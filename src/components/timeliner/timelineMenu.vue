@@ -1,0 +1,243 @@
+<template>
+  <div class="timeline-menu">
+    <!---->
+    <div style="height:26px">
+      dfdfdfd
+    </div>
+    <!--播放控制-->
+    <div style="height:50px;" class="timeline-subtitle">
+      <block-slice slot="e" dir="horizontal" :staticIndex="0" :staticValue="'260px'">
+        <div slot="s">
+          <table cellspacing="0" cellpadding="0" style="width: 100%;line-height:30px;">
+            <tr>
+              <td> 大规模d</td>
+              <td>
+                <div :class="['timeline-play-pause-icon', playing? 'pause-icon' : 'play-icon']" @click="togglePlayState">
+
+                </div>
+              </td>
+              <td>df </td>
+              <td class="center">
+                {{ position }} / 10
+              </td>
+            </tr>
+          </table>
+          <table cellspacing="0" cellpadding="0" style="width: 100%;">
+            <tr>
+              <td>5555</td>
+              <td>555</td>
+              <td class="right">
+                <div class="bg-preset timeline-view-eye timeline-view-eye-visible pointer" @click="toggleVisibleAll"></div>
+                <div class="bg-preset timeline-view-layer-lock pointer" @click="toggleEditableAll"></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <!--和 控制条-->
+        <div slot="e">
+          <!--拖动-->
+          <div id="timeline-drag-thumbnail-wrap">
+            <div id="timeline-drag-thumbnail">
+              <!--timeline-drag-thumbnail-->
+              <div id="timeline-drag-thumbnail-handle" style=""></div>
+            </div>
+            <!--时间轴刻度-->
+            <div id="timeline-scale">
+            </div>
+          </div>
+          <div>
+            right
+          </div>
+        </div>
+      </block-slice>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'timelineMenu',
+  data () {
+    return {
+      msg: 'timelineMenu'
+    }
+  },
+  computed: {
+    position() {
+      return (this.$store.state.position / 1000).toFixed(3);
+    },
+    playing:{
+      get() {
+        return this.$store.state.playing;
+      },
+      set(val) {
+        window.timeline.setPaused(!val);
+        this.$store.state.playing = val;
+      }
+    }
+  },
+  methods: {
+    // 播放 暂停
+    togglePlayState() {
+      this.playing = !this.playing;
+    },
+    // 显示隐藏所有
+    toggleVisibleAll() {
+
+    },
+    // 切换可编辑所有
+    toggleEditableAll() {
+
+    }
+  },
+  created() {
+    
+  },
+  mounted() {
+    $(()=>{
+      $('#timeline-drag-thumbnail').draggable({
+        axis: 'x',
+        containment: '#timeline-drag-thumbnail-wrap',
+        start: () => {
+
+        },
+        stop: () => {
+
+        },
+        drag: () => {
+
+        }
+      })
+      .resizable({
+        handles: "w,e",
+        minWidth: 100,
+        containment: 'parent',
+        start: () => {
+
+        },
+        stop: () => {
+
+        },
+        resize: () => {
+
+        }
+      })
+    })
+  }
+}
+</script>
+
+<style lang="scss">
+  .timeline-menu {
+    border-top: 1px solid #181818;
+    position: absolute;
+    top: 0px;
+    left: 0;
+    right: 0;
+    height: 25px;
+    // padding: 0 20px;
+    background: #2c2e2f;
+    td{
+      vertical-align: middle;
+    }
+  }
+  .timeline-menu:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #484a4b;
+  }
+  .timeline-subtitle{
+    border-top: 1px solid #181818;
+    position: absolute;
+    width: 100%;
+  }
+  .timeline-subtitle:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #484a4b;
+  }
+
+  #timeline-drag-thumbnail-wrap{
+    padding-top: 5px;
+    position: relative;
+  }
+  // 拖动条
+  #timeline-drag-thumbnail{
+    width: 10%;
+    height: 20px;
+    background-color: #37393A;
+    opacity: 1;
+    cursor: move;
+    .ui-resizable-w, .ui-resizable-e{
+      top:0;
+      height: 100%;
+      border-radius: 0;
+      opacity: 0;
+    }
+    #timeline-drag-thumbnail-handle{
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 90;
+    }
+  }
+
+  
+  #timeline-scale{
+    position: absolute;
+    width: 100%;
+    height: 20px;
+    left:0;
+    top: 0;
+    // background-color: yellowgreen;
+    opacity: 0.1;
+    top: 5px;
+  }
+
+  // 播放 暂停按钮
+  .timeline-play-pause-icon{
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    background-size: contain;
+    background-position: center;
+    background-repeat:no-repeat;
+    vertical-align: middle;
+    cursor: pointer;
+    opacity: 0.8;
+    &:hover{
+      opacity: 1;
+    }
+  }
+  .play-icon{
+    background-image: url("data:image/svg+xml,%3Csvg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cstyle/%3E%3C/defs%3E%3Cpath d='M298.667 256v512l426.666-256z' fill='%231296db'/%3E%3C/svg%3E");
+  }
+  .pause-icon{
+    background-image: url("data:image/svg+xml,%3Csvg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cstyle/%3E%3C/defs%3E%3Cpath d='M341.333 298.667h128v426.666h-128zm213.334 0h128v426.666h-128z' fill='%231296db'/%3E%3C/svg%3E"); 
+  }
+  .timeline-view-eye, .timeline-view-layer-lock{
+    display:inline-block;
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+  }
+  .timeline-view-eye-visible{
+    background-image: url("data:image/svg+xml,%3Csvg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cstyle/%3E%3C/defs%3E%3Cpath d='M945.724 511.931c0 83.503-178.842 261.637-433.701 261.637-248.372 0-433.701-175.202-433.701-261.637 0-86.422 186.128-261.356 433.701-261.356 256.862.001 433.762 174.935 433.701 261.357zM512.405 298.299c-115.427 0-208.998 95.714-208.998 213.774 0 118.061 93.57 213.774 208.998 213.774 115.462 0 209.036-95.714 209.036-213.774-.001-118.06-93.574-213.774-209.036-213.774zm-.382 77.295c-73.507 0-133.097 60.94-133.097 136.122 0 75.173 59.59 136.125 133.097 136.125s133.073-60.952 133.073-136.125c0-75.182-59.566-136.122-133.073-136.122z' fill='%23ffffff'/%3E%3C/svg%3E");
+    margin-right: 2px;
+  }
+  .timeline-view-layer-lock{
+    background-image: url("data:image/svg+xml,%3Csvg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cstyle/%3E%3C/defs%3E%3Cpath d='M644.01 342.016V256q0-54.016-38.997-93.013T512 123.989t-93.013 38.998T379.989 256v86.016h264.022zm-132.01 384q34.005 0 59.99-25.984t25.983-59.99-25.984-59.989T512 554.07t-59.99 25.984-25.983 59.99 25.984 59.989T512 726.016zm256-384q34.005 0 59.99 25.003t25.983 59.008v427.989q0 34.005-25.984 59.008T768 938.027H256q-34.005 0-59.99-25.003t-25.983-59.008v-427.99q0-34.005 25.984-59.007T256 342.016h41.984V256q0-88.021 63.019-150.997T512 41.984t150.997 63.019T726.016 256v86.016H768z' fill='%23ffffff'/%3E%3C/svg%3E");
+    background-size: 80%;
+    margin-right: 2px;
+  }
+</style>

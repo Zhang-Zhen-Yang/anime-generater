@@ -1,18 +1,15 @@
-# anime-generater
+## 图文编辑器
 
-> A Vue.js project
 
-## Build Setup
+### 模板构成
 
-``` bash
-# install dependencies
-npm install
+1.时间轴
 
-# serve with hot reload at localhost:8080
-npm run dev
 
-# build for production with minification
-npm run build
-```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+
+
+一样先登录: 192.168.1.134:8090/wonbaoWeb/local?userId=105227988
+
+
