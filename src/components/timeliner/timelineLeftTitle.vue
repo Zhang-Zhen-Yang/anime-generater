@@ -8,8 +8,8 @@
         :data-index="index"
         :class="['layer'+index,'timeline-layer-title', activeLayerIndex.length == 1 && activeLayerIndex[0] == index ? 'activeLayer' : '']"
       >
-        <div class="relative" @dragover="dragoverMask(index)">
-          <block-slice dir="horizontal" :staticIndex="1" :staticValue="50 + 'px'">
+        <div class="relative" @dragover="dragoverMask(index)" style="border-bottom:1px solid #525252;height:25px;">
+          <block-slice dir="horizontal" :staticIndex="1" :staticValue="57 + 'px'">
             <div slot="e" style="overflow:hidden;text-overflow:ellipsis; ">
               &emsp;&nbsp;{{ item.type }}{{ item.UUID }}
             </div>
@@ -25,6 +25,8 @@
                     <div class="pointer" @click.stop="toggleEditable(item)" style="width: 25px;">
                       {{item.editable ? '·' : '×'}}
                     </div>
+                  </td>
+                  <td style="width: 5px;">
                   </td>
                 </tr>
               </table>
@@ -45,7 +47,7 @@
         ></div>
         <!--子层-->
         <div v-if="item.type=='container' && item.tlShowChildren" style="" class="timeline-layer-title-child-wrap">
-          <div v-for="c,cindex in item.children" :key="cindex">
+          <div v-for="c,cindex in item.children" :key="cindex" style="height: 25px;">
             <div @click.stop="setActiveLayer([index, cindex])" :class="['timeline-layer-title-child', activeLayerIndex.length == 2 && activeLayerIndex[0] == index && activeLayerIndex[1] == cindex? 'activeLayer' : '']">
               &emsp;&emsp;{{ c.type }}
             </div>
@@ -99,6 +101,7 @@ export default {
     },
     // 开始拖动
     dragStart(e, item, index) {
+      e.dataTransfer.setData('index', index);
       console.log(e);
     },
     dragover(e) {
@@ -107,6 +110,9 @@ export default {
     drop(e){
       e.preventDefault();
       console.log(e);
+      let fromIndex = e.dataTransfer.getData('index');
+      this.$store.dispatch('swipeChild',{fromIndex, toIndex: this.dragoverMaskIndex, position: this.dargoverMaskPosition})
+      // alert(fromIndex);
       this.dragoverMaskIndex = -1;
     },
     dragoverMask(index) {
@@ -126,11 +132,11 @@ export default {
 <style lang="scss">
   .timeline-layer-title,.timeline-layer-title-child{
     // height: 25px;
-    border-top: 1px solid #525252;
+    // border-bottom: 1px solid #525252;
     font-size: 14px;
     color: #CCCCCC;
     line-height: 25px;
-    background-color: #444444;
+    // background-color: #444444;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

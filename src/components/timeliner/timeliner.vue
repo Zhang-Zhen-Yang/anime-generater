@@ -7,14 +7,14 @@
 
         <div slot="e" id="timeline-scroll-wrap" style="">
           <block-slice dir="horizontal" :staticValue="'260px'" >
-            <div slot="s" style="width: 100%;height: 100%;">
+            <div slot="s" style="width: 100%;height: 100%;background-color:#2c2e2f;">
               <!---->
               <timeline-left-title :layers="layers"></timeline-left-title>
               
 
             </div>
-            <div slot="e" style="width: 100%;height: 100%;">
-              e
+            <div slot="e" style="width: 100%;height: 100%;padding: 0 0px;">
+              <timeline-tween ></timeline-tween>
             </div>
           </block-slice>
 
@@ -35,9 +35,10 @@
 import timelineMenu from './timelineMenu.vue';
 import timelineBottom from './timelineBottom.vue';
 import timelineLeftTitle from './timelineLeftTitle.vue';
+import timelineTween from './timelineTween.vue';
 export default {
   name: 'timelinear',
-  components: {timelineMenu, timelineBottom, timelineLeftTitle},
+  components: {timelineMenu, timelineBottom, timelineLeftTitle, timelineTween},
   data () {
     return {
       msg: 'timelinear',
@@ -74,12 +75,13 @@ export default {
 <style lang="scss">
   .timeline {
     // border-top: 1px solid #181818;
-    
     width: 100%;
     height: 100%;
     color: #9f9f9f;
     font-size: 14px;
-   
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .timeline, .timeline__main {
     bottom: 0;

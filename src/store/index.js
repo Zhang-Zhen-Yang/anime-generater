@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-21 13:59:55
+ * @Last Modified time: 2019-03-22 11:26:42
  */
 
 import http from '../script/http';
@@ -25,6 +25,7 @@ import dialogAudio from './dialogAudio';
 import dialogGenerate from './dialogGenerate';
 import dialogSetting from './dialogSetting';
 import dialogDownload from './dialogDownload';
+import tl from './tl';
 import demo from '../script/templateDemo.js';
 const store = {
 	state: {
@@ -709,6 +710,7 @@ const store = {
 		dialogGenerate,
 		dialogSetting,
 		dialogAudio,
+		tl,
 	}
 }
 export default store;

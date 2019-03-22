@@ -40,6 +40,7 @@ export default {
     height: 25px;
     border-top: 1px solid #525252;
     padding-top: 2px;
+    background-color: #2c2e2f;
   }
   .timeline-bottom-icon{
     width: 20px;

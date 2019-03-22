@@ -7,7 +7,7 @@
     <!--播放控制-->
     <div style="height:50px;" class="timeline-subtitle">
       <block-slice slot="e" dir="horizontal" :staticIndex="0" :staticValue="'260px'">
-        <div slot="s">
+        <div slot="s" style="position:relative;z-index:1">
           <table cellspacing="0" cellpadding="0" style="width: 100%;line-height:30px;">
             <tr>
               <td> 大规模d</td>
@@ -16,13 +16,17 @@
 
                 </div>
               </td>
-              <td>df </td>
               <td class="center">
-                {{ position }} / 10
+                {{ position }} / {{ duration }}
+              </td>
+              <td>
+                <div style="cursor:e-resize;display:inline-block;border-bottom:1px dashed rgba(255, 255, 255, 0.6);line-height:1.2em;">
+                  15
+                </div>
               </td>
             </tr>
           </table>
-          <table cellspacing="0" cellpadding="0" style="width: 100%;">
+          <table cellspacing="0" cellpadding="0" style="margin-top:-6px;width: 98%;background-color:#2c2e2f;">
             <tr>
               <td>5555</td>
               <td>555</td>
@@ -36,17 +40,16 @@
         <!--和 控制条-->
         <div slot="e">
           <!--拖动-->
-          <div id="timeline-drag-thumbnail-wrap">
+          <div id="timeline-drag-thumbnail-wrap" ref="timeline-drag-thumbnail-wrap">
             <div id="timeline-drag-thumbnail">
               <!--timeline-drag-thumbnail-->
               <div id="timeline-drag-thumbnail-handle" style=""></div>
             </div>
             <!--时间轴刻度-->
-            <div id="timeline-scale">
-            </div>
+            <timeline-scale></timeline-scale>
           </div>
           <div>
-            right
+            <timeline-pointer></timeline-pointer>
           </div>
         </div>
       </block-slice>
@@ -55,14 +58,26 @@
 </template>
 
 <script>
+import timelineScale from './timelineScale';
+import timelinePointer from './timelinePointer';
 export default {
   name: 'timelineMenu',
+  components: {timelineScale, timelinePointer},
   data () {
     return {
       msg: 'timelineMenu'
     }
   },
   computed: {
+    tl() {
+      return this.$store.state.tl;
+    },
+    timeline() {
+      return this.$store.state.timeline;
+    },
+    duration() {
+      return ((this.timeline? this.timeline.duration : 0) / 1000).toFixed(3);
+    },
     position() {
       return (this.$store.state.position / 1000).toFixed(3);
     },
@@ -104,8 +119,12 @@ export default {
         stop: () => {
 
         },
-        drag: () => {
-
+        drag: (e, ui) => {
+          let left = ui.position.left;
+          let totalWidth = this.$refs['timeline-drag-thumbnail-wrap'].clientWidth;
+          // console.log(totalWidth.clientWidth);
+          this.tl.offsetX = left / totalWidth; 
+          // console.log(this.tl.offsetX);
         }
       })
       .resizable({
@@ -118,8 +137,12 @@ export default {
         stop: () => {
 
         },
-        resize: () => {
-
+        resize: (e, ui) => {
+          let totalWidth = this.$refs['timeline-drag-thumbnail-wrap'].clientWidth;
+          let width = ui.size.width;
+          let left = ui.position.left;
+          this.tl.offsetX = left / totalWidth;
+          this.tl.scale = width / totalWidth;
         }
       })
     })
@@ -193,16 +216,6 @@ export default {
   }
 
   
-  #timeline-scale{
-    position: absolute;
-    width: 100%;
-    height: 20px;
-    left:0;
-    top: 0;
-    // background-color: yellowgreen;
-    opacity: 0.1;
-    top: 5px;
-  }
 
   // 播放 暂停按钮
   .timeline-play-pause-icon{
