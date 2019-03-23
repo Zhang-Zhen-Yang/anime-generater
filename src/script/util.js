@@ -182,6 +182,21 @@ const util = {
 		  }
 		});
 		return args;
+	},
+	formatMinutes: function(d) {
+		 // convert milliseconds to seconds
+		 let seconds = d / 1000;
+		 let hours = Math.floor(seconds / 3600);
+		 let minutes = Math.floor((seconds - hours * 3600) / 60);
+		 seconds = seconds - minutes * 60;
+		 let output = seconds + 's';
+		 if (minutes) {
+			 output = minutes + 'm ' + output;
+		 }
+		 if (hours) {
+			 output = hours + 'h ' + output;
+		 }
+		 return output;
 	}
 
 }

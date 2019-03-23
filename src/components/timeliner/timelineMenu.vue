@@ -21,7 +21,7 @@
               </td>
               <td>
                 <div style="cursor:e-resize;display:inline-block;border-bottom:1px dashed rgba(255, 255, 255, 0.6);line-height:1.2em;">
-                  15
+                  {{ tlDuration }}
                 </div>
               </td>
             </tr>
@@ -65,12 +65,19 @@ export default {
   components: {timelineScale, timelinePointer},
   data () {
     return {
-      msg: 'timelineMenu'
+      msg: 'timelineMenu',
+      resizing: false,
     }
   },
   computed: {
     tl() {
       return this.$store.state.tl;
+    },
+    tlScale() {
+      return this.tl.scale;
+    },
+    tlDuration() {
+      return (this.tl.duration / 1000).toFixed(2);
     },
     timeline() {
       return this.$store.state.timeline;
@@ -103,7 +110,12 @@ export default {
     // 切换可编辑所有
     toggleEditableAll() {
 
-    }
+    },
+    setDragThumbnailWidth() {
+      $('#timeline-drag-thumbnail').css({
+        width: this.tlScale * 100 + '%',
+      })
+    },
   },
   created() {
     
@@ -132,10 +144,11 @@ export default {
         minWidth: 100,
         containment: 'parent',
         start: () => {
-
+          this.resizing = true;
         },
         stop: () => {
-
+           this.resizing = false;
+           this.setDragThumbnailWidth();
         },
         resize: (e, ui) => {
           let totalWidth = this.$refs['timeline-drag-thumbnail-wrap'].clientWidth;
@@ -146,6 +159,14 @@ export default {
         }
       })
     })
+    this.setDragThumbnailWidth();
+  },
+  watch:{
+    tlScale() {
+      if(!this.resizing) {
+        this.setDragThumbnailWidth();
+      }
+    },
   }
 }
 </script>

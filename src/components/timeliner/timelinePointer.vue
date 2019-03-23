@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import util from '../../script/util.js';
 export default {
   name: 'timeline-pointer',
   data () {
@@ -53,7 +54,101 @@ export default {
     position() {
       return this.$store.state.position;
     },
+    // 时间轴在是显示区的多少倍
+    scaleValue(){
+      return Math.ceil(1 / this.scale);
+    },
     ranges() {
+      /**
+       * {
+       *  sl shlowLabel 是否显示标签
+       * }
+       * 
+      */
+
+
+
+
+      /* let scaleCloseValue = this.scaleValue;
+      let round2 = scaleCloseValue - (scaleCloseValue % 2);
+      let round5 = scaleCloseValue - (scaleCloseValue % 5);
+      let disScaleValue;
+      if(Math.abs(round2 - scaleCloseValue) > Math.abs(round5 - scaleCloseValue)) {
+        disScaleValue = round5;
+      } else {
+        disScaleValue = round2;
+      }
+      console.log('scaleCloseValue', scaleCloseValue);
+      console.log('disScaleValue----------------------------------------------',disScaleValue);
+
+    
+      console.log(scaleCloseValue);
+      let power = (this.tlDuration + '').length - 3;
+      let powerDivValue = Math.pow(10, power) / (this.scaleValue);
+      let count1 = Math.ceil(this.tlDuration / powerDivValue);
+      let count2 = Math.ceil(this.tlDuration / (powerDivValue * 2));
+      let count5 = Math.ceil(this.tlDuration / (powerDivValue * 5));
+      let testList = [[count1, 1], [count2, 2], [count5, 5]].map((item, index) => {
+        return {
+          count: item[0],
+          distance: Math.abs(item[0] - 100 * scaleCloseValue),
+          value: powerDivValue * item[1]
+        }
+      })
+      testList.sort(function(p, n){
+        return p.distance - n.distance;
+      });
+      let distItem = testList[0];
+      let timeScaleList = [];
+      for(let i=0; i <= distItem.count; i++  ) {
+        timeScaleList.push({
+          label: util.formatMinutes(i * distItem.value),//`${i * distItem.value / 1000}s`,
+          sl: false,
+          value: i * distItem.value
+        })
+      }
+      console.log(timeScaleList);
+      return timeScaleList;
+      */
+
+     
+     let scaleCloseValue = this.scaleValue;
+     // let scaleTen =  Math.pow(10, Math.ceil(scaleCloseValue / 10));
+
+      let power = (this.tlDuration + '').length - 2;
+      let powerDivValue = Math.pow(10, power);
+      let count1 = Math.ceil(this.tlDuration / powerDivValue);
+      let count2 = Math.ceil(this.tlDuration / (powerDivValue * 2));
+      let count5 = Math.ceil(this.tlDuration / (powerDivValue * 5));
+
+      let testList = [[count1, 1], [count2, 2], [count5, 5]].map((item, index) => {
+        return {
+          count: item[0],
+          distance: Math.abs(item[0] - 15 * scaleCloseValue),
+          value: powerDivValue * item[1]
+        }
+      })
+      testList.sort(function(p, n){
+        return p.distance - n.distance;
+      });
+      let distItem = testList[0];
+      let timeScaleList = [];
+      for(let i=0; i <= distItem.count; i++  ) {
+        timeScaleList.push({
+          label: util.formatMinutes(i * distItem.value),//`${i * distItem.value / 1000}s`,
+          sl: true,
+          value: i * distItem.value
+        })
+
+      }
+      return timeScaleList;
+
+
+
+
+
+      
+
       let ranges = [];
       for(let i =0;i<=180;i++){
         let label = {

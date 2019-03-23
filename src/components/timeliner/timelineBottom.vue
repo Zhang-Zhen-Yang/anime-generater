@@ -26,7 +26,8 @@ export default {
   },
   methods: {
     setAction(type){
-      console.log(type);
+      this.$store.dispatch('layerAction', {type})
+      // console.log(type);
     }
   },
   created() {

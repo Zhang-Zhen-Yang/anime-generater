@@ -21,7 +21,7 @@
         </block-slice>
         <!--右侧配置面板-->
         <div slot="s" style="" id="options-panel-wrap">
-          dfdfdfdfdfd
+          <settingOptions></settingOptions>
         </div>
       </block-slice>
     </block-slice>
@@ -33,12 +33,13 @@
 <script>
 import topBar from './components/topBar.vue';
 import timeliner from './components/timeliner/timeliner.vue';
+import settingOptions from './components/settingOptions/settingOptions.vue';
 import workSpace from './components//workSpace.vue';
 import dialogGenerate from './components/dialogGenerate/dialogGenerate';
 import dialogDownload from './components/dialogDownload/dialogDownload';
 export default {
   name: 'app',
-  components: {timeliner, topBar, workSpace, dialogGenerate, dialogDownload},
+  components: {timeliner, settingOptions, topBar, workSpace, dialogGenerate, dialogDownload},
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -143,6 +144,8 @@ a {
   background-color:#F0F8FF;
   height:100%;
   border-left: 1px solid #ddd;
+  background-color: #2c2e2f;
+  color: rgba(255, 255, 255, 1);
 }
 #options-panel-wrap .ui-resizable-w{
   height: 100%;

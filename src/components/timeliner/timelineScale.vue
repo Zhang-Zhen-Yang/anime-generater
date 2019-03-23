@@ -1,6 +1,6 @@
 <template>
   <div id="timeline-scale">
-    <div class="timeline-scale-item" v-for="item, index in range" v-if="!item.isHide" :style="{left: item.value / duration * 100 + '%'}">
+    <div class="timeline-scale-item" v-for="item, index in data" v-if="!item.isHide" :style="{left: item.value / tlDuration * 100 + '%'}">
       <div class="timeline-scale-item-label">
         {{ item.label }}
       </div>
@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import util from '../../script/util.js';
 export default {
   name: 'timeline-scale',
   data () {
@@ -27,6 +28,41 @@ export default {
       return 10000;
     },
     data() {
+      let power = (this.tlDuration + '').length - 2;
+      let powerDivValue = Math.pow(10, power);
+      let count1 = Math.ceil(this.tlDuration / powerDivValue);
+      let count2 = Math.ceil(this.tlDuration / (powerDivValue * 2));
+      let count5 = Math.ceil(this.tlDuration / (powerDivValue * 5));
+
+      // console.log([count1, count2, count5]);
+      let testList = [[count1, 1], [count2, 2], [count5, 5]].map((item, index) => {
+        return {
+          count: item[0],
+          distance: Math.abs(item[0] - 15),
+          value: powerDivValue * item[1]
+        }
+        // console.log(item);
+      })
+      testList.sort(function(p, n){
+        return p.distance - n.distance;
+      });
+      // console.log(testList);
+      let distItem = testList[0];
+      let timeScaleList = [];
+      for(let i=0; i <= distItem.count; i++  ) {
+        timeScaleList.push({
+          label: util.formatMinutes(i * distItem.value),//`${i * distItem.value / 1000}s`,
+          isHide: false,
+          value: i * distItem.value
+        })
+      }
+      // console.log(timeScaleList);
+      return timeScaleList;
+
+
+      // console.log('powerDivValue---------------------',powerDivValue);
+
+
       let data = [];
       let ten_seconds = Math.ceil(this.tlDuration / 10000);
       if(ten_seconds < 1) {
@@ -40,7 +76,7 @@ export default {
       return data;
     },
     range() {
-      alert(this.duration);
+      // alert(this.duration);
       return this.data.map((item, index)=>{
       let ten_seconds = Math.ceil(this.duration / 10000);
       if(ten_seconds < 1) {
@@ -127,7 +163,7 @@ export default {
     display: inline-block;
     position: absolute;
     font-size: 12px;
-    transform: translate(-50%, 0);
-    
+    transform: translate(-50%, 0) scale(0.8);
+    white-space:nowrap;
   }
 </style>

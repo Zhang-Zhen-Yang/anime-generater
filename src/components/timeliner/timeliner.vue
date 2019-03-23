@@ -10,10 +10,8 @@
             <div slot="s" style="width: 100%;height: 100%;background-color:#2c2e2f;">
               <!---->
               <timeline-left-title :layers="layers"></timeline-left-title>
-              
-
             </div>
-            <div slot="e" style="width: 100%;height: 100%;padding: 0 0px;">
+            <div slot="e" style="width: 100%;height: 100%;padding: 0 0px; overflow:hidden;">
               <timeline-tween ></timeline-tween>
             </div>
           </block-slice>
