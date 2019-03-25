@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-22 11:26:42
+ * @Last Modified time: 2019-03-25 17:48:09
  */
 
 import http from '../script/http';
@@ -26,7 +26,9 @@ import dialogGenerate from './dialogGenerate';
 import dialogSetting from './dialogSetting';
 import dialogDownload from './dialogDownload';
 import tl from './tl';
+import optionsSetting from './optionsSetting';
 import demo from '../script/templateDemo.js';
+import demo2 from '../script/templateDemo2.js';
 const store = {
 	state: {
 		goods: {
@@ -55,7 +57,7 @@ const store = {
 			show: false,
 		},
 		// 模板
-		project: demo,
+		project: demo2,
 		activeLayerIndex: [0],
 		stage: null,
 		timeline: null,
@@ -695,12 +697,7 @@ const store = {
 			var blob = new Blob([project]);
 			util.funDownload('', blob, 'project.temp');
 		},
-		// 更新位置
-		swipeChild({state, commit}, {fromIndex, toIndex}) {
-			let pickItem = state.project.layers.splice(fromIndex,1);
-			console.log([fromIndex, toIndex]);
-			state.project.layers.splice(toIndex, 0, pickItem[0]);
-		}
+		
 	},
 	modules: {
 		/*dialogGoods,
@@ -711,6 +708,7 @@ const store = {
 		dialogSetting,
 		dialogAudio,
 		tl,
+		os: optionsSetting,
 	}
 }
 export default store;

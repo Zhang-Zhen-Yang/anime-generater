@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-23 17:23:25
+ * @Last Modified time: 2019-03-25 17:53:05
  */
 
  // 时间轴组件
@@ -36,6 +36,18 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
+    // 更新位置
+		swipeChild({rootState, state, commit}, {fromIndex, toIndex}) {
+			let pickItem = rootState.project.layers.splice(fromIndex,1);
+			console.log([fromIndex, toIndex]);
+      rootState.project.layers.splice(toIndex, 0, pickItem[0]);
+      let prevChild = window.stage.children[fromIndex - 0 +1];
+      let nextChild = window.stage.children[toIndex - 0 + 1];
+      console.log([fromIndex, toIndex]);
+     console.log([prevChild, nextChild]);
+      // window.stage.swipe();
+      window.stage.swapChildren(nextChild, prevChild);
+		},
     // 添加图层，删除图层
 		layerAction({state, rootState,commit,dispatdh}, {type}) {
 			switch(type) {
@@ -97,16 +109,51 @@ const store = {
     },
     // 设置当前选中的补间
     setActiveTween({state,rootState,dispatdh}, {t, topIndex, subIndex, tweenIndex}) {
+      rootState.playing = false;
+      rootState.timeline.setPaused(true);
       state.currentTween = t;
       state.topIndex = topIndex;
       state.subIndex = subIndex;
       state.tweenIndex = tweenIndex;
 
-      if(subIndex > -1) {
-        rootState.activeLayerIndex = [topIndex, subIndex]
-      } else {
-        rootState.activeLayerIndex = [topIndex]
+      if(topIndex >-1 && subIndex > -1) {
+        rootState.activeLayerIndex = [topIndex, subIndex];
+        let layers = rootState.project.layers[topIndex].children[subIndex] || {};
+        let currentPosition = 0;
+        for(let i =0; i < (tweenIndex + 1); i++) {
+          currentPosition += layers.tween ? (layers.tween[i].time || 0) : 0;
+        }
+        rootState.timeline.setPosition(currentPosition);
+      } else if(topIndex > -1){
+        // alert('top');
+        rootState.activeLayerIndex = [topIndex];
+        let layers = rootState.project.layers[topIndex] || {};
+        // 点击当前缓动，时间轴指针要去到的地方
+        let currentPosition = 0;
+        for(let i =0; i < (tweenIndex + 1); i++) {
+          // alert(layers.tween[i].time);
+          currentPosition += layers.tween ? (layers.tween[i].time || 0) : 0;
+        }
+        
+        // alert(currentPosition);
+        // 如果超出总时长，位置减1
+        if(currentPosition >= rootState.timeline.duration) {
+          currentPosition -= 0.01;
+        }
+        rootState.timeline.setPosition(currentPosition);
       }
+    },
+    startSetValue({state,rootState,dispatch}) {
+      let t = state.currentTween;
+      let topIndex = state.topIndex;
+      let subIndex = state.subIndex;
+      let tweenIndex = state.tweenIndex;
+  
+      dispatch('setActiveTween', {t, topIndex, subIndex, tweenIndex});
+    },
+    // 测试
+    test({state,rootState,dispatdh}) {
+      // console.log(window.timeline._tweens[1].target.x);
     }
 		
 	}// end actions 

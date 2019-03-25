@@ -25,17 +25,17 @@ let obj = {
       state.timeline = timeline;
       window.timeline = timeline;
 
-      this.renderLayers({type: 'stage', layers, parent: stage, timeline, project});
+      this.renderLayers({parentType: 'stage', layers, parent: stage, timeline, project});
 
       c.Ticker.setFPS(24);
       c.Ticker.addEventListener('tick', stage);
     }
   },
   // 对图层进行行渲染
-  renderLayers ({type, layers, parent, timeline, project}) {
+  renderLayers ({parentType, layers, parent, timeline, project}) {
     let {width, height} = project;
     console.log('layers', layers);
-    if (type === 'container') {
+    if (parentType === 'container') {
       console.log('layers------------------------------', layers);
     }
     // 图层
@@ -53,12 +53,13 @@ let obj = {
           item,
           timeline,
           project,
+          parentType,
           UUID,
           addChild: true,
           callback: ({obj, scale}) => {
             // alert(scale);
-            /* obj.name = UUID;
-            item.UUID = UUID; */
+            // obj.name = UUID;
+            /* item.UUID = UUID; */
             // container.addChild(obj);
             let tween = this.getTween({obj, item, timeline, scale});
             console.log('UUID', UUID);
@@ -143,10 +144,18 @@ let obj = {
     });
   },
   // 添加图片类型=================================================================
-  getBitmap ({container, item, timeline, project, UUID = '', addChild = false, callback}) {
+  getBitmap ({container, item, timeline, project, UUID = '', parentType, addChild = false, callback}) {
     let img = util.NImage(item.pic_url);
     let imgObj = new c.Bitmap(img);
     imgObj.name = UUID;
+    if(parentType=='container') {
+      // alert('container');
+      console.log('container', imgObj);
+      setTimeout(()=>{
+        console.log('container-------------------------------------------------------', imgObj);
+
+      }, 3000)
+    }
     if (addChild) {
       container.addChild(imgObj);
     }
@@ -244,7 +253,7 @@ let obj = {
     thisContainer.name = UUID;
     let shape = new c.Shape();
     shape.graphics.f('red').drawRect(0, 0, 100, 100);
-    thisContainer.addChild(shape);
+    // thisContainer.addChild(shape);
     if (addChild) {
       container.addChild(thisContainer);
     }
@@ -252,7 +261,7 @@ let obj = {
       obj: thisContainer
     });
     this.renderLayers({
-      type: 'container',
+      parentType: 'container',
       layers: item.children,
       parent: thisContainer,
       timeline,
@@ -260,10 +269,16 @@ let obj = {
     });
   },
   // 设置动画补间 =====================================================================
-  getTween ({obj, item, timeline, scale = 1}) {
+  getTween ({obj, item, timeline, scale = 1,f}) {
     // 动画
     let tween = c.Tween.get(obj);
+    if(f =='propsChange') {
+      console.log('item.tween-------------------', item.tween);
+    }
     (item.tween || []).forEach((t, tIndex) => {
+      if(f =='propsChange'){
+        // console.log(t.action);
+      }
       let currentAction = t.action;
       let props = t.props ? {...t.props} : {};
       

@@ -49,7 +49,7 @@
         <div v-if="item.type=='container' && item.tlShowChildren" style="" class="timeline-layer-title-child-wrap">
           <div v-for="c,cindex in item.children" :key="cindex" style="height: 25px;">
             <div @click.stop="setActiveLayer([index, cindex])" :class="['timeline-layer-title-child', activeLayerIndex.length == 2 && activeLayerIndex[0] == index && activeLayerIndex[1] == cindex? 'activeLayer' : '']">
-              &emsp;&emsp;{{ c.type }}
+              &emsp;&emsp;{{ c.type }} {{ c.UUID }}
             </div>
           </div>
         </div>

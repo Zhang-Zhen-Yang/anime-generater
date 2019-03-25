@@ -8,7 +8,7 @@
       <!--子元素-->
       <div v-if="item.type=='container' && item.tlShowChildren">
         <div class="timeline-layer-tween-child" v-for="cItem,cIndex in item.children">
-          <timelineTweenItem :anTween="item" :topIndex="index" :subIndex="cIndex">
+          <timelineTweenItem :anTween="cItem" :topIndex="index" :subIndex="cIndex">
           </timelineTweenItem>
         </div>
       </div>

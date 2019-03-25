@@ -7,6 +7,9 @@
       <div :class="['pause-and-play-tip', playing ? 'pause-tip':'play-tip', 'pointer']" @click="togglePlayState">
       </div>
     </div>
+    <button style="position: absolute;left: 10px;top: 10px;" @click="test">
+      test
+    </button>
   </div>
 </template>
 
@@ -50,6 +53,9 @@ export default {
     togglePlayState() {
       this.playing = !this.playing;
     },
+    test() {
+      this.$store.dispatch('test');
+    }
   },
   created() {
     

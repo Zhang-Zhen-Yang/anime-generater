@@ -149,6 +149,7 @@ const util = {
 		console.log(b);
 		return new Uint8Array(b.split('').map(charCodeAt))
 	},
+	// 获取图片应放大缩小多少倍才能覆盖画布
 	getImageScale: function({img, cw, ch,type}) {
 		let scale = 1;
 		let iw = img.width;
@@ -183,6 +184,7 @@ const util = {
 		});
 		return args;
 	},
+	// 将毫秒转成带分钟，时钟的字符串
 	formatMinutes: function(d) {
 		 // convert milliseconds to seconds
 		 let seconds = d / 1000;
@@ -197,6 +199,9 @@ const util = {
 			 output = hours + 'h ' + output;
 		 }
 		 return output;
+	},
+	getTargetByIndex: function({}) {
+
 	}
 
 }

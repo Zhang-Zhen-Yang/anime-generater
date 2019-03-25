@@ -3,8 +3,8 @@
     <table class="timeline-tween-item-table" cellspacing="0" cellpadding="0" style="width:100%;table-layout: fixed;">
       <tr>
         <td style="width:0;"></td>
-        <td v-for="t,index in tweenLocal" class="relative" :style="{whiteSpace:'nowrap',width: t.width}">
-          <div v-if="t.action=='to'" class="tween-action tween-to-action">
+        <td v-for="t,index in tweenLocal" :class="['relative']" :style="{whiteSpace:'nowrap',width: t.width}">
+          <div v-if="t.action=='to'" :class="['tween-action', 'tween-to-action', topIndex == tlTopIndex && subIndex == tlSubIndex ? 'tween-to-action-active' : '']">
             <div
               :class="['tween-action-dot', 'tween-to-action-dot', topIndex == tlTopIndex && subIndex == tlSubIndex && index == tlTweenIndex? 'tween-action-dot-active' : '']"
               @click="setActiveTween(index)"
@@ -12,7 +12,7 @@
               <!--{{ t.action }}-->
             </div>
           </div>
-          <div v-if="t.action=='wait'" class="tween-action tween-wait-action">
+          <div v-if="t.action=='wait'" :class="['tween-action', 'tween-wait-action', topIndex == tlTopIndex && subIndex == tlSubIndex ? 'tween-wait-action-active' : '']">
             <div
               :class="['tween-action-dot', 'tween-wait-action-dot', topIndex == tlTopIndex && subIndex == tlSubIndex && index == tlTweenIndex ? 'tween-action-dot-active' : '']"
                @click="setActiveTween(index)"
@@ -21,6 +21,7 @@
             </div>
           </div>
         </td>
+        <td></td>
       </tr>
     </table>
     <!--
@@ -179,5 +180,11 @@ export default {
     background-color: rgba(255, 255, 255, 0.5);
     top: 10px!important;
     transform: rotate(45deg);
+  }
+  .tween-to-action-active{
+    background-color: rgba(0, 0, 0, 0.2)
+  }
+  .tween-wait-action-active{
+    background-color: rgba(255, 255, 255, 0.1)
   }
 </style>

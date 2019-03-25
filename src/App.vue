@@ -143,7 +143,7 @@ a {
 #options-panel-wrap{
   background-color:#F0F8FF;
   height:100%;
-  border-left: 1px solid #ddd;
+  border-left: 1px solid #181818;
   background-color: #2c2e2f;
   color: rgba(255, 255, 255, 1);
 }

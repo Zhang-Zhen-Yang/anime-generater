@@ -24,6 +24,8 @@ import snackbar from './snackbar/snackbar.vue';
 import progressBar from './progressBar/progressBar.vue';
 import toggle from './toggle/toggle.vue';
 import blockSlice from './blockSlice/blockSlice.vue';
+import numResize from './numResize/numResize.vue';
+
 
 const options = {
 	pageBottom,
@@ -45,6 +47,7 @@ const options = {
 	progressBar,
 	toggle,
 	blockSlice,
+	numResize,
 };
 options.install = (Vue) => {
     for (let component in options) {

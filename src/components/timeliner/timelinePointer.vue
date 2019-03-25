@@ -192,7 +192,7 @@ export default {
           let left = ui.position.left;
           let totalWidth = this.$refs['timeline-pointer'].clientWidth;
           let position = parseInt(left / totalWidth * this.tlDuration);
-          console.log(position);
+          // console.log(position);
           window.timeline.setPosition(position);
         }
       })

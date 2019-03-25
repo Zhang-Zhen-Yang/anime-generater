@@ -6,8 +6,7 @@
             <div class="toggle-container">
                 <div class="toggle-circle"></div>  
             </div>
-        </label>   
-        
+        </label>
     </div>
 </template>
 
