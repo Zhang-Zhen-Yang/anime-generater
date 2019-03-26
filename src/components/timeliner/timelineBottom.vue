@@ -1,6 +1,6 @@
 <template>
   <div id="timeline-bottom">
-    <div class="timeline-bottom-icon add-icon" title="新建图层" @click="setAction(0)">
+    <div class="timeline-bottom-icon add-icon" title="新建图层" @click.stop="showMenu" @contextmenu.prev="">
 
     </div>
     <div class="timeline-bottom-icon file-icon" title="新建文件夹" @click="setAction(1)">
@@ -18,16 +18,39 @@ export default {
   name: 'timeline-bottom',
   data () {
     return {
-      msg: 'timeline-bottom'
+      msg: 'timeline-bottom',
+      menuItems:  [
+        {
+          label: '新建图片图层bb',
+          value: 'image',
+        },
+        {
+          label: '新建文本图层aaa',
+          value: 'text',
+        },
+      ]
     }
   },
   computed: {
-    
+    contextMenu() {
+      return this.$store.state.tl.contextMenu;
+    }
   },
   methods: {
     setAction(type){
       this.$store.dispatch('layerAction', {type})
       // console.log(type);
+    },
+    showMenu(e) {
+      console.log(e);
+      this.contextMenu.menuItems = this.menuItems;
+      this.contextMenu.x = e.pageX;
+      this.contextMenu.y = e.pageY;
+      this.contextMenu.show = true;
+      this.contextMenu.callback = this.menuClick;
+    },
+    menuClick(val) {
+      this.$store.dispatch('layerAction', {type: 0, layerType: val})
     }
   },
   created() {

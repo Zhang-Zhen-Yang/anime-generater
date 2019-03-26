@@ -1,6 +1,5 @@
 <template>
     <div class="number-resize" @mousedown="start">
-        number-resize
         <slot></slot>
     </div>
 </template>

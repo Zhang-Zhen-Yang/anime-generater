@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-25 16:59:08
+ * @Last Modified time: 2019-03-26 11:59:59
  */
 
  // 时间轴组件
@@ -68,7 +68,7 @@ const store = {
       // window.timeline.updateDuration();
       // currentTweenObj.target.rotation = 45;
     },
-    // 添加图层，删除图层
+    // 更改图片
 		imageChange({state, rootState,commit,dispatdh}, {img}) {
       let topIndex = rootState.tl.topIndex;
       let subIndex = rootState.tl.subIndex;
@@ -128,16 +128,26 @@ const store = {
             console.log(obj);
             console.log(scale);
             let UUID = new util.getUUID().id;
-
-            let prevChild = currentContainer.getChildByName(currentUUID);
-            var mask = prevChild.mask;
+            // alert(currentUUID);
+            let prevChild; // = currentContainer.getChildByName(currentUUID);;
+            window.stage.children.forEach((item, index)=>{
+              // console.log(item);
+              let child = item.getChildByName ? item.getChildByName(currentUUID) : null;
+              if (child) {
+                prevChild = child;
+              }
+            })
+            
+            var mask = prevChild ? prevChild.mask : null;
             if (mask) {
               obj.mask = mask;
             }
-            console.log(prevChild.mask);
-            currentContainer.addChild(obj);
+            // console.log(prevChild.mask);
+            /*currentContainer.addChild(obj);
             currentContainer.swapChildren(prevChild, obj);
-            currentContainer.removeChild(prevChild);
+            currentContainer.removeChild(prevChild);*/
+            currentContainer.removeAllChildren();
+            currentContainer.addChild(obj);
             obj.name = UUID;
             rootState.project.layers[topIndex].UUID = UUID;
             

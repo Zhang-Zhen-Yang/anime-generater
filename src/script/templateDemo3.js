@@ -1,9 +1,10 @@
+// 简化时间轴，time 改为绝对时间点
 let demo = {
   width: 640,
   height: 480,
   bgColor: '#FCC7AF',
   canvasScale: 1,
-  ver: 1,
+  ver: 2,
   // 层
   layers: [
     {
@@ -28,7 +29,7 @@ let demo = {
             x: 100,
             y: 300,
           },
-          time: 3000,
+          time: 6000,
         },
 
       ]
@@ -60,8 +61,8 @@ let demo = {
             {
               action: 'to',
               props: {
-                x: 'cw / 2',
-                Y: 'ch / 2',
+                x: 200,
+                Y: 300,
               },
               time: 3000
             },
@@ -79,7 +80,7 @@ let demo = {
         },
         {
           action: 'wait',
-          time: 3000,
+          time: 4000,
         },
         {
           action: 'to',
@@ -87,7 +88,7 @@ let demo = {
             x: 200,
             y: 200,
           },
-          time: 2000
+          time: 6000
         }
       ]
 

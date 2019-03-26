@@ -20,9 +20,11 @@
                 {{ position }} / {{ duration }}
               </td>
               <td>
-                <div style="cursor:e-resize;display:inline-block;border-bottom:1px dashed rgba(255, 255, 255, 0.6);line-height:1.2em;">
-                  {{ tlDuration }}
-                </div>
+                <num-resize v-model="tlDuration" :stepScale="0.2">
+                  <div style="display:inline-block;border-bottom:1px dashed rgba(255, 255, 255, 0.6);line-height:1.2em;">
+                    {{ tlDuration.toFixed(2) }}
+                  </div>
+                </num-resize>
               </td>
             </tr>
           </table>
@@ -70,23 +72,35 @@ export default {
     }
   },
   computed: {
+    timeline() {
+      return this.$store.state.timeline;
+    },
+    durationNum() {
+      return this.timeline? this.timeline.duration : 0;
+    },
+    duration() {
+      return (this.durationNum / 1000).toFixed(3);
+    },
+    position() {
+      return (this.$store.state.position / 1000).toFixed(3);
+    },
     tl() {
       return this.$store.state.tl;
     },
     tlScale() {
       return this.tl.scale;
     },
-    tlDuration() {
-      return (this.tl.duration / 1000).toFixed(2);
-    },
-    timeline() {
-      return this.$store.state.timeline;
-    },
-    duration() {
-      return ((this.timeline? this.timeline.duration : 0) / 1000).toFixed(3);
-    },
-    position() {
-      return (this.$store.state.position / 1000).toFixed(3);
+    tlDuration:{
+      get() {
+        return (this.tl.duration / 1000);
+      },
+      set(val) {
+        let toSetValue = val * 1000;
+        console.log([toSetValue, this.durationNum]);
+        if(toSetValue >= this.durationNum && (toSetValue < this.durationNum * 2 || toSetValue < 9000)) {
+          this.tl.duration = toSetValue;
+        }
+      }
     },
     playing:{
       get() {

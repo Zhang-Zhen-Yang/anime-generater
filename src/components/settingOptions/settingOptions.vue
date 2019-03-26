@@ -4,7 +4,8 @@
       title
     </div>
     <div id="setting-options-content" slot="e">
-      <table cellspacing="0" cellpadding="0" style="width:100%;">
+
+      <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="hasProps">
         <tr>
           <td>缓动</td>
           <td>
@@ -78,6 +79,9 @@ export default {
     },
     currentTween() {
       return this.tl.currentTween;
+    },
+    hasProps() {
+      return this.currentTween ? this.currentTween.props : null;
     },
     // 当前属性
     props() {

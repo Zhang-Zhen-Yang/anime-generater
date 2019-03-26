@@ -27,6 +27,7 @@
     </block-slice>
     <dialogGenerate v-if="dialogGenerate.show"></dialogGenerate>
     <dialogDownload v-show="dialogDownload.show"></dialogDownload>
+    <contextMenu></contextMenu>
   </div>
 </template>
 
@@ -37,9 +38,10 @@ import settingOptions from './components/settingOptions/settingOptions.vue';
 import workSpace from './components//workSpace.vue';
 import dialogGenerate from './components/dialogGenerate/dialogGenerate';
 import dialogDownload from './components/dialogDownload/dialogDownload';
+import contextMenu from './components/contextMenu';
 export default {
   name: 'app',
-  components: {timeliner, settingOptions, topBar, workSpace, dialogGenerate, dialogDownload},
+  components: {timeliner, settingOptions, topBar, workSpace, dialogGenerate, dialogDownload, contextMenu},
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',

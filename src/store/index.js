@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-25 17:48:09
+ * @Last Modified time: 2019-03-26 15:08:21
  */
 
 import http from '../script/http';
@@ -29,6 +29,7 @@ import tl from './tl';
 import optionsSetting from './optionsSetting';
 import demo from '../script/templateDemo.js';
 import demo2 from '../script/templateDemo2.js';
+import demo3 from '../script/templateDemo3.js'; // 新
 const store = {
 	state: {
 		goods: {
@@ -57,7 +58,7 @@ const store = {
 			show: false,
 		},
 		// 模板
-		project: demo2,
+		project: demo3,
 		activeLayerIndex: [0],
 		stage: null,
 		timeline: null,

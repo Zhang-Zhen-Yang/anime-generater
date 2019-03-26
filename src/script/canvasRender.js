@@ -40,7 +40,12 @@ let obj = {
     }
     // 图层
     layers.forEach((item, index) => {
-      let container = new c.Container();
+      this.addLayer({parentType, parent,item,project, timeline});
+      
+    });
+  },
+  addLayer({parentType, parent,item, project, timeline}) {
+    let container = new c.Container();
       parent.addChild(container);
       let type = item.type;
       let UUID = new util.getUUID().id;
@@ -141,7 +146,6 @@ let obj = {
           }
         });
       }
-    });
   },
   // 添加图片类型=================================================================
   getBitmap ({container, item, timeline, project, UUID = '', parentType, addChild = false, callback}) {
@@ -275,7 +279,16 @@ let obj = {
     if(f =='propsChange') {
       console.log('item.tween-------------------', item.tween);
     }
-    (item.tween || []).forEach((t, tIndex) => {
+    let projectTween = item.tween || [];
+    // ver2
+    projectTween.sort((p, n)=>{
+      let pT = p.time || 0;
+      let nT = n.time || 0;
+      return pT - nT;
+    })
+
+    console.log(projectTween);
+    projectTween.forEach((t, tIndex) => {
       if(f =='propsChange'){
         // console.log(t.action);
       }
@@ -324,6 +337,11 @@ let obj = {
         props.scaleY *= scale;
       }
 
+      let tDuration = t.time || 0;
+      // 现在采用绝对点，所以要减去上一个的
+      if(projectTween[tIndex-1]) {
+        tDuration -= (projectTween[tIndex-1].time || 0);
+      }
       switch (currentAction) {
         // 设置
         case 'set':
@@ -331,11 +349,11 @@ let obj = {
           break;
         // 缓动
         case 'to':
-          tween[currentAction](props, t.time || 0, c.Ease[t.ease] || c.Ease.linear);
+          tween[currentAction](props, tDuration, c.Ease[t.ease] || c.Ease.linear);
           break;
         // 等待
         case 'wait':
-          tween[currentAction](t.time || 0);
+          tween[currentAction](tDuration);
           break;
         default: break;
       }
