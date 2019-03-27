@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" >
     <block-slice :staticIndex="0" :staticValue="'56px'">
       <!--头部-->
       <topBar slot="s"></topBar>
@@ -59,6 +59,11 @@ export default {
       return this.$store.state.dialogDownload;
     },
   },
+  methods: {
+    keydown(e) {
+      this.$store.dispatch('keydown',{e});
+    }
+  },
   mounted() {
     this.tw = this.$refs.timelinerWrap;
     $(()=>{
@@ -89,7 +94,10 @@ export default {
         // console.log(position);
       }
     }, 40);
-  }
+    document.body.addEventListener('keydown', (e)=>{
+      this.keydown(e);
+    }, false)
+  },
 }
 </script>
 

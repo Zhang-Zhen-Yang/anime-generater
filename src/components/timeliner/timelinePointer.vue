@@ -1,18 +1,23 @@
 <template>
   <div id="timeline-pointer" class="relative" ref="timeline-pointer" :style="{width: width, left: left}">
     <div>
-      <div v-for="item,index in ranges" :class="['timeline-display-label', item.sl? 'timeline-display-label-sl' : '' ]" :style="{left: (item.value / tlDuration * 100 )+'%' }">
+      <div v-for="item,index in ranges"
+      :class="['timeline-display-label', item.sl? 'timeline-display-label-sl' : '' ]"
+      :style="{left: (item.value / tlDuration * 100 )+'%' }">
         <div class="timeline-display-label-time" v-if="item.sl">
           {{ item.label }}
         </div>
-        
       </div>
+      <!--总长时的红线-->
+      <div class="timeline-display-label total-position" :style="{left: (duration / tlDuration * 100 + '%')}">
+      </div>
+
     </div>
     
     <div style="width: 0;" class="timeline-pointer-cursor-wrap" ref="timeline-pointer-cursor-wrap">
       <div class="timeline-pointer-cursor">
       </div>
-      {{ width }} {{left }}
+      <!--{{ width }} {{left }}-->
     </div>
   </div>
 </template>
@@ -47,9 +52,15 @@ export default {
     tlDuration() {
       return this.tl.duration;
     },
+    timeline() {
+      return this.$store.state.timeline;
+    },
     // 动画时长
     duration() {
-      return 10000;
+      if(this.timeline) {
+        return this.timeline.duration;
+      }
+      return 0;
     },
     position() {
       return this.$store.state.position;
@@ -230,6 +241,7 @@ export default {
     background-color: #ffffff;
 
   }
+
   .timeline-pointer-cursor{
     width: 10px;
     height: 13px;
@@ -252,6 +264,9 @@ export default {
     background-color: #3D4041;
     left: -0.5px;
     // transform: translate(-50%, 0);
+  }
+  .timeline-display-label.total-position:after{
+    background-color: rgba(255, 0, 0, 0.8);
   }
   .timeline-display-label-sl:after{
      background-color: #515556;

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-26 17:47:22
+ * @Last Modified time: 2019-03-27 15:11:06
  */
 
  // 时间轴组件
@@ -107,7 +107,7 @@ const store = {
         let currentObj = currentContainer.getChildByName(currentUUID);
         currentContainer.removeChild(currentObj);
         window.timeline.removeTween(currentTweenObj);
-
+        
       } else if(topIndex > -1){
         let currentLayer = rootState.project.layers[topIndex] || {};
         rootState.project.layers.splice(topIndex, 1);
@@ -120,6 +120,15 @@ const store = {
         /* let currentObj = currentContainer.getChildByName(currentUUID);
         currentContainer.removeChild(currentObj);*/
         window.timeline.removeTween(currentTweenObj);
+        // 如果是 container 类型，要把子元素也去掉
+        if(currentLayer.type == 'container') {
+          // alert('dd');
+          currentLayer.children.forEach((item, index)=>{
+            let childTweenObj = item.tweenObj;
+            window.timeline.removeTween(childTweenObj);
+          })
+        }
+
       }
     },
     // 设置当前选中的补间
@@ -192,7 +201,7 @@ const store = {
       let subIndex = state.subIndex;
       let tweenIndex = state.tweenIndex;
   
-      dispatch('setActiveTween', {t, topIndex, subIndex, tweenIndex});
+      // dispatch('setActiveTween', {t, topIndex, subIndex, tweenIndex});
     },
     // 更新缓动
     updateTween({state,rootState,dispatdh},{topIndex, subIndex}) {
@@ -214,7 +223,7 @@ const store = {
         currentTweenObj = currentLayer.tweenObj;
         // obj = window.stage.children[topIndex + 1].children[0];
       }
-      console.log(UUID);
+      
       obj = utilTimeline.getObjByUUID({parent: window.stage, UUID});
       if(currentLayer.type == 'image') {
         scale = util.getImageScale({
@@ -225,8 +234,11 @@ const store = {
         });
       }
       let tween = canvasRender.getTween({obj, item: currentLayer, timeline: window.timeline, scale});
+      // alert(window.timeline._tweens.length);
       window.timeline.removeTween(currentTweenObj);
+      // alert(window.timeline._tweens.length);
       window.timeline.addTween(tween);
+      // alert(window.timeline._tweens.length);
     },
     // 添加缓动
     addTween({state,rootState,dispatch},{topIndex, subIndex, position}) {
@@ -242,6 +254,27 @@ const store = {
       let currentObj = utilTimeline.getObjByUUID({parent: window.stage,UUID: currentUUID});
       console.log(currentUUID);
       if(position > rootState.timeline.duration) {
+        let lastTween = currentLayer.tween[currentLayer.tween.length - 1];
+        if(lastTween) {
+          currentLayer.tween.push({
+            action: 'to',
+            props: JSON.parse(JSON.stringify(lastTween.props)),
+            time: position
+          })
+        } else {
+          currentLayer.tween.push({
+            action: 'to',
+            props: {
+              x: 0,
+              y: 0,
+              scaleX: 1,
+              scaleY: 1,
+              rotation: 0,
+              alpha: 1,
+            },
+            time: position
+          })
+        }
         
       } else {
         rootState.timeline.gotoAndStop(position);
@@ -251,9 +284,32 @@ const store = {
           props: newProps,
           time: position
         })
-        dispatch('updateTween', {topIndex, subIndex});
         // console.log(newProps);
       }
+      dispatch('updateTween', {topIndex, subIndex});
+    },
+    // 删除当前缓动
+    removeTween({state,rootState,dispatch}) {
+      // alert('removeTween');
+      let topIndex = state.topIndex;
+      let subIndex = state.subIndex;
+      let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
+      let tweenIndex = state.tweenIndex;
+      if(currentLayer && currentLayer.tween && currentLayer.tween[tweenIndex]) {
+        currentLayer.tween.splice(tweenIndex,1);
+        dispatch('updateTween', {topIndex, subIndex});
+      }
+    },
+    // 鼠标按下事件
+    keydown({state,rootState,dispatch}, {e}) {
+      let kc = e.keyCode;
+      switch(kc) {
+        case 46:
+          dispatch('removeTween');
+          break;
+        default: break;
+      }
+      // console.log(e);
     },
     // 测试
     test({state,rootState,dispatdh}) {

@@ -122,7 +122,14 @@ export default {
   methods: {
     // 绑定拖动事件
     bindDraggable() {
-      let thisTimelineTweenItem = this.$refs['timeline-tween-item']
+      let thisTimelineTweenItem = this.$refs['timeline-tween-item'];
+      if(thisTimelineTweenItem) {
+        /*try{
+          $(thisTimelineTweenItem).find('.tween-props-dot').draggable('disable');
+        } catch(e){
+
+        }*/
+      }
       $(thisTimelineTweenItem).find('.tween-props-dot').draggable({
         containment: 'parent',
         axis: 'x',
@@ -141,11 +148,13 @@ export default {
           let topIndex = this.topIndex;
           let subIndex = this.subIndex;
           this.$store.dispatch('updateTween', {topIndex, subIndex});
+          // alert('kkk');
         },
         drag: (e, ui) => {
           // let left = ui.position.left;
         }
       })
+      
     },
     // 当前选中的补间
     setActiveTween(index) {
@@ -170,6 +179,16 @@ export default {
   created() {
     
   },
+  watch:{
+    tweenLocal: {
+      deep: true,
+      handler(nval) {
+        this.$nextTick(()=>{
+          this.bindDraggable();
+        })
+      }
+    }
+  }
 }
 </script>
 

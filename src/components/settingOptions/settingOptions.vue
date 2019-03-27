@@ -7,7 +7,7 @@
 
       <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="hasProps">
         <tr>
-          <td>缓动</td>
+          <td style="width: 8em;">缓动</td>
           <td>
             
           </td>
@@ -24,7 +24,7 @@
                 {{ x }}
               </span>
             </num-resize>
-            <input type="number" v-model="x" @change="change({type:'x',value: x})">
+            <input type="number" v-if="false" v-model="x" @change="change({type:'x',value: x})">
           </td>
         </tr>
         <!--y-->
@@ -37,6 +37,69 @@
               @change="change({type:'y',value: y})">
               <span>
                 {{ y }}
+              </span>
+            </num-resize>
+          </td>
+        </tr>
+        <!--scaleX-->
+        <tr>
+          <td>scaleX</td>
+          <td>
+            <num-resize
+              v-model="scaleX"
+              :stepScale="0.01"
+              @start="startSetValue"
+              @change="change({type:'scaleX',value: scaleX})">
+              <span>
+                {{ scaleX }}
+              </span>
+            </num-resize>
+          </td>
+        </tr>
+        <!--scaleY-->
+        <tr>
+          <td>scaleY</td>
+          <td>
+            <num-resize
+              v-model="scaleY"
+              :stepScale="0.01"
+              
+              @start="startSetValue"
+              @change="change({type:'scaleY',value: scaleY})">
+              <span>
+                {{ scaleY }}
+              </span>
+            </num-resize>
+          </td>
+        </tr>
+        <!--rotation-->
+        <tr>
+          <td>rotation</td>
+          <td>
+            <num-resize
+              v-model="rotation"
+              :stepScale="1"
+              @start="startSetValue"
+              @change="change({type:'rotation',value: rotation})">
+              <span>
+                {{ rotation }}
+              </span>
+            </num-resize>
+          </td>
+        </tr>
+        <!--alpha-->
+        <tr>
+          <td>alpha</td>
+          <td>
+            <num-resize
+              v-model="alpha"
+              :stepScale="0.01"
+              :max="1"
+              :min="0"
+              @start="startSetValue"
+              @change="change({type:'alpha',value: alpha})">
+              <span>
+                {{ alpha }}
               </span>
             </num-resize>
           </td>
@@ -62,6 +125,7 @@
 </template>
 
 <script>
+import util from '../../script/util';
 export default {
   name: 'setting-options',
   data () {
@@ -71,6 +135,9 @@ export default {
     }
   },
   computed: {
+    project() {
+      return this.$store.state.project;
+    },
     tl() {
       return this.$store.state.tl;
     },
@@ -107,6 +174,57 @@ export default {
         this.target.y = val;
       }
     },
+    // scaleX
+    scaleX:{
+      get() {
+        return this.props.scaleX;
+      },
+      set(val) {
+        this.props.scaleX = val;
+        let targetValue = val;
+        if(this.cLayer.type == 'image') {
+          targetValue = val * util.getImageScale({img: this.target.image, cw: this.project.width, ch: this.project.height,type: 'cover'})
+          
+        }
+        this.target.scaleX = targetValue;
+      }
+    },
+    // scaleY
+    scaleY:{
+      get() {
+        return this.props.scaleY;
+      },
+      set(val) {
+        this.props.scaleY = val;
+        let targetValue = val;
+        if(this.cLayer.type == 'image') {
+          targetValue = val * util.getImageScale({img: this.target.image, cw: this.project.width, ch: this.project.height,type: 'cover'})
+        }
+        this.target.scaleY = targetValue;
+      }
+    },
+    // rotation
+    rotation:{
+      get() {
+        return this.props.rotation;
+      },
+      set(val) {
+        this.props.rotation = val;
+        this.target.rotation = val;
+      }
+    },
+    // alpha
+    alpha:{
+      get() {
+        return this.props.alpha;
+      },
+      set(val) {
+        this.props.alpha = val;
+        this.target.alpha = val;
+      }
+    },
+
+    
     tlTopIndex() {
       return this.tl.topIndex;
     },
@@ -207,6 +325,10 @@ export default {
     overflow: auto;
     -webkit-user-select: none;
     user-select: none;
+    table td{
+      padding: 5px;
+      font-size: 13px;
+    }
   }
   /*scrollbar*/
   #setting-options-content::-webkit-scrollbar {

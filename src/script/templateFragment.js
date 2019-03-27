@@ -14,47 +14,35 @@ let obj = {
               regY: 'oh / 2',
               x: 0,
               y: 0,
+              rotation: 0,
+              scaleX: 1,
+              scaleY: 1,
+              alpha: 1,
   
             },
-            time: 0
-          },
-          {
-            action: 'to',
-            props: {
-              x: 100,
-              y: 100,
-              rotation: -45
-            },
-            pic_url: 'https://img.moegirl.org/common/thumb/4/4e/%E5%88%91%E9%83%A8%E5%A7%AC3.png/200px-%E5%88%91%E9%83%A8%E5%A7%AC3.png',
-            time: 1000,
+            time: 0,
             ease: 'linear'
           },
           {
             action: 'to',
             props: {
-              x: 200,
-              y: 200,
+              x: 300,
+              y: 300,
+              rotation: 0,
               scaleX: 0.5,
               scaleY: 0.5,
+              alpha: 1,
             },
-            time: 1000,
-            ease: 'linear',
+            time: 9000,
+            ease: 'linear'
           },
-          {
-            action: 'to',
-            props: {
-              rotation: 360,
-            },
-            time: 2000,
-            ease: 'linear',
-          }
         ]
     },
     // 文本
     text: {
       type: 'text',
       UUID: '',
-      text: 'fgo',
+      text: 'text',
       fontSize: 100,
       fontFamily: '黑体',
       textBaseline: 'top',
@@ -68,33 +56,27 @@ let obj = {
             alpha: 1,
             regX: 'ow / 2',
             regY: 'oh / 2',
-            x: 'cw / 2',
-            y: 'ch / 2'
+            x: 0,
+            y: 0,
+            scaleX: 1,
+            scaleY: 1,
+            rotation: 0
           },
           time: 0
         },
         {
           action: 'to',
           props: {
-            alpha: 0
+            alpha: 1,
+            x: 100,
+            y: 100,
+            scaleX: 1,
+            scaleY: 1,
+            rotation: 0
           },
           time: 1000
         },
-        {
-          action: 'wait',
-          time: 3000
-        },
-        {
-          action: 'to',
-          props: {
-            scaleX: 1,
-            scaleY: 1,
-            rotation: 360,
-            y: 'ch - oh',
-            alpha: 1
-          },
-          time: 2000
-        },
+        
       ]
     },
 };

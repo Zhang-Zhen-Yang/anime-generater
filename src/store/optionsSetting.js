@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-26 11:59:59
+ * @Last Modified time: 2019-03-27 15:10:53
  */
 
  // 时间轴组件
@@ -11,6 +11,7 @@ import http from '../script/http';
 import api from '../script/api';
 
 import util from '../script/util';
+import utilTimeline from '../script/utilTimeline';
 import canvasRender from '../script/canvasRender';
 import Vue from 'vue';
 const store = {
@@ -38,9 +39,12 @@ const store = {
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
     // 属性变化，更新tween
-    propsChange({state, rootState,commit,dispatdh}, {target, currentLayer}){
+    propsChange({state, rootState,commit,dispatdh}, {target}){
+      
+      let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
       let currentTweenObj = currentLayer.tweenObj;
       if(!currentTweenObj) return;
+
       let scale = 1;
       if(currentLayer.type == 'image') {
         scale = util.getImageScale({
@@ -51,7 +55,9 @@ const store = {
         });
       }
 
+      // alert(window.timeline._tweens.length);
       window.timeline.removeTween(currentTweenObj);
+      // alert(window.timeline._tweens.length);
 
       console.warn(currentTweenObj.target);
       let tween = canvasRender.getTween({
@@ -65,6 +71,8 @@ const store = {
       
       // tween = cra
       window.timeline.addTween(tween);
+      // alert(window.timeline._tweens.length);
+      // currentLayer.tweenObj = tween;
       // window.timeline.updateDuration();
       // currentTweenObj.target.rotation = 45;
     },

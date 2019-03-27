@@ -1,3 +1,4 @@
+
 const util = {
 	getUUID: function () {
     // When asked what this Object is, lie and return it's value

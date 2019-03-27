@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-26 15:08:21
+ * @Last Modified time: 2019-03-27 16:50:47
  */
 
 import http from '../script/http';
@@ -64,7 +64,7 @@ const store = {
 		timeline: null,
 		// 是否在播放视频
 		playing: true,
-
+		
 		
 	},
 	// ---------------------------------------------------------------------------------------------------------

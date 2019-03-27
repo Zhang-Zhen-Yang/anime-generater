@@ -10,13 +10,16 @@
     <button style="position: absolute;left: 10px;top: 10px;" @click="test">
       test
     </button>
+    <workSpaceDom></workSpaceDom>
   </div>
 </template>
 
 <script>
 import canvasRender from '../script/canvasRender.js';
+import workSpaceDom from './workSpaceDom/workSpaceDom.vue';
 export default {
   name: 'temp',
+  components: {workSpaceDom},
   data () {
     return {
       msg: 'temp'

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-10 16:46:16 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-02-11 10:08:54
+ * @Last Modified time: 2019-03-27 15:26:15
  */
 
 
@@ -16,7 +16,7 @@ const store = {
 		show: false,
 		lastAction: 'loading',
 		quality: 50,
-		frames: 12,
+		frames: 20,
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {

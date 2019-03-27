@@ -21,11 +21,11 @@ export default {
       msg: 'timeline-bottom',
       menuItems:  [
         {
-          label: '新建图片图层bb',
+          label: '新建图片层',
           value: 'image',
         },
         {
-          label: '新建文本图层aaa',
+          label: '新建文本层',
           value: 'text',
         },
       ]
