@@ -1,13 +1,10 @@
 <template>
-  <div id="work-space-dom">
+  <div id="work-space-dom" :style="stageStyle">
     {{ stage }}
     <div v-for="item, index in stage.children">
-      <domImage v-if="item.children && item.children[0] && item.children[0].image" :obj="item.children[0]"></domImage>
-     
-      <div>
-
-      </div>
-
+      <domImage
+        :index="index - 1"
+        v-if="item.children && item.children[0] && item.children[0].image" :obj="item.children[0]"></domImage>
     </div>
   </div>
 </template>
@@ -25,7 +22,21 @@ export default {
   },
   computed: {
     stage() {
-      return this.$store.state.stage || [];
+      return this.$store.state.stage || {children: []};
+    },
+    size() {
+     if(this.stage.canvas){
+       let {width, height} = this.stage.canvas;
+       return {width, height};
+     }
+     return {width: 0, height: 0};
+
+    },
+    stageStyle() {
+      return {
+        width: this.size.width + 'px',
+        height: this.size.height + 'px',
+      }
     },
     project() {
       return this.$store.state.project;
@@ -69,5 +80,6 @@ export default {
     width: 400px;
     height: 400px;
     background-color: rgba(0,0,0,0.2);
+    overflow: hidden;
   }
 </style>
