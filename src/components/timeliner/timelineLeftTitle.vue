@@ -98,6 +98,9 @@ export default {
     },
     setActiveLayer(indexs) {
       this.$store.state.activeLayerIndex = indexs;
+      this.$store.state.tl.topIndex = indexs[0];
+      this.$store.state.tl.subIndex = indexs[1] || -1;
+      this.$store.state.tl.tweenIndex = -1;
     },
     // 开始拖动
     dragStart(e, item, index) {

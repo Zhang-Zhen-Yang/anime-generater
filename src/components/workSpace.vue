@@ -1,13 +1,13 @@
 <template>
-  <div id="work-space">
-    <div class="inline-block" style="width:0px;height: 100%;vertical-align: middle;background-color:red;"></div>
+  <div id="work-space" class="scrollbar-overwrite">
+    <div class="inline-block" style="width:0px;height: 100%;vertical-align: middle;background-color:red;" v-if="false"></div>
     <canvas id="canvas" class="inline-block" ref="canvas" @click="togglePlayState">
     </canvas>
-    <div style="display: inline-block;position: absolute;left: 50%;top: 50%;">
+    <div style="display: inline-block;position: absolute;left: 50%;top: 50%;" v-if="false">
       <div :class="['pause-and-play-tip', playing ? 'pause-tip':'play-tip', 'pointer']" @click="togglePlayState">
       </div>
     </div>
-    <button style="position: absolute;left: 10px;top: 10px;" @click="test">
+    <button v-if="false" style="position: absolute;left: 10px;top: 10px;" @click="test">
       test
     </button>
     <workSpaceDom></workSpaceDom>
@@ -74,11 +74,21 @@ export default {
     width: 100%;
     height: 100%;
     text-align:center;
+    position: relative;
+    overflow: auto;
     #canvas{
-      max-width: 95%;
+      /* max-width: 95%;
       max-height: 95%;
       background-color: #efefef;
       vertical-align: middle;
+      position: absolute;
+      left:0px;
+      top: 0px;
+      right: 0;
+      bottom: 0;*/
+      margin-top: 20px;
+
+      
     }
     #canvas:hover+div .pause-and-play-tip{
       display: block;

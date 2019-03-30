@@ -82,7 +82,7 @@ export default {
       return (this.durationNum / 1000).toFixed(3);
     },
     position() {
-      return (this.$store.state.position / 1000).toFixed(3);
+      return ((this.$store.state.position || 0) / 1000).toFixed(3);
     },
     tl() {
       return this.$store.state.tl;
@@ -239,6 +239,7 @@ export default {
       height: 100%;
       border-radius: 0;
       opacity: 0;
+      transform: translate(0,0);
     }
     #timeline-drag-thumbnail-handle{
       width: 100%;

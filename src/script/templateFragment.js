@@ -3,6 +3,7 @@ let obj = {
     image: {
         type: 'image',
         UUID: 'test',
+        obj: null,
         pic_url: 'http://n.sinaimg.cn/sinacn13/400/w720h1280/20180406/7d86-fysuuyc1778445.png',
         visible: true,
         editable: true,
@@ -15,8 +16,8 @@ let obj = {
               x: 0,
               y: 0,
               rotation: 0,
-              scaleX: 1,
-              scaleY: 1,
+              scaleX: 0.5,
+              scaleY: 0.5,
               alpha: 1,
   
             },
@@ -42,39 +43,43 @@ let obj = {
     text: {
       type: 'text',
       UUID: '',
+      obj: null,
       text: 'text',
       fontSize: 100,
-      fontFamily: '黑体',
+      fontFamily: '站酷酷黑',
       textBaseline: 'top',
+      color: '#FF9729',
       visible: true,
       editable: true,
       tween: [
         {
           action: 'to',
           props: {
-            color: 'yellow',
+            // color: 'yellow',
             alpha: 1,
             regX: 'ow / 2',
             regY: 'oh / 2',
-            x: 0,
-            y: 0,
-            scaleX: 1,
-            scaleY: 1,
-            rotation: 0
-          },
-          time: 0
-        },
-        {
-          action: 'to',
-          props: {
-            alpha: 1,
             x: 100,
             y: 100,
             scaleX: 1,
             scaleY: 1,
             rotation: 0
           },
-          time: 1000
+          time: 0,
+          ease: 'linear'
+        },
+        {
+          action: 'to',
+          props: {
+            alpha: 1,
+            x: 200,
+            y: 200,
+            scaleX: 1,
+            scaleY: 1,
+            rotation: 0
+          },
+          time: 1000,
+          ease: 'linear'
         },
         
       ]

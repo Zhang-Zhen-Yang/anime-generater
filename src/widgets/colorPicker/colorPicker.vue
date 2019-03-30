@@ -1,7 +1,7 @@
 // 颜色选择器
 <template>
   <div>
-    <div class="content-item-sub-title"><div class="color-tip" :style="{backgroundColor: value}"></div>{{title}}</div>
+    <div class="content-item-sub-title font14"><div class="color-tip" :style="{backgroundColor: value}"></div>{{title}}</div>
     <div v-clickoutside="closePopup" @click="openPopup" class="relative">
       <input type="text" class="content-item-input" :value="value" readonly="readonly" @focus="focus">
       <div class="absolute" style="z-index: 1;">
@@ -63,8 +63,17 @@ export default {
     width: 18px;
     height: 18px;
     margin-right: 10px;
-    border-radius: 3px;
+    border-radius: 50%;
     vertical-align: -4px;
-    border:1px solid #eeeeee
+    border:1px solid #2f3132;
+  }
+  .content-item-input{
+    background: #57595a;
+    border: 1px solid #2f3132;
+    color: #fff;
+    padding: 2px 5px;
+    &:focus{
+      outline: none;
+    }
   }
 </style>

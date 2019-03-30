@@ -152,6 +152,7 @@ let obj = {
     let img = util.NImage(item.pic_url);
     let imgObj = new c.Bitmap(img);
     imgObj.name = UUID;
+    item.obj = imgObj;
     if(parentType=='container') {
       // alert('container');
       console.log('container', imgObj);
@@ -188,7 +189,11 @@ let obj = {
     let text = item.text;
     let fontSize = item.fontSize;
     let fontFamily = item.fontFamily;
-    let textObj = new c.Text(text, `bold ${fontSize}px ${fontFamily}`);
+    let textObj = new c.Text(text, `normal ${fontSize}px ${fontFamily}`);
+    item.obj = textObj;
+    textObj.set({
+      color: item.color
+    })
     textObj.name = UUID;
     if (addChild) {
       container.addChild(textObj);
@@ -202,6 +207,7 @@ let obj = {
     let graphics = item.graphics;
     let {type, strokeWidth, stroke, fill} = graphics;
     let shape = new c.Shape();
+    item.obj = shape;
     shape.name = UUID;
     if (addChild) {
       container.addChild(shape);
@@ -254,6 +260,7 @@ let obj = {
   getContainer ({container, item, timeline, project, UUID = '', addChild = false, callback}) {
     console.log('item----------------------------------', item);
     let thisContainer = new c.Container();
+    item.obj = thisContainer;
     thisContainer.name = UUID;
     let shape = new c.Shape();
     shape.graphics.f('red').drawRect(0, 0, 100, 100);

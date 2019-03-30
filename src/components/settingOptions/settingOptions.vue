@@ -1,15 +1,62 @@
 <template>
   <block-slice slot="e" dir="vertical" :staticIndex="0" :staticValue="35 + 'px'">
     <div id="setting-options-title" slot="s">
-      title
+      设置
     </div>
     <div id="setting-options-content" slot="e">
+      <!--{{ cLayer.type }}-->
 
-      <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="hasProps">
+      <!--图片类型-->
+      <template v-if="cLayer.type=='image'">
+        <!--文本-->
+        <div class="c-layer-title">
+          <span>图片</span>
+        </div>
+        <mask-replace
+          :text="'选择图片'"
+          :showImageUpload="true"
+          @select="bgImageSelect"
+          @change="imageChange(0, $event)"
+        >
+          <img v-if="cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
+        </mask-replace>
+
+      </template>
+
+
+      <!--文本类型-->
+      <template v-if="cLayer.type=='text'">
+        <!--文本-->
+        <div class="c-layer-title">
+          <span>文本</span>
+        </div>
+        <textarea v-model="text" @change="textChange" name="" id="text-textarea" class="scrollbar-overwrite" cols="30" rows="10" style="width: 100%;">
+
+        </textarea>
+        <!--文本颜色-->
+        <!--<div class="c-layer-title">
+          <span>颜色</span>
+        </div>-->
+        <color-picker title="颜色" v-model="color">
+        </color-picker>
+        <!--字体-->
+        <div class="c-layer-title">
+          <span>字体</span>
+        </div>
+        <select name="" id="" v-model="fontFamily">
+          <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
+        </select>
+
+      </template>
+
+      <!--节点的属性值-->
+      <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="hasProps&&cLayer.type">
         <tr>
           <td style="width: 8em;">缓动</td>
           <td>
-            
+            <select name="" id="" v-model="ease">
+              <option value="" v-for="item,index in eases" :value="item.value">{{ item.name }}</option>
+            </select>
           </td>
         </tr>
         <!--x-->
@@ -109,16 +156,7 @@
       <hr>
       {{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}{{ cTween }}
       <hr>
-      <mask-replace
-        v-if="cLayer.type=='image'"
-        :text="'选择图片'"
-        :showImageUpload="true"
-        @select="bgImageSelect"
-        @change="imageChange(0, $event)"
-      >
-        <img v-if="cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
-      </mask-replace>
-      {{ cLayer.type }}
+      
       <!-- {{ cLayer.tween.length }}-->
     </div>
   </block-slice>
@@ -126,6 +164,8 @@
 
 <script>
 import util from '../../script/util';
+import fontsList from '../../script/fontsList';
+import eases from '../../script/eases';
 export default {
   name: 'setting-options',
   data () {
@@ -150,9 +190,60 @@ export default {
     hasProps() {
       return this.currentTween ? this.currentTween.props : null;
     },
-    // 当前属性
+    // 文本类型层，的文本
+    text:{
+      get() {
+        return this.cLayer.text;
+      },
+      set(val) {
+        this.cLayer.text = val;
+        // console.log(this.target);
+        this.target.text = val;
+      }
+    },
+    // 文本颜色
+    color: {
+      get() {
+        return this.cLayer.color;
+      },
+      set(val) {
+        this.cLayer.color = val;
+        this.target.color = val;
+      }
+    },
+    // 字体
+    fontFamily: {
+      get() {
+        return this.cLayer.fontFamily;
+      },
+      set(val) {
+        console.log(this.target);
+        this.target.font =`normal 100px ${val}`;
+        this.cLayer.fontFamily = val;
+      }
+    },
+    fontsList() {
+      return fontsList;
+    },
+    // 当前属性==================================================================
     props() {
       return this.currentTween ? this.currentTween.props : {};
+    },
+    eases() {
+      return eases;
+    },
+    // 当前缓动
+    ease:{
+      get() {
+        return this.currentTween ? this.currentTween.ease : 'linear'
+      },
+      set(val) {
+        if(this.currentTween) {
+          this.currentTween.ease = val;
+          this.$store.dispatch('propsChange', {target: this.target, currentLayer: this.cLayer});
+        }
+        // console.log(val);
+      },
     },
     // x
     x:{
@@ -223,7 +314,7 @@ export default {
         this.target.alpha = val;
       }
     },
-
+    //===========================================================================================
     
     tlTopIndex() {
       return this.tl.topIndex;
@@ -240,14 +331,14 @@ export default {
       let cLayer = {};
       let currentContainer = null;
       if(this.tlTopIndex > -1) {
-        cLayer = {...this.layers[this.tlTopIndex]};
+        cLayer = this.layers[this.tlTopIndex];
         currentContainer = window.stage.children[this.tlTopIndex + 1];
       }
       if(cLayer && cLayer.children && cLayer.children[this.tlSubIndex]) {
-        cLayer = {...cLayer.children[this.tlSubIndex]};
+        cLayer = cLayer.children[this.tlSubIndex];
         currentContainer = window.stage.children[this.tlTopIndex + 1].children[0].children[this.tlSubIndex];
       }
-      let UUID = cLayer.UUID;
+      let UUID = (cLayer || {}).UUID;
       if(UUID && currentContainer) {
         // alert('dddddd');
         this.target = currentContainer.getChildByName(UUID) || {};
@@ -281,11 +372,14 @@ export default {
         this.$store.dispatch('imageChange', {img});
       }
     },
-    // 
+    // 属性变化
     change({type, value}) {
       // alert([type, value]);
       if (!this.target) return;
       this.$store.dispatch('propsChange', {target: this.target, currentLayer: this.cLayer});
+    },
+    textChange(e){
+      console.log(e);
     },
     // 属性开始调整，设置时间轴指针的位置
     startSetValue() {
@@ -326,7 +420,7 @@ export default {
     -webkit-user-select: none;
     user-select: none;
     table td{
-      padding: 5px;
+      padding: 5px 0;
       font-size: 13px;
     }
   }
@@ -343,6 +437,23 @@ export default {
 
   #setting-options-content::-webkit-scrollbar-thumb:hover{
     background-color:#c1c1c1;
+  }
+
+
+  .c-layer-title{
+    font-size: 14px;
+    padding: 5px 0;
+  }
+  // 
+  #text-textarea{
+    background: #57595a;
+    border: 1px solid #2f3132;
+    color: #fff;
+    padding: 2px 5px;
+    resize: none;
+    &:focus{
+      outline: none;
+    }
   }
   
 </style>

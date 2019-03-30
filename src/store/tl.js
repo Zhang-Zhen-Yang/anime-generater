@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-27 15:11:06
+ * @Last Modified time: 2019-03-29 16:20:36
  */
 
  // 时间轴组件
@@ -259,7 +259,8 @@ const store = {
           currentLayer.tween.push({
             action: 'to',
             props: JSON.parse(JSON.stringify(lastTween.props)),
-            time: position
+            time: position,
+            ease: 'linear'
           })
         } else {
           currentLayer.tween.push({
@@ -272,7 +273,8 @@ const store = {
               rotation: 0,
               alpha: 1,
             },
-            time: position
+            time: position,
+            ease: 'linear'
           })
         }
         
@@ -302,10 +304,23 @@ const store = {
     },
     // 鼠标按下事件
     keydown({state,rootState,dispatch}, {e}) {
+      let ignoreNodeNames = ['TEXTAREA', 'INPUT']
+      if(ignoreNodeNames.indexOf(e.target.nodeName) > -1) {
+        return;
+      }
+      let playing = rootState.playing;
       let kc = e.keyCode;
+      console.log(kc);
       switch(kc) {
+        // delete
         case 46:
           dispatch('removeTween');
+          break;
+        // enter
+        case 13:
+          
+          window.timeline.setPaused(playing);
+          rootState.playing = !playing;
           break;
         default: break;
       }

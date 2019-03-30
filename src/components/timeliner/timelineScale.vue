@@ -143,6 +143,10 @@ export default {
     // background-color: yellowgreen;
     opacity: 1;
     top: 5px;
+    /* .ui-resizable-handle{
+      top: 0;
+      transform: (0,0);
+    }*/ 
   }
   .timeline-scale-item{
     position: absolute;

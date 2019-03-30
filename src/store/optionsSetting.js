@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-27 15:10:53
+ * @Last Modified time: 2019-03-30 11:35:07
  */
 
  // 时间轴组件
@@ -46,7 +46,7 @@ const store = {
       if(!currentTweenObj) return;
 
       let scale = 1;
-      if(currentLayer.type == 'image') {
+      if(currentLayer.type == 'image' && target.image) {
         scale = util.getImageScale({
           img: target.image,
           cw: rootState.project.width,

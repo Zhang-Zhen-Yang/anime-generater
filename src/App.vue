@@ -143,7 +143,7 @@ a {
   // border-top: 1px solid red;
 }
 #timeline-wrap .ui-resizable-n{
-  width: 100%;
+  width: 200%!important;
   left: 0;
   top: -5px;
   border-radius: 0;

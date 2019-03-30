@@ -1,11 +1,10 @@
 <template>
   <div style="position: relative;">
-    <img class="dom-image" :src="obj.image.src" :style="style" ref="domImage" @click.stop="setActiveIndex" />
-    <div :style="dragStyle" :class="['dom-image-d', isSub ? 'dom-image-d-sub': '']" ref="domImageD" v-show="isActivity" @click.stop="">
-      <div :style="resizeStyle" class="dom-image-r" ref="domImageR">
-        <!--{{ isSub ? style : {} }}
-        {{ obj.x }} {{ obj.image.width }} {{ obj.scaleX }}-->
-      </div>
+    <div class="dom-text" :style="style" ref="domText"  @click.stop="setActiveIndex">
+      {{ obj.text || 'test' }}
+    </div>
+    <div :style="dragStyle" class="dom-text-d" ref="domTextD" v-show="isActivity" @click.stop="">
+      <div :style="resizeStyle" class="dom-text-r" ref="domTextR"></div>
     </div>
   </div>
 </template>
@@ -14,7 +13,7 @@
 import  utilTimeline from '../../script/utilTimeline.js';
 import  util from '../../script/util.js';
 export default {
-  name: 'dom-image',
+  name: 'dom-text',
   props: {
     obj: {
       type: Object,
@@ -43,7 +42,7 @@ export default {
   },
   data () {
     return {
-      msg: 'dom-image',
+      msg: 'dom-text',
       resizing: false,
       resizeStartRStyle: {},
       resizeStartDStyle: {},
@@ -62,14 +61,17 @@ export default {
     subIndex() {
       return this.tl.subIndex;
     },
+    bounds(){
+      return this.obj.getBounds() || {width: 0, height: 0};
+    },
     tweenIndex() {
       return this.tl.tweenIndex;
     },
     objWidth() {
-      return this.obj.image.width * Math.abs(this.obj.scaleX);
+      return this.bounds.width * Math.abs(this.obj.scaleX);
     },
     objHeight() {
-      return this.obj.image.height * Math.abs(this.obj.scaleY);
+      return this.bounds.height * Math.abs(this.obj.scaleY);
     },
     style() {
       let pScaleX = 1;
@@ -81,13 +83,15 @@ export default {
 
       let left = this.obj.x;
       let top = this.obj.y;
-      let width = this.obj.image.width * Math.abs(this.obj.scaleX);
-      let height = this.obj.image.height * Math.abs(this.obj.scaleY);
+      let bounds = this.bounds;
+      // console.log('this.obj.getBounds()----------',this.obj.getBounds());
+      let width = bounds.width * Math.abs(this.obj.scaleX); //this.obj.image.width * Math.abs(this.obj.scaleX);
+      let height = bounds.height* Math.abs(this.obj.scaleX); //this.obj.image.height * Math.abs(this.obj.scaleY);
       return {
         position: 'absolute',
         left: (left - width / 2) * pScaleX + 'px',
         top:  (top - height / 2) * pScaleY + 'px',
-        width: width  * pScaleX + 'px',
+        width: width * pScaleX + 'px',
         height: height * pScaleY + 'px',
         transform: `${this.obj.scaleX < 0 ?'scaleX(-1)': ''} ${this.obj.scaleY < 0 ?'scaleY(-1)': ''} rotateZ(${this.obj.rotation}deg)`
       }
@@ -107,7 +111,7 @@ export default {
       return style;
     },
     resizeStyle() {
-      // console.log(this.resizing);
+      console.log(this.resizing);
       if(this.resizing) {
         return this.resizeStartRStyle;
       }
@@ -125,10 +129,9 @@ export default {
     u(){
       window.stage.update();
     },
-    // 绑定缩放和拖动
     bindDraggableResizable() {
       // 调整大小
-      $(this.domImageR)
+      $(this.domTextR)
       .resizable({
         handles: 's,n,e,w,se,sw,ne,nw',
         aspectRatio: true,
@@ -146,16 +149,16 @@ export default {
             pScaleX = this.parentObj.scaleX;
             pScaleY = this.parentObj.scaleY;
           }
-
+          
           let {left, top} = ui.position;
           let {width, height} = ui.size;
-          let scaleX = width / this.obj.image.width;
-          let scaleY = height / this.obj.image.height;
-          let x = parseFloat(this.domImageD.style.left) - 0 + left + width / 2;
-          let y = parseFloat(this.domImageD.style.top) - 0 + top + height / 2;
+          let scaleX = width / this.bounds.width;
+          let scaleY = height / this.bounds.height;
+          let x = parseFloat(this.domTextD.style.left) - 0 + left + width / 2;
+          let y = parseFloat(this.domTextD.style.top) - 0 + top + height / 2;
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(!currentLayer) return;
-          let initScale = util.getImageScale({img: this.obj.image, cw: this.project.width, ch: this.project.height,type: 'cover'});
+          let initScale = 1;//util.getImageScale({img: this.obj.image, cw: this.project.width, ch: this.project.height,type: 'cover'});
           // alert(initScale);
           if(currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
@@ -164,8 +167,8 @@ export default {
             currentLayer.tween[this.tweenIndex].props.scaleX = scaleX / initScale / pScaleX;
             currentLayer.tween[this.tweenIndex].props.scaleY = scaleY /initScale / pScaleY;
             this.$store.dispatch('propsChange', {target: this.obj});
-            this.domImageR.style.left = 0;
-            this.domImageR.style.top = 0;
+            this.domTextR.style.left = 0;
+            this.domTextR.style.top = 0;
           }
           // this.$store.dispatch('propsChange', {target: this.obj});
         },
@@ -177,15 +180,14 @@ export default {
             pScaleY = this.parentObj.scaleY;
           }
 
-
           let {left, top} = ui.position;
           let {width, height} = ui.size;
-          let scaleX = width / this.obj.image.width;
-          let scaleY = height / this.obj.image.height;
-          let x = parseFloat(this.domImageD.style.left) - 0 + left + width / 2;
-          let y = parseFloat(this.domImageD.style.top) - 0 + top + height / 2;
-          // console.log([parseFloat(this.domImageD.style.left), this.domImageD.style.top]);
-          console.log([this.domImageD.style.left,y]);
+          let scaleX = width / this.bounds.width;//this.obj.image.width;
+          let scaleY = height / this.bounds.height;//this.obj.image.height;
+          let x = parseFloat(this.domTextD.style.left) - 0 + left + width / 2;
+          let y = parseFloat(this.domTextD.style.top) - 0 + top + height / 2;
+          // console.log([parseFloat(this.domTextD.style.left), this.domTextD.style.top]);
+          console.log([this.domTextD.style.left,y]);
           this.obj.scaleX = scaleX / pScaleX;
           this.obj.scaleY = scaleY / pScaleY;
           this.obj.x = x / pScaleX;
@@ -227,14 +229,13 @@ export default {
             currentLayer.tween[this.tweenIndex].props.rotation = 0;
             this.$store.dispatch('propsChange', {target: this.obj});
           }
-        console.log('dblclick');
+        // console.log('dblclick');
       })
 
 
 
       // 可拖动
-      $(this.domImageD).draggable({
-        cancel: this.isSub? '' : 'dom-image-d-sub', // 如果不是container 下的元素，阻止拖动
+      $(this.domTextD).draggable({
         start: (e, ui)=>{
 
         },
@@ -249,7 +250,7 @@ export default {
           let left = ui.position.left - 0 + (this.objWidth / 2 * pScaleX);
           let top = ui.position.top - 0 + (this.objHeight / 2 * pScaleY);
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
-          if(currentLayer && currentLayer.tween && currentLayer.tween[this.tweenIndex]) {
+          if(currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
             currentLayer.tween[this.tweenIndex].props.x = left / pScaleX;
             currentLayer.tween[this.tweenIndex].props.y = top / pScaleY;
@@ -265,7 +266,6 @@ export default {
           }
           let left = ui.position.left - 0 + (this.objWidth / 2 * pScaleX);
           let top = ui.position.top - 0 + (this.objHeight / 2 * pScaleY);
-          // console.log([ui.position.left, ui.position.top]);
           this.obj.x = left / pScaleX;
           this.obj.y = top / pScaleY;
           this.u();
@@ -283,27 +283,26 @@ export default {
         this.$store.state.activeLayerIndex = [this.index];
         this.$store.state.tl.topIndex = this.index;
         this.$store.state.tl.subIndex = -1;
-      }      
-      // alert('ddd');
+      }  
     }
   },
   created() {
     
   },
   mounted() {
-    this.domImage = this.$refs.domImage;
-    this.domImageR = this.$refs.domImageR;
-    this.domImageD = this.$refs.domImageD;
+    this.domText = this.$refs.domText;
+    this.domTextR = this.$refs.domTextR;
+    this.domTextD = this.$refs.domTextD;
     this.bindDraggableResizable();
   }
 }
 </script>
 
 <style lang="scss">
-  .dom-image{
-    opacity: 0;
+  .dom-text{
+    
   }
-  .dom-image-r{
+  .dom-text-r{
     border: 1px dashed #1284e7;
   }
 </style>

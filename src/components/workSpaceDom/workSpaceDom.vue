@@ -1,26 +1,44 @@
 <template>
   <div id="work-space-dom" :style="stageStyle">
     {{ stage }}
-    <div v-for="item, index in stage.children">
+    <!--<div v-for="item, index in stage.children">
       <domImage
         :index="index - 1"
         v-if="item.children && item.children[0] && item.children[0].image" :obj="item.children[0]"></domImage>
+    </div>-->
+    <div v-for="item, index in layers">
+      <!--图片类型-->
+      <domImage
+        :index="index"
+        v-if="item.type=='image'&&item.obj && item.obj.image" :obj="item.obj"></domImage>
+      <domText
+        :index="index"
+        v-if="item.type=='text'&&item.obj" :obj="item.obj"></domText>
+      <domContainer
+        :index="index"
+        v-if="item.type=='container'&&item.obj" :obj="item.obj" :item="item"></domContainer>
     </div>
+
   </div>
 </template>
 
 <script>
 import canvasRender from '../../script/canvasRender.js';
 import domImage from './domImage.vue';
+import domText from './domText.vue';
+import domContainer from './domContainer.vue';
 export default {
   name: 'work-space-dom',
-  components: {domImage},
+  components: {domImage, domText, domContainer},
   data () {
     return {
       msg: 'work-space-dom'
     }
   },
   computed: {
+    c() {
+      return window.createjs;
+    },
     stage() {
       return this.$store.state.stage || {children: []};
     },
@@ -41,7 +59,9 @@ export default {
     project() {
       return this.$store.state.project;
     },
-    
+    layers() {
+      return this.project.layers
+    },
     timeline() {
       return this.$store.state.timeline || {duration: 1};
     },
@@ -67,7 +87,9 @@ export default {
     this.render();
     setTimeout(()=>{
       console.log(this.$store.state.stage);
+      console.log(this.c.Bitmap);
     }, 3000)
+
   }
 }
 </script>
@@ -75,11 +97,13 @@ export default {
 <style lang="scss">
   #work-space-dom{
     position: absolute;
-    left:70px;
-    top: 10px;
+    left:50%;
+    transform: translate(-50%, 0);
+    top: 20px;
     width: 400px;
     height: 400px;
-    background-color: rgba(0,0,0,0.2);
-    overflow: hidden;
+    // background-color: rgba(0,0,0,0.2);
+    // overflow: hidden;
+
   }
 </style>

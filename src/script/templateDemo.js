@@ -280,6 +280,7 @@ let demo = {
       UUID: '',
       text: 'fgo',
       fontSize: 100,
+      color: 'yellow',
       fontFamily: '黑体',
       textBaseline: 'top',
       visible: true,

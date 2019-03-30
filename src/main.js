@@ -13,7 +13,7 @@ Vue.use(Vuex);
 Vue.use(widgets);
 Vue.use(filter);
 const store = new Vuex.Store(rootStore);
-new Vue({
+window.p = new Vue({
   el: '#app',
   store,
   render: h => h(App)
