@@ -1,6 +1,6 @@
 <template>
   <div id="work-space-dom" :style="stageStyle">
-    {{ stage }}
+    <!--{{ stage }}-->
     <!--<div v-for="item, index in stage.children">
       <domImage
         :index="index - 1"
@@ -99,7 +99,7 @@ export default {
     position: absolute;
     left:50%;
     transform: translate(-50%, 0);
-    top: 20px;
+    top: 0;
     width: 400px;
     height: 400px;
     // background-color: rgba(0,0,0,0.2);

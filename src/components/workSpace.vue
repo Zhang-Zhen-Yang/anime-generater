@@ -76,6 +76,10 @@ export default {
     text-align:center;
     position: relative;
     overflow: auto;
+    padding-top: 20px;
+    #work-space-dom{
+      top: 20px;
+    }
     #canvas{
       /* max-width: 95%;
       max-height: 95%;
@@ -86,7 +90,7 @@ export default {
       top: 0px;
       right: 0;
       bottom: 0;*/
-      margin-top: 20px;
+      // margin-top: 20px;
 
       
     }

@@ -70,6 +70,9 @@ export default {
     }
   },
   computed: {
+    playing() {
+      return this.$store.state.playing;
+    },
     project() {
       return this.$store.state.project;
     },
@@ -87,6 +90,10 @@ export default {
     },
     tweenIndex() {
       return this.tl.tweenIndex;
+    },
+    // 
+    currentTween() {
+      return this.tl.currentTween;
     },
     objWidth() {
       return this.bounds.width * Math.abs(this.obj.scaleX);
@@ -138,7 +145,7 @@ export default {
       return style;
     },
     isActivity() {
-      return this.topIndex == this.index && this.subIndex == -1;
+      return this.topIndex == this.index && this.subIndex == -1 && !this.playing && this.currentTween;
     }
   },
   methods: {

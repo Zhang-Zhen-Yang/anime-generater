@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-29 16:20:36
+ * @Last Modified time: 2019-04-01 17:58:31
  */
 
  // 时间轴组件
@@ -55,8 +55,75 @@ const store = {
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
     // 更新位置
-		swipeChild({rootState, state, commit}, {fromIndex, toIndex}) {
-			let pickItem = rootState.project.layers.splice(fromIndex,1);
+		swipeChild({rootState, state, commit}, {fromIndex, fromSubIndex=-1, toIndex, toSubIndex=-1,position}) {
+      rootState.activeLayerIndex=[0];
+      state.topIndex = -1;
+      state.subIndex = -1;
+      console.log([fromIndex, fromSubIndex,toIndex, toSubIndex, position]);
+
+      // 拖动的是否是container 下的元素
+      let fromIsSub = fromSubIndex >-1;
+      // 投放的是否是container 下
+      let toIsSub = toSubIndex >-1;
+
+      // return;
+      let pickItem;
+      // alert(fromSubIndex > -1);
+      if(fromSubIndex < 0) {
+        pickItem = rootState.project.layers.splice(fromIndex,1);
+      } else {
+        pickItem = rootState.project.layers[fromIndex].children[fromSubIndex].splice(fromIndex,1);
+      }
+      let fromObj = pickItem[0].obj;
+      let fromObjWithContainer = fromObj.parent;
+      // console.log(fromObj);
+      fromObj.parent.parent.removeChild(fromObj.parent);
+
+
+      let toItem;
+      // 如果移动到的是第一层
+      if(toSubIndex < 0) {
+        toItem = rootState.project.layers[toIndex];
+      } else {
+        console.log('................................');
+        console.log(toIndex);
+
+        console.log( rootState.project.layers);
+        console.log( rootState.project.layers[toIndex]);
+        toItem = rootState.project.layers[toIndex].children[toSubIndex];
+        console.log('................................');
+      }
+      let toObj = toItem.obj;
+      let toObjWithContainer = toItem.obj.parent;
+      console.log(toObjWithContainer.parent);
+
+
+      if(toSubIndex < 0) {
+        if(position == 0) {
+          rootState.project.layers.splice(toIndex,0,pickItem[0]);
+          toObjWithContainer.parent.addChildAt(fromObjWithContainer, toIndex + 1);
+        } else {
+          rootState.project.layers.splice(toIndex + 1,0,pickItem[0]);
+          toObjWithContainer.parent.addChildAt(fromObjWithContainer, toIndex + 2);
+        }
+
+      } else {
+        if(position == 0) {
+          rootState.project.layers[toIndex].children.splice(toSubIndex,0,pickItem[0]);
+          toObjWithContainer.parent.addChildAt(fromObjWithContainer, toSubIndex);
+        } else {
+          rootState.project.layers[toIndex].childrrn.splice(toSubIndex + 1,0,pickItem[0]);
+          toObjWithContainer.parent.addChildAt(fromObjWithContainer, toSubIndex + 1);
+        }
+      }
+
+
+
+
+
+
+
+			/* let pickItem = rootState.project.layers.splice(fromIndex,1);
 			console.log([fromIndex, toIndex]);
       rootState.project.layers.splice(toIndex, 0, pickItem[0]);
       let prevChild = window.stage.children[fromIndex - 0 +1];
@@ -64,7 +131,8 @@ const store = {
       console.log([fromIndex, toIndex]);
      console.log([prevChild, nextChild]);
       // window.stage.swipe();
-      window.stage.swapChildren(nextChild, prevChild);
+      window.stage.swapChildren(nextChild, prevChild);*/
+
 		},
     // 添加图层，文件夹， 删除图层
 		layerAction({state, rootState,commit,dispatch}, {type, layerType}) {
@@ -167,6 +235,7 @@ const store = {
         rootState.timeline.setPosition(currentPosition);
       }
     },
+    // 设置当前的缓动节点
     setActiveTweenVer2({state,rootState,dispatdh}, {t, topIndex, subIndex, tweenIndex}) {
       rootState.playing = false;
       rootState.timeline.setPaused(true);

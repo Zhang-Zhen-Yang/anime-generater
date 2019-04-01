@@ -1,5 +1,5 @@
 <template>
-  <div id="app" >
+  <div id="app" @click="appClick">
     <block-slice :staticIndex="0" :staticValue="'56px'">
       <!--头部-->
       <topBar slot="s"></topBar>
@@ -60,8 +60,13 @@ export default {
     },
   },
   methods: {
+    // 键盘事件
     keydown(e) {
       this.$store.dispatch('keydown',{e});
+    },
+    // 全局点击
+    appClick(e) {
+      // console.log(e.target.className);
     }
   },
   mounted() {
@@ -162,5 +167,8 @@ a {
   top: 0;
   border-radius: 0;
   opacity: 0;
+  transform: none;
+  left: 0;
+  width: 10px;
 }
 </style>

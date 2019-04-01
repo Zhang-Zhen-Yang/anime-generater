@@ -228,7 +228,7 @@ export default {
     position: absolute;
     // left:500px;
     top:0;
-    opacity: 0.5;
+    opacity: 0.7;
     cursor:move;
   }
   .timeline-pointer-cursor-wrap:after{
@@ -238,7 +238,8 @@ export default {
     position: absolute;
     left: 0;
     top: 0;
-    background-color: #ffffff;
+    // background-color: #ffffff;
+    background-color: #1284e7;
 
   }
 
@@ -246,7 +247,7 @@ export default {
     width: 10px;
     height: 13px;
     background-size:contain;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='26' viewBox='0 0 20 26'%3E%3Cpath fill='%23ffffff' fill-rule='evenodd' d='M2 0h16a2 2 0 0 1 2 2v14.917a1 1 0 0 1-.367.774L10 25.573.367 17.691A1 1 0 0 1 0 16.917V2a2 2 0 0 1 2-2z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='26' viewBox='0 0 20 26'%3E%3Cpath fill='%231284e7' fill-rule='evenodd' d='M2 0h16a2 2 0 0 1 2 2v14.917a1 1 0 0 1-.367.774L10 25.573.367 17.691A1 1 0 0 1 0 16.917V2a2 2 0 0 1 2-2z'/%3E%3C/svg%3E");
     transform: translate(-50%, 0);
   }
 

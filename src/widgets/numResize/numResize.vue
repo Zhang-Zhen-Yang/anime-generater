@@ -1,6 +1,18 @@
 <template>
-    <div class="number-resize" @mousedown="start" @click="showInput">
-        <input type="number" class="property-input" v-if="inputShow" @blur="inputShow=false" autofocus>
+    <div class="number-resize" @mousedown="start" @dblclick="showInput">
+        <input
+            type="number"
+            ref="number-resize-input"
+            class="property-input"
+            v-if="inputShow"
+            :value="value"
+            @input="input"
+            :max="max"
+            :min="min"
+            :step="stepScale"
+            @blur="inputShow=false"
+            @change="change"
+        >
         <slot v-else></slot>
     </div>
 </template>
@@ -47,12 +59,14 @@ export default {
     }, // end computed
     methods: {
         start(e) {
+            if(this.inputShow) {
+                return;
+            }
             this.startTimeStamp = Date.now();
             this.resizing = true;
             this.initValue = this.value;
             this.x = e.pageX;
             this.$emit('start');
-            
         },
         onresize(e) {
              if(this.inputShow) {
@@ -64,11 +78,11 @@ export default {
             this.distance = e.pageX - this.x;
             let totalValue = this.distance * this.stepScale + this.initValue;
             if(totalValue <= this.min) {
-                this.$emit('input', this.min)
-            } else if(totalValue >= this.max){
+                this.$emit('input', this.min);
+            } else if(totalValue >= this.max) {
                 this.$emit('input', this.max);
             } else {
-                this.$emit('input', totalValue)
+                this.$emit('input', totalValue);
             }
             // console.log(this.distance);
         },
@@ -94,11 +108,25 @@ export default {
         },
         // 显示输入框
         showInput() {
-            if(Date.now() - this.startTimeStamp < 200) {
+            this.inputShow = true;
+            this.$nextTick(()=>{
+                this.$refs['number-resize-input'].focus();
+            })
+            /*if(Date.now() - this.startTimeStamp < 200) {
                 console.log('showInput');
                 this.inputShow = true;
-            }
-        }
+            }*/
+        },
+        input(e) {
+            let value = parseFloat(e.target.value || 0);
+            this.$emit('input', value);
+            // console.log(e.target.value);
+        },
+        change(e) {
+            let value = parseFloat(e.target.value || 0);
+            this.$emit('change', value);
+            console.log(['change', e.target.value]);
+        },
     }, // end methods
     created() {
 

@@ -7,6 +7,7 @@ let obj = {
         pic_url: 'http://n.sinaimg.cn/sinacn13/400/w720h1280/20180406/7d86-fysuuyc1778445.png',
         visible: true,
         editable: true,
+        layerName: '图片',
         tween: [
           {
             action: 'to',
@@ -51,6 +52,7 @@ let obj = {
       color: '#FF9729',
       visible: true,
       editable: true,
+      layerName: '文本',
       tween: [
         {
           action: 'to',

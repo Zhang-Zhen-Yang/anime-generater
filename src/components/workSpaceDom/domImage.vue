@@ -50,6 +50,9 @@ export default {
     }
   },
   computed: {
+    playing() {
+      return this.$store.state.playing;
+    },
     project() {
       return this.$store.state.project;
     },
@@ -64,6 +67,10 @@ export default {
     },
     tweenIndex() {
       return this.tl.tweenIndex;
+    },
+    // 
+    currentTween() {
+      return this.tl.currentTween;
     },
     objWidth() {
       return this.obj.image.width * Math.abs(this.obj.scaleX);
@@ -116,9 +123,9 @@ export default {
     },
     isActivity() {
       if(this.isSub) {
-        return this.topIndex == this.index && this.subIndex == this.sIndex;
+        return this.topIndex == this.index && this.subIndex == this.sIndex && !this.playing && !!this.currentTween;
       }
-      return this.topIndex == this.index;
+      return this.topIndex == this.index && !this.playing && !!this.currentTween;
     }
   },
   methods: {

@@ -10,7 +10,7 @@
       <template v-if="cLayer.type=='image'">
         <!--文本-->
         <div class="c-layer-title">
-          <span>图片</span>
+          <span class="prop-name">图片</span>
         </div>
         <mask-replace
           :text="'选择图片'"
@@ -28,7 +28,7 @@
       <template v-if="cLayer.type=='text'">
         <!--文本-->
         <div class="c-layer-title">
-          <span>文本</span>
+          <span class="prop-name">文本</span>
         </div>
         <textarea v-model="text" @change="textChange" name="" id="text-textarea" class="scrollbar-overwrite" cols="30" rows="10" style="width: 100%;">
 
@@ -41,7 +41,7 @@
         </color-picker>
         <!--字体-->
         <div class="c-layer-title">
-          <span>字体</span>
+          <span class="prop-name">字体</span>
         </div>
         <select name="" id="" v-model="fontFamily">
           <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
@@ -50,9 +50,11 @@
       </template>
 
       <!--节点的属性值-->
-      <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="hasProps&&cLayer.type">
+      <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="currentTween&&hasProps&&cLayer.type">
         <tr>
-          <td style="width: 8em;">缓动</td>
+          <td style="width: 8em;">
+            <span class="prop-name">缓动</span>
+          </td>
           <td>
             <select name="" id="" v-model="ease">
               <option value="" v-for="item,index in eases" :value="item.value">{{ item.name }}</option>
@@ -61,13 +63,15 @@
         </tr>
         <!--x-->
         <tr>
-          <td>x</td>
+          <td>
+            <span class="prop-name">x</span>
+          </td>
           <td>
             <num-resize
               v-model="x"
               @start="startSetValue"
               @change="change({type:'x',value: x})">
-              <span>
+              <span >
                 {{ x }}
               </span>
             </num-resize>
@@ -76,7 +80,9 @@
         </tr>
         <!--y-->
         <tr>
-          <td>y</td>
+          <td>
+            <span class="prop-name">y</span>
+          </td>
           <td>
             <num-resize
               v-model="y"
@@ -90,7 +96,9 @@
         </tr>
         <!--scaleX-->
         <tr>
-          <td>scaleX</td>
+          <td>
+            <span class="prop-name">scaleX</span>
+          </td>
           <td>
             <num-resize
               v-model="scaleX"
@@ -105,12 +113,13 @@
         </tr>
         <!--scaleY-->
         <tr>
-          <td>scaleY</td>
+          <td>
+            <span class="prop-name">scaleY</span>
+          </td>
           <td>
             <num-resize
               v-model="scaleY"
               :stepScale="0.01"
-              
               @start="startSetValue"
               @change="change({type:'scaleY',value: scaleY})">
               <span>
@@ -121,7 +130,11 @@
         </tr>
         <!--rotation-->
         <tr>
-          <td>rotation</td>
+          <td>
+            <span class="prop-name">
+              rotation
+            </span>
+          </td>
           <td>
             <num-resize
               v-model="rotation"
@@ -136,7 +149,11 @@
         </tr>
         <!--alpha-->
         <tr>
-          <td>alpha</td>
+          <td>
+            <span  class="prop-name">
+              alpha
+            </span>
+          </td>
           <td>
             <num-resize
               v-model="alpha"
@@ -152,12 +169,11 @@
           </td>
         </tr>
       </table>
-     
+     <!-- 
       <hr>
       {{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}{{ cTween }}
       <hr>
-      
-      <!-- {{ cLayer.tween.length }}-->
+      {{ cLayer.tween.length }}-->
     </div>
   </block-slice>
 </template>
@@ -420,8 +436,10 @@ export default {
     -webkit-user-select: none;
     user-select: none;
     table td{
-      padding: 5px 0;
+      // padding: 5px 0;
       font-size: 13px;
+      height: 2.5em;
+      vertical-align: middle;
     }
   }
   /*scrollbar*/
@@ -454,6 +472,16 @@ export default {
     &:focus{
       outline: none;
     }
+  }
+  .prop-name:before{
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    margin-right: 7px;
+    background: #666;
+    border-radius: 50%;
   }
   
 </style>

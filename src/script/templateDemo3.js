@@ -12,6 +12,8 @@ let demo = {
       obj: null,
       UUID: '',
       visible: true,
+      editable: true,
+      layerName: 'test',
       pic_url: 'http://imgs.aixifan.com/content/2019_3_24/1.5533916272933776E9.png',
       tween: [
         {
@@ -26,7 +28,7 @@ let demo = {
             regX: 'ow / 2',
             regY: 'oh / 2'
           },
-          time: 3000,
+          time: 0,
           ease: 'linear',
         },
         {
@@ -55,12 +57,16 @@ let demo = {
       tlShowChildren: true,
       visible: true,
       editable: true,
+      layerName: 'test',
       // 子对象
       children: [
         {
           UUID: '',
           obj: null,
           type: 'image',
+          visible: true,
+          editable: true,
+          layerName: 'test',
           pic_url: 'http://imgs.aixifan.com/content/2019_3_13/1.552485453249718E9.png',
           tween: [
             {
@@ -104,6 +110,7 @@ let demo = {
           color: '#FF9729',
           visible: true,
           editable: true,
+          layerName: 'test',
           tween: [
             {
               action: 'to',

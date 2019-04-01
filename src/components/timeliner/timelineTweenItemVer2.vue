@@ -7,6 +7,9 @@
       @click="setActiveTween(index)"
       :data-index="index"
     >
+      <div :class="['tween-props-dot-handle']">
+
+      </div>
     </div>
 
     <table v-if="false" class="timeline-tween-item-table" cellspacing="0" cellpadding="0" style="width:100%;table-layout: fixed;">
@@ -250,16 +253,29 @@ export default {
 
 
   .tween-props-dot{
-    width: 10px;
-    height: 10px;
+    width: 0px;
+    height: 0px;
     background-color: rgba(255, 255, 255,0.5);
     border-radius: 50%;
     top: 50%!important;
     transform: translate(0, -50%);
     cursor: move;
+    .tween-props-dot-handle{
+      width: 10px;
+      height: 10px;
+      background-color: rgba(255, 255, 255,0.5);
+      border-radius: 50%;
+      left: -5px;
+      top: -5px;
+      position: absolute;
+    }
   }
   .tween-props-dot-active{
     background-color: #6ECEDF;
+    .tween-props-dot-handle{
+      background-color: #6ECEDF;
+    }
+
   }
 
 
