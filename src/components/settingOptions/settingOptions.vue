@@ -8,18 +8,79 @@
 
       <!--图片类型-->
       <template v-if="cLayer.type=='image'">
-        <!--文本-->
+        <!--图片-->
         <div class="c-layer-title">
           <span class="prop-name">图片</span>
         </div>
-        <mask-replace
-          :text="'选择图片'"
-          :showImageUpload="true"
-          @select="bgImageSelect"
-          @change="imageChange(0, $event)"
-        >
-          <img v-if="cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
-        </mask-replace>
+        <div style="padding-left: 15px;">
+          <mask-replace
+            :text="'选择图片'"
+            :showImageUpload="true"
+            @select="bgImageSelect"
+            @change="imageChange(0, $event)"
+          >
+            <img v-if="cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
+          </mask-replace>
+        </div>
+        <!--投影-->
+        <div class="c-layer-title">
+          <span class="prop-name">投影</span>
+        </div>
+        <div style="padding-left: 15px;">
+          <table cellspacing="0" cellpadding="0" style="width: 100%;">
+            <tr>
+              <td style="width: 8em;">offsetX</td>
+              <td colspan="2">
+                <num-resize
+                  v-model="shadowOffsetX"
+                  @start="startSetValue"
+                  @change="initChange({type:'shadowOffsetX',value: shadowOffsetX})">
+                  <span >
+                    {{ shadowOffsetX }}
+                  </span>
+                </num-resize>
+                <input type="number" v-if="false" v-model="shadowOffsetX" @change="initChange({type:'shadowOffsetX',value: shadowOffsetX})">
+              </td>
+            </tr>
+            <tr>
+              <td>offsetY</td>
+              <td colspan="2">
+                <num-resize
+                  v-model="shadowOffsetY"
+                  @start="startSetValue"
+                  @change="initChange({type:'shadowOffsetY',value: shadowOffsetY})">
+                  <span >
+                    {{ shadowOffsetY }}
+                  </span>
+                </num-resize>
+                <input type="number" v-if="false" v-model="shadowOffsetY" @change="initChange({type:'shadowOffsetY',value: shadowOffsetY})">
+              </td>
+            </tr>
+            <tr>
+              <td>blur</td>
+              <td colspan="2">
+                <num-resize
+                  v-model="shadowBlur"
+                  @start="startSetValue"
+                  @change="initChange({type:'shadowBlur',value: shadowBlur})">
+                  <span >
+                    {{ shadowBlur }}
+                  </span>
+                </num-resize>
+                <input type="number" v-if="false" v-model="shadowBlur" @change="initChange({type:'shadowBlur',value: shadowBlur})">
+              </td>
+            </tr>
+            <tr>
+              <td>color</td>
+              <td v-if="false">
+                <div class="color-dot" :style="{backgroundColor: shadowColor}"></div>&nbsp;
+              </td>
+              <td colspan="2">
+                <color-picker title="颜色" v-model="shadowColor" :showTitle="false"></color-picker>
+              </td>
+            </tr>
+          </table>
+        </div>
 
       </template>
 
@@ -30,145 +91,162 @@
         <div class="c-layer-title">
           <span class="prop-name">文本</span>
         </div>
-        <textarea v-model="text" @change="textChange" name="" id="text-textarea" class="scrollbar-overwrite" cols="30" rows="10" style="width: 100%;">
-
-        </textarea>
+        <div style="padding-left: 15px;">
+          <textarea v-model="text" @change="textChange" name="" id="text-textarea" class="scrollbar-overwrite" cols="30" rows="10" style="width: 100%;">
+          </textarea>
+        </div>
         <!--文本颜色-->
         <!--<div class="c-layer-title">
           <span>颜色</span>
         </div>-->
-        <color-picker title="颜色" v-model="color">
-        </color-picker>
+        <div class="c-layer-title">
+          <span class="prop-name">颜色</span>
+        </div>
+        <div style="padding-left: 15px;">
+          <color-picker title="颜色" v-model="color" :showTitle="false">
+          </color-picker>
+        </div>
         <!--字体-->
         <div class="c-layer-title">
           <span class="prop-name">字体</span>
         </div>
-        <select name="" id="" v-model="fontFamily">
-          <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
-        </select>
+        <div style="padding-left: 15px;">
+          <select name="" id="" v-model="fontFamily" style="background-color:#57595a;color:white;border-radius:2px;">
+            <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
+          </select>
+        </div>
 
       </template>
 
-      <!--节点的属性值-->
-      <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="currentTween&&hasProps&&cLayer.type">
-        <tr>
-          <td style="width: 8em;">
-            <span class="prop-name">缓动</span>
-          </td>
-          <td>
-            <select name="" id="" v-model="ease">
-              <option value="" v-for="item,index in eases" :value="item.value">{{ item.name }}</option>
-            </select>
-          </td>
-        </tr>
-        <!--x-->
-        <tr>
-          <td>
-            <span class="prop-name">x</span>
-          </td>
-          <td>
-            <num-resize
-              v-model="x"
-              @start="startSetValue"
-              @change="change({type:'x',value: x})">
-              <span >
-                {{ x }}
+      <template v-if="currentTween&&hasProps&&cLayer.type">
+      <!--节点-->
+      <div class="c-layer-title">
+        <span class="prop-name">节点</span>
+      </div>
+      <div style="padding-left: 15px;">
+
+        <!--节点的属性值-->
+        <table cellspacing="0" cellpadding="0" style="width:100%;">
+          <tr>
+            <td style="width: 8em;">
+              <span class="prop-name-x">缓动</span>
+            </td>
+            <td>
+              <select name="" id="" v-model="ease" style="background-color:#57595a;color:white;border-radius:2px;">
+                <option value="" v-for="item,index in eases" :value="item.value">{{ item.name }}</option>
+              </select>
+            </td>
+          </tr>
+          <!--x-->
+          <tr>
+            <td>
+              <span class="prop-name-x">x</span>
+            </td>
+            <td>
+              <num-resize
+                v-model="x"
+                @start="startSetValue"
+                @change="change({type:'x',value: x})">
+                <span >
+                  {{ x }}
+                </span>
+              </num-resize>
+              <input type="number" v-if="false" v-model="x" @change="change({type:'x',value: x})">
+            </td>
+          </tr>
+          <!--y-->
+          <tr>
+            <td>
+              <span class="prop-name-x">y</span>
+            </td>
+            <td>
+              <num-resize
+                v-model="y"
+                @start="startSetValue"
+                @change="change({type:'y',value: y})">
+                <span>
+                  {{ y }}
+                </span>
+              </num-resize>
+            </td>
+          </tr>
+          <!--scaleX-->
+          <tr>
+            <td>
+              <span class="prop-name-x">scaleX</span>
+            </td>
+            <td>
+              <num-resize
+                v-model="scaleX"
+                :stepScale="0.01"
+                @start="startSetValue"
+                @change="change({type:'scaleX',value: scaleX})">
+                <span>
+                  {{ scaleX }}
+                </span>
+              </num-resize>
+            </td>
+          </tr>
+          <!--scaleY-->
+          <tr>
+            <td>
+              <span class="prop-name-x">scaleY</span>
+            </td>
+            <td>
+              <num-resize
+                v-model="scaleY"
+                :stepScale="0.01"
+                @start="startSetValue"
+                @change="change({type:'scaleY',value: scaleY})">
+                <span>
+                  {{ scaleY }}
+                </span>
+              </num-resize>
+            </td>
+          </tr>
+          <!--rotation-->
+          <tr>
+            <td>
+              <span class="prop-name-x">
+                rotation
               </span>
-            </num-resize>
-            <input type="number" v-if="false" v-model="x" @change="change({type:'x',value: x})">
-          </td>
-        </tr>
-        <!--y-->
-        <tr>
-          <td>
-            <span class="prop-name">y</span>
-          </td>
-          <td>
-            <num-resize
-              v-model="y"
-              @start="startSetValue"
-              @change="change({type:'y',value: y})">
-              <span>
-                {{ y }}
+            </td>
+            <td>
+              <num-resize
+                v-model="rotation"
+                :stepScale="1"
+                @start="startSetValue"
+                @change="change({type:'rotation',value: rotation})">
+                <span>
+                  {{ rotation }}
+                </span>
+              </num-resize>
+            </td>
+          </tr>
+          <!--alpha-->
+          <tr>
+            <td>
+              <span  class="prop-name-x">
+                alpha
               </span>
-            </num-resize>
-          </td>
-        </tr>
-        <!--scaleX-->
-        <tr>
-          <td>
-            <span class="prop-name">scaleX</span>
-          </td>
-          <td>
-            <num-resize
-              v-model="scaleX"
-              :stepScale="0.01"
-              @start="startSetValue"
-              @change="change({type:'scaleX',value: scaleX})">
-              <span>
-                {{ scaleX }}
-              </span>
-            </num-resize>
-          </td>
-        </tr>
-        <!--scaleY-->
-        <tr>
-          <td>
-            <span class="prop-name">scaleY</span>
-          </td>
-          <td>
-            <num-resize
-              v-model="scaleY"
-              :stepScale="0.01"
-              @start="startSetValue"
-              @change="change({type:'scaleY',value: scaleY})">
-              <span>
-                {{ scaleY }}
-              </span>
-            </num-resize>
-          </td>
-        </tr>
-        <!--rotation-->
-        <tr>
-          <td>
-            <span class="prop-name">
-              rotation
-            </span>
-          </td>
-          <td>
-            <num-resize
-              v-model="rotation"
-              :stepScale="1"
-              @start="startSetValue"
-              @change="change({type:'rotation',value: rotation})">
-              <span>
-                {{ rotation }}
-              </span>
-            </num-resize>
-          </td>
-        </tr>
-        <!--alpha-->
-        <tr>
-          <td>
-            <span  class="prop-name">
-              alpha
-            </span>
-          </td>
-          <td>
-            <num-resize
-              v-model="alpha"
-              :stepScale="0.01"
-              :max="1"
-              :min="0"
-              @start="startSetValue"
-              @change="change({type:'alpha',value: alpha})">
-              <span>
-                {{ alpha }}
-              </span>
-            </num-resize>
-          </td>
-        </tr>
-      </table>
+            </td>
+            <td>
+              <num-resize
+                v-model="alpha"
+                :stepScale="0.01"
+                :max="1"
+                :min="0"
+                @start="startSetValue"
+                @change="change({type:'alpha',value: alpha})">
+                <span>
+                  {{ alpha }}
+                </span>
+              </num-resize>
+            </td>
+          </tr>
+        </table>
+      </div>
+      </template>
      <!-- 
       <hr>
       {{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}{{ cTween }}
@@ -197,6 +275,9 @@ export default {
     tl() {
       return this.$store.state.tl;
     },
+    topIndex() {
+
+    },
     layers() {
       return this.$store.state.project.layers;
     },
@@ -205,6 +286,46 @@ export default {
     },
     hasProps() {
       return this.currentTween ? this.currentTween.props : null;
+    },
+    // 投影 x轴偏移
+    shadowOffsetX: {
+      get(){
+        return this.cLayer.shadowOffsetX;
+      },
+      set(val) {
+        this.cLayer.shadowOffsetX = val;
+        this.cLayer.obj.shadow.offsetX = val;
+      }
+    },
+    // 投影 y轴偏移
+    shadowOffsetY: {
+      get(){
+        return this.cLayer.shadowOffsetY;
+      },
+      set(val) {
+        this.cLayer.shadowOffsetY = val;
+        this.cLayer.obj.shadow.offsetY = val;
+      }
+    },
+    // 投影 模糊半径
+    shadowBlur: {
+      get(){
+        return this.cLayer.shadowBlur;
+      },
+      set(val) {
+        this.cLayer.shadowBlur = val;
+        this.cLayer.obj.shadow.blur = val;
+      }
+    },
+    // 投影 颜色
+    shadowColor: {
+      get(){
+        return this.cLayer.shadowColor;
+      },
+      set(val) {
+        this.cLayer.shadowColor = val;
+        this.cLayer.obj.shadow.color = val;
+      }
     },
     // 文本类型层，的文本
     text:{
@@ -388,6 +509,9 @@ export default {
         this.$store.dispatch('imageChange', {img});
       }
     },
+    initChange({type, value}){
+
+    },
     // 属性变化
     change({type, value}) {
       // alert([type, value]);
@@ -469,6 +593,7 @@ export default {
     color: #fff;
     padding: 2px 5px;
     resize: none;
+    border-radius: 2px;
     &:focus{
       outline: none;
     }
@@ -482,6 +607,12 @@ export default {
     margin-right: 7px;
     background: #666;
     border-radius: 50%;
+  }
+  .color-dot{
+    display:inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius:50%;
   }
   
 </style>

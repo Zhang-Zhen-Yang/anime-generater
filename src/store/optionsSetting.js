@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-30 11:35:07
+ * @Last Modified time: 2019-04-02 17:54:46
  */
 
  // 时间轴组件
@@ -165,6 +165,14 @@ const store = {
           }
         });
       }
+    },
+    // 加载字体
+    loadFont({state, rootState,commit,dispatdh}) {
+      WebFont.load({
+        custom: {
+          families: ['My Font']
+        }
+      });
     },
     
 		

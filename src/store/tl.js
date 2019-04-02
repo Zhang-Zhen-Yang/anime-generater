@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-01 17:58:31
+ * @Last Modified time: 2019-04-02 13:45:27
  */
 
  // 时间轴组件
@@ -56,24 +56,102 @@ const store = {
 	actions: {
     // 更新位置
 		swipeChild({rootState, state, commit}, {fromIndex, fromSubIndex=-1, toIndex, toSubIndex=-1,position}) {
-      rootState.activeLayerIndex=[0];
-      state.topIndex = -1;
-      state.subIndex = -1;
-      console.log([fromIndex, fromSubIndex,toIndex, toSubIndex, position]);
-
+      if(fromIndex == toIndex && fromSubIndex == toSubIndex) {
+        return;
+      }
+      /*if(fromSubIndex < 0 && toSubIndex > -1) {
+        return;
+      }*/
       // 拖动的是否是container 下的元素
       let fromIsSub = fromSubIndex >-1;
       // 投放的是否是container 下
       let toIsSub = toSubIndex >-1;
 
+      if(!fromIsSub&&toIsSub) {
+        // 容器不能再放容器
+        if(rootState.project.layers[fromIndex].type=='container') {
+          return;
+        }
+      }
+
+      let originToItem = toIsSub ? rootState.project.layers[toIndex].children[toSubIndex] :  rootState.project.layers[toIndex];
+      
+      rootState.activeLayerIndex=[0];
+      
+
+      state.topIndex = -1;
+      state.subIndex = -1;
+      console.log([fromIndex, fromSubIndex,toIndex, toSubIndex, position]);
+
+
+
+      let toDistIndex= toIndex;
+      let toDistSubIndex = toSubIndex;
+      let shouldToIndex, shouldToSubIndex;
+
+      if(toIsSub) {
+        shouldToIndex = toIndex;
+        if(position == 0) {
+          shouldToSubIndex = toSubIndex;
+        } else {
+          shouldToSubIndex = toSubIndex + 1;
+        }
+      } else {
+        if(position == 0) {
+          shouldToIndex = toIndex;
+        } else {
+          shouldToIndex = toIndex + 1;
+        }
+      }
+      // alert(shouldToIndex);
+
       // return;
       let pickItem;
       // alert(fromSubIndex > -1);
-      if(fromSubIndex < 0) {
-        pickItem = rootState.project.layers.splice(fromIndex,1);
+      // 上
+      if(!fromIsSub) {
+        pickItem = rootState.project.layers.splice(fromIndex, 1);
+        // 上上
+        if(!toIsSub) {
+          if(fromIndex < shouldToIndex) {
+            toDistIndex = shouldToIndex - 1;
+          } else {
+            toDistIndex = shouldToIndex;
+          }
+          // alert(toDistIndex);
+        // 上下
+        } else {
+          toDistSubIndex = shouldToSubIndex;
+          if(fromIndex < shouldToIndex) {
+            toDistIndex = shouldToIndex - 1;
+          } else {
+            toDistIndex = shouldToIndex;
+          }
+        }
+      
+      // 下
       } else {
-        pickItem = rootState.project.layers[fromIndex].children[fromSubIndex].splice(fromIndex,1);
+        console.log([fromIndex, '-------------------',fromSubIndex]);
+        // console.log();
+        pickItem = rootState.project.layers[fromIndex].children.splice(fromSubIndex,1);
+         // 下上
+         if(!toIsSub) {
+        
+          // 下下
+          } else {
+            if(fromSubIndex < shouldToIndex) {
+              toDistSubIndex = shouldToIndex;
+            } else {
+              toDistSubIndex = shouldToIndex - 1
+            }
+            alert(toDistSubIndex);
+          }
       }
+      
+      // return;
+      /*console.log([toIndex,toDistIndex, toDistSubIndex]);
+      return;*/
+
       let fromObj = pickItem[0].obj;
       let fromObjWithContainer = fromObj.parent;
       // console.log(fromObj);
@@ -82,39 +160,38 @@ const store = {
 
       let toItem;
       // 如果移动到的是第一层
-      if(toSubIndex < 0) {
-        toItem = rootState.project.layers[toIndex];
-      } else {
-        console.log('................................');
-        console.log(toIndex);
-
-        console.log( rootState.project.layers);
-        console.log( rootState.project.layers[toIndex]);
-        toItem = rootState.project.layers[toIndex].children[toSubIndex];
-        console.log('................................');
+      if(!toIsSub) {
+        toItem = rootState.project.layers[0];
+      } else {       
+        toItem = rootState.project.layers[toDistIndex].children[0];
       }
-      let toObj = toItem.obj;
-      let toObjWithContainer = toItem.obj.parent;
-      console.log(toObjWithContainer.parent);
+      let toObj = originToItem.obj;// toItem.obj;
+      let toObjWithContainer = originToItem.obj.parent; //toItem.obj.parent;
+     
 
-
-      if(toSubIndex < 0) {
-        if(position == 0) {
+      // 如果是移动到上层
+      if(!toIsSub) {
+        /* if(position == 0) {
           rootState.project.layers.splice(toIndex,0,pickItem[0]);
           toObjWithContainer.parent.addChildAt(fromObjWithContainer, toIndex + 1);
         } else {
           rootState.project.layers.splice(toIndex + 1,0,pickItem[0]);
           toObjWithContainer.parent.addChildAt(fromObjWithContainer, toIndex + 2);
-        }
+        }*/
+        console.log(toDistIndex);
+        rootState.project.layers.splice(toDistIndex,0,pickItem[0]);
+        toObjWithContainer.parent.addChildAt(fromObjWithContainer, toDistIndex + 1);
 
       } else {
-        if(position == 0) {
+        /* if(position == 0) {
           rootState.project.layers[toIndex].children.splice(toSubIndex,0,pickItem[0]);
           toObjWithContainer.parent.addChildAt(fromObjWithContainer, toSubIndex);
         } else {
           rootState.project.layers[toIndex].childrrn.splice(toSubIndex + 1,0,pickItem[0]);
           toObjWithContainer.parent.addChildAt(fromObjWithContainer, toSubIndex + 1);
-        }
+        }*/
+        rootState.project.layers[toDistIndex].children.splice(toDistSubIndex,0,pickItem[0]);
+        toObjWithContainer.parent.addChildAt(fromObjWithContainer, toDistSubIndex);
       }
 
 
@@ -162,31 +239,37 @@ const store = {
     },
     // 删除图层
     removeLayer({state, rootState,commit,dispatdh}, {}) {
+
       let activeLayerIndex = rootState.activeLayerIndex;
       let topIndex = typeof activeLayerIndex[0] == 'number' ? activeLayerIndex[0] : -1;
       let subIndex = typeof activeLayerIndex[1] == 'number' ? activeLayerIndex[1] : -1;
       if(topIndex >-1 && subIndex > -1) {
         let currentLayer = rootState.project.layers[topIndex].children[subIndex] || {};
-        rootState.project.layers[topIndex].children.splice(subIndex, 1);
-        let currentContainer = window.stage.children[topIndex + 1].children[0].children[subIndex];
+        let removeItem = rootState.project.layers[topIndex].children.splice(subIndex, 1);
+        let removeItemObj = removeItem[0].obj;
+        removeItemObj.parent.parent.removeChild(removeItemObj.parent);
+
+        /* let currentContainer = window.stage.children[topIndex + 1].children[0].children[subIndex];
         
         let currentUUID = currentLayer.UUID;
         let currentTweenObj = currentLayer.tweenObj;
         let currentObj = currentContainer.getChildByName(currentUUID);
         currentContainer.removeChild(currentObj);
-        window.timeline.removeTween(currentTweenObj);
+        window.timeline.removeTween(currentTweenObj);*/
         
       } else if(topIndex > -1){
         let currentLayer = rootState.project.layers[topIndex] || {};
-        rootState.project.layers.splice(topIndex, 1);
-        let currentContainer = window.stage.children[topIndex + 1];
+        let removeItem = rootState.project.layers.splice(topIndex, 1);
+        // console.log(removeItem);
+        let removeItemObj = removeItem[0].obj;
+        removeItemObj.parent.parent.removeChild(removeItemObj.parent);
+        
+        /*let currentContainer = window.stage.children[topIndex + 1];
 
         window.stage.removeChild(currentContainer);
 
         let currentUUID = currentLayer.UUID;
         let currentTweenObj = currentLayer.tweenObj;
-        /* let currentObj = currentContainer.getChildByName(currentUUID);
-        currentContainer.removeChild(currentObj);*/
         window.timeline.removeTween(currentTweenObj);
         // 如果是 container 类型，要把子元素也去掉
         if(currentLayer.type == 'container') {
@@ -195,7 +278,7 @@ const store = {
             let childTweenObj = item.tweenObj;
             window.timeline.removeTween(childTweenObj);
           })
-        }
+        }*/
 
       }
     },

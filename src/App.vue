@@ -85,6 +85,7 @@ export default {
         handles: "w",
         minWidth: 100,
         maxWidth: 400,
+        // grid: [ 100,],
         resize: (e, ui) =>{
           let width = ui.size.width;
           this.settingPanelWidth = width;
@@ -168,7 +169,7 @@ a {
   border-radius: 0;
   opacity: 0;
   transform: none;
-  left: 0;
+  left: 2px;
   width: 10px;
 }
 </style>

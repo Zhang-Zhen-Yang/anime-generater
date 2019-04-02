@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative;">
+  <div style="position: relative;" ref="domImageWrap" v-show="isVisible" @click.stop="">
     <img class="dom-image" :src="obj.image.src" :style="style" ref="domImage" @click.stop="setActiveIndex" />
     <div :style="dragStyle" :class="['dom-image-d', isSub ? 'dom-image-d-sub': '']" ref="domImageD" v-show="isActivity" @click.stop="">
       <div :style="resizeStyle" class="dom-image-r" ref="domImageR">
@@ -79,6 +79,7 @@ export default {
       return this.obj.image.height * Math.abs(this.obj.scaleY);
     },
     style() {
+
       let pScaleX = 1;
       let pScaleY = 1;
       if(this.isSub) {
@@ -126,6 +127,9 @@ export default {
         return this.topIndex == this.index && this.subIndex == this.sIndex && !this.playing && !!this.currentTween;
       }
       return this.topIndex == this.index && !this.playing && !!this.currentTween;
+    },
+    isVisible() {
+      return this.obj.visible;
     }
   },
   methods: {
@@ -298,6 +302,7 @@ export default {
     
   },
   mounted() {
+    this.domImageWrap = this.$refs.domImageWrap;
     this.domImage = this.$refs.domImage;
     this.domImageR = this.$refs.domImageR;
     this.domImageD = this.$refs.domImageD;

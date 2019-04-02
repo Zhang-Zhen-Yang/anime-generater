@@ -176,8 +176,10 @@ let obj = {
       });
       imgObj.set({
         scaleX: scale,
-        scaleY: scale
+        scaleY: scale,
+        visible: item.visible,
       });
+      imgObj.shadow = new c.Shadow(item.shadowColor || '#000000', item.shadowOffsetX || 0, item.shadowOffsetY || 0, item.shadowBlur || 0);
       callback({
         obj: imgObj,
         scale
@@ -192,7 +194,8 @@ let obj = {
     let textObj = new c.Text(text, `normal ${fontSize}px ${fontFamily}`);
     item.obj = textObj;
     textObj.set({
-      color: item.color
+      color: item.color,
+      visible: item.visible,
     })
     textObj.name = UUID;
     if (addChild) {
@@ -260,6 +263,9 @@ let obj = {
   getContainer ({container, item, timeline, project, UUID = '', addChild = false, callback}) {
     console.log('item----------------------------------', item);
     let thisContainer = new c.Container();
+    thisContainer.set({
+      visible: item.visible,
+    })
     item.obj = thisContainer;
     thisContainer.name = UUID;
     let shape = new c.Shape();

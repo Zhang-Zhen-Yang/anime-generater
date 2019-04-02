@@ -1,7 +1,7 @@
 // 颜色选择器
 <template>
   <div>
-    <div class="content-item-sub-title font14"><div class="color-tip" :style="{backgroundColor: value}"></div>{{title}}</div>
+    <div class="content-item-sub-title font14" v-if="showTitle"><div class="color-tip" :style="{backgroundColor: value}"></div>{{title}}</div>
     <div v-clickoutside="closePopup" @click="openPopup" class="relative">
       <input type="text" class="content-item-input" :value="value" readonly="readonly" @focus="focus">
       <div class="absolute" style="z-index: 1;">
@@ -26,6 +26,10 @@ export default {
     title: {
       type: String,
       default: '',
+    },
+    showTitle: {
+      type: Boolean,
+      default: true
     }
   },
   data () {

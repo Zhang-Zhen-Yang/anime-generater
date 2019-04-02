@@ -1,6 +1,6 @@
 // 容器类型
 <template>
-  <div>
+  <div v-show="isVisible">
     <div :style="dragStyle" class="dom-container-d" ref="domContainerD" v-show="isActivity">
       <div :style="resizeStyle" class="dom-container-r" ref="domContainerR"></div>
     </div>
@@ -146,6 +146,9 @@ export default {
     },
     isActivity() {
       return this.topIndex == this.index && this.subIndex == -1 && !this.playing && this.currentTween;
+    },
+    isVisible() {
+      return this.obj.visible;
     }
   },
   methods: {
@@ -273,7 +276,8 @@ export default {
       })
     },
     // 点击击活图层
-    setActiveIndex() {
+    setActiveIndex(e) {
+      console.log(e.target);
       this.$store.state.activeLayerIndex = [this.index];
       this.$store.state.tl.topIndex = this.index;
       this.$store.state.tl.subIndex = -1;

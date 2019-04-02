@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative;">
+  <div style="position: relative;" v-show="isVisible">
     <div class="dom-text" :style="style" ref="domText"  @click.stop="setActiveIndex">
       {{ obj.text || 'test' }}
     </div>
@@ -130,6 +130,9 @@ export default {
         return this.topIndex == this.index && this.subIndex == this.sIndex && !this.playing && !!this.currentTween;
       }
       return this.topIndex == this.index && !this.playing && !!this.currentTween;
+    },
+    isVisible() {
+      return this.obj.visible;
     }
   },
   methods: {

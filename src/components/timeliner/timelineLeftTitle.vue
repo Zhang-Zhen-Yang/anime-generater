@@ -59,10 +59,18 @@
         </div>
         <!---------------------------------------子层--------------------------------------------------------------------->
         <div v-if="item.type=='container' && item.tlShowChildren" style="" class="timeline-layer-title-child-wrap">
+
           <!--start sublist-->
-          <div v-for="c, cindex in item.children" :key="cindex" style="height: 25px;position: relative;" @dragover="dragoverMask(index, cindex)">
+          <div v-for="c, cindex in item.children"
+            :key="cindex" style="height: 25px;position: relative;"
+            @dragover="dragoverMask(index, cindex)"
+            draggable="true"
+            @dragstart="dragStartSub($event, item, index, cindex)"
+          >
             <!--图层名称-->
-            <div @click.stop="setActiveLayer([index, cindex])" :class="['timeline-layer-title-child', activeLayerIndex.length == 2 && activeLayerIndex[0] == index && activeLayerIndex[1] == cindex? 'activeLayer' : '']">
+            <div
+              @click.stop="setActiveLayer([index, cindex])"
+              :class="['timeline-layer-title-child', activeLayerIndex.length == 2 && activeLayerIndex[0] == index && activeLayerIndex[1] == cindex? 'activeLayer' : '']">
               <table cellspacing="0" cellpadding="0" style="table-layout:fixed;width: 100%">
                 <tr>
                   <td style="width: 2.5em"></td>
@@ -157,6 +165,9 @@ export default {
     },
     // 
     toggleVisible(item) {
+      item.obj.set({
+        visible: !item.visible
+      })
       item.visible = !item.visible;
     },
     // 
@@ -177,15 +188,24 @@ export default {
       e.dataTransfer.effectAllowed = "allow";
       console.log(e);
     },
+    dragStartSub(e, item, index,cindex){
+      // alert([index, cindex]);
+      e.stopPropagation();
+      e.dataTransfer.setData('index', [index, cindex].join(','));
+    },
     dragover(e) {
       e.preventDefault();
     },
     drop(e){
       e.preventDefault();
       console.log(e);
-      let fromIndex = e.dataTransfer.getData('index');
+      let fromIndexs = e.dataTransfer.getData('index').split(',');
+      console.log('fromIndexsfromIndexsfromIndexs', fromIndexs);
+      let fromIndex = parseInt(fromIndexs[0]);
+      let fromSubIndex = parseInt(fromIndexs[1] || -1);
       this.$store.dispatch('swipeChild',{
         fromIndex,
+        fromSubIndex,
         toIndex: this.dragoverMaskIndex,
         toSubIndex: this.dragoverMaskSubIndex,
         position: this.dargoverMaskPosition
@@ -221,6 +241,11 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
     position: relative;
+  }
+  .timeline-layer-title-child{
+    border-bottom: 1px solid #525252;
+    height: 25px;
+    // background-color: red;
   }
   .timeline-layer-title.activeLayer,.timeline-layer-title-child.activeLayer{
     background-color: rgba(255,195,25,0.5);

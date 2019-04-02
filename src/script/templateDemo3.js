@@ -13,7 +13,11 @@ let demo = {
       UUID: '',
       visible: true,
       editable: true,
-      layerName: 'test',
+      layerName: '层1',
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      shadowBlur: 10,
+      shadowColor: '#000000',
       pic_url: 'http://imgs.aixifan.com/content/2019_3_24/1.5533916272933776E9.png',
       tween: [
         {
@@ -57,7 +61,7 @@ let demo = {
       tlShowChildren: true,
       visible: true,
       editable: true,
-      layerName: 'test',
+      layerName: '层2',
       // 子对象
       children: [
         {
@@ -66,7 +70,11 @@ let demo = {
           type: 'image',
           visible: true,
           editable: true,
-          layerName: 'test',
+          layerName: '层2.1',
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
+          shadowBlur: 10,
+          shadowColor: '#000000',
           pic_url: 'http://imgs.aixifan.com/content/2019_3_13/1.552485453249718E9.png',
           tween: [
             {
@@ -110,7 +118,7 @@ let demo = {
           color: '#FF9729',
           visible: true,
           editable: true,
-          layerName: 'test',
+          layerName: '层2.2',
           tween: [
             {
               action: 'to',
