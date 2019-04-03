@@ -2,7 +2,7 @@
 let demo = {
   width: 640,
   height: 480,
-  bgColor: '#FCC7AF',
+  bgColor: '#ffffff',
   canvasScale: 1,
   ver: 2,
   // 层
@@ -16,7 +16,7 @@ let demo = {
       layerName: '层1',
       shadowOffsetX: 0,
       shadowOffsetY: 0,
-      shadowBlur: 10,
+      shadowBlur: 100,
       shadowColor: '#000000',
       pic_url: 'http://imgs.aixifan.com/content/2019_3_24/1.5533916272933776E9.png',
       tween: [
@@ -73,7 +73,7 @@ let demo = {
           layerName: '层2.1',
           shadowOffsetX: 0,
           shadowOffsetY: 0,
-          shadowBlur: 10,
+          shadowBlur: 100,
           shadowColor: '#000000',
           pic_url: 'http://imgs.aixifan.com/content/2019_3_13/1.552485453249718E9.png',
           tween: [

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-02 13:45:27
+ * @Last Modified time: 2019-04-03 17:38:14
  */
 
  // 时间轴组件
@@ -28,6 +28,7 @@ const store = {
     topIndex: -1,
     subIndex: -1,
     tweenIndex: -1,
+    // 菜单
     contextMenu: {
       show: true,
       x: 0,
@@ -42,7 +43,11 @@ const store = {
           value: 'text',
         },
       ]
-    }
+    },
+    // 撤销历史列表
+    undoList: [],
+    // 重做历史列表
+    redoList: [],
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -55,10 +60,11 @@ const store = {
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
     // 更新位置
-		swipeChild({rootState, state, commit}, {fromIndex, fromSubIndex=-1, toIndex, toSubIndex=-1,position}) {
+		swipeChild({rootState, state, commit, dispatch}, {fromIndex, fromSubIndex=-1, toIndex, toSubIndex=-1,position}) {
       if(fromIndex == toIndex && fromSubIndex == toSubIndex) {
         return;
       }
+      dispatch('addStep');
       /*if(fromSubIndex < 0 && toSubIndex > -1) {
         return;
       }*/
@@ -216,6 +222,7 @@ const store = {
 			switch(type) {
         // 图层
         case 0:
+          dispatch('addStep');
           dispatch('addLayer', {layerType});
           break;
         // 文件夹
@@ -223,13 +230,14 @@ const store = {
          break;
         // 删除
         case 2:
+          dispatch('addStep');
           dispatch('removeLayer', {});
 				  break;
 				default: break;
 			}
     },
     // 添加图层
-    addLayer({state, rootState,commit,dispatdh}, {layerType}) {
+    addLayer({state, rootState,commit,dispatch}, {layerType}) {
 
       let newLayer = JSON.parse(JSON.stringify(templateFragment[layerType]));
       rootState.project.layers.push(newLayer);
@@ -238,7 +246,7 @@ const store = {
       canvasRender.addLayer({parentType: 'root', parent: window.stage, item,project: rootState.project,timeline: rootState.timeline});
     },
     // 删除图层
-    removeLayer({state, rootState,commit,dispatdh}, {}) {
+    removeLayer({state, rootState,commit,dispatch}, {}) {
 
       let activeLayerIndex = rootState.activeLayerIndex;
       let topIndex = typeof activeLayerIndex[0] == 'number' ? activeLayerIndex[0] : -1;
@@ -283,7 +291,7 @@ const store = {
       }
     },
     // 设置当前选中的补间
-    setActiveTween({state,rootState,dispatdh}, {t, topIndex, subIndex, tweenIndex}) {
+    setActiveTween({state,rootState,dispatch}, {t, topIndex, subIndex, tweenIndex}) {
       rootState.playing = false;
       rootState.timeline.setPaused(true);
       state.currentTween = t;
@@ -319,7 +327,7 @@ const store = {
       }
     },
     // 设置当前的缓动节点
-    setActiveTweenVer2({state,rootState,dispatdh}, {t, topIndex, subIndex, tweenIndex}) {
+    setActiveTweenVer2({state,rootState,dispatch}, {t, topIndex, subIndex, tweenIndex}) {
       rootState.playing = false;
       rootState.timeline.setPaused(true);
       state.currentTween = t;
@@ -356,7 +364,7 @@ const store = {
       // dispatch('setActiveTween', {t, topIndex, subIndex, tweenIndex});
     },
     // 更新缓动
-    updateTween({state,rootState,dispatdh},{topIndex, subIndex}) {
+    updateTween({state,rootState,dispatch},{topIndex, subIndex}) {
       let tweenIndex =  state.tweenIndex;
       let currentLayer;
       let currentTweenObj;
@@ -394,6 +402,7 @@ const store = {
     },
     // 添加缓动
     addTween({state,rootState,dispatch},{topIndex, subIndex, position}) {
+      dispatch('addStep');
       state.topIndex = topIndex;
       state.subIndex = subIndex;
       if(subIndex > -1) {
@@ -444,6 +453,7 @@ const store = {
     },
     // 删除当前缓动
     removeTween({state,rootState,dispatch}) {
+      dispatch('addStep');
       // alert('removeTween');
       let topIndex = state.topIndex;
       let subIndex = state.subIndex;
@@ -478,8 +488,111 @@ const store = {
       }
       // console.log(e);
     },
+    //显示或隐藏所有图层
+    toggleVisibleAll({state,rootState,dispatch}) {
+      let allVisibleCount = 0;
+      let allInVisibleCount = 0;
+      rootState.project.layers.forEach((layer)=>{
+        if(layer.visible) {
+          allVisibleCount += 1;
+        } else {
+          allInVisibleCount += 1;
+        }
+        if(layer.type == 'container') {
+          layer.children.forEach((clayer)=>{
+            if(clayer.visible) {
+              allVisibleCount += 1;
+            } else {
+              allInVisibleCount += 1;
+            }
+          })
+        }
+      })
+      let toSetValue = true;
+      if(allVisibleCount > 0) {
+        toSetValue = false;
+      }
+      rootState.project.layers.forEach((layer)=>{
+        layer.visible = toSetValue;
+        layer.obj.set({visible: toSetValue});
+        if(layer.type == 'container') {
+          layer.children.forEach((clayer)=>{
+            clayer.visible = toSetValue;
+            clayer.obj.set({visible: toSetValue});
+          })
+        }
+      })
+      // alert([allVisibleCount, allInVisibleCount]);
+    },
+    // 添加历史记录
+    addStep({rootState, state}, {type = 'undo', clearRedo = true}={type: 'undo', clearRedo: true}) {
+      // alert('ddd');
+      let obj = utilTimeline.cloneObj(rootState.project);
+      obj.layers.forEach((layer)=>{
+        if(layer.type == 'image') {
+          layer.pic_url = utilTimeline.getPicKeyByItem(layer);
+        } else if(layer.type == 'container') {
+          layer.children.forEach((clayer)=>{
+            if(clayer.type == 'image') {
+              clayer.pic_url = utilTimeline.getPicKeyByItem(clayer);
+            }
+          })
+        }
+      })
+      if(type == 'undo') {
+        let distObj = {
+          project: obj,
+        };
+        console.log(JSON.stringify(distObj));
+        console.log(state.undoList[state.undoList.length - 1]);
+        if(state.undoList.length > 0 && (JSON.stringify(distObj) == JSON.stringify(state.undoList[state.undoList.length - 1]))) {
+          return 
+        }
+        state.undoList.push(distObj)
+        if(clearRedo) {
+          state.redoList = [];
+        }
+      } else {
+        state.redoList.unshift({
+          project: obj,
+        })
+      }
+    },
+    // 撤销重做
+    undoredo({state,rootState,dispatch}, {type}) {
+      // alert(type);
+      // 撤销
+      if(type == 0) {
+        if(state.undoList.length > 0) {
+          dispatch('addStep', {type: 'redo'});
+          let fillItem = state.undoList.splice(state.undoList.length - 1, 1)[0];
+          //
+          utilTimeline.fillLocalImageByKey(fillItem);
+          rootState.project = fillItem.project;
+          canvasRender.render({
+            canvas: document.getElementById('canvas'),
+            project: rootState.project,
+            state: rootState
+          })
+        }
+      // 重做
+      } else if(type == 1) {
+        if(state.redoList.length > 0) {
+          dispatch('addStep', {type: 'undo', clearRedo: false});
+          let fillItem = state.redoList.splice(0, 1)[0];
+          
+          utilTimeline.fillLocalImageByKey(fillItem);
+          rootState.project = fillItem.project;
+          canvasRender.render({
+            canvas: document.getElementById('canvas'),
+            project: rootState.project,
+            state: rootState
+          })
+        }
+      }
+    },
     // 测试
-    test({state,rootState,dispatdh}) {
+    test({state,rootState,dispatch}) {
       // console.log(window.timeline._tweens[1].target.x);
     }
 		

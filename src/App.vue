@@ -9,6 +9,7 @@
           <block-slice slot="e" dir="horizontal" :staticIndex="0" :staticValue="'60px'">
             <div id="left-bar" slot="s" style="background-color: #2C2C2C;height: 100%;">
               left-bar
+              <undoredo></undoredo>
             </div>
             <!--工作区-->
             <workSpace slot="e"></workSpace>
@@ -39,9 +40,10 @@ import workSpace from './components//workSpace.vue';
 import dialogGenerate from './components/dialogGenerate/dialogGenerate';
 import dialogDownload from './components/dialogDownload/dialogDownload';
 import contextMenu from './components/contextMenu';
+import undoredo from './components/undoredo.vue';
 export default {
   name: 'app',
-  components: {timeliner, settingOptions, topBar, workSpace, dialogGenerate, dialogDownload, contextMenu},
+  components: {timeliner, settingOptions, topBar, workSpace, dialogGenerate, dialogDownload, contextMenu, undoredo},
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -103,6 +105,7 @@ export default {
     document.body.addEventListener('keydown', (e)=>{
       this.keydown(e);
     }, false)
+    this.$store.dispatch('initnew');
   },
 }
 </script>

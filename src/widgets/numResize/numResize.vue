@@ -12,6 +12,7 @@
             :step="stepScale"
             @blur="inputShow=false"
             @change="change"
+            @focus="focus"
         >
         <slot v-else></slot>
     </div>
@@ -58,6 +59,10 @@ export default {
 
     }, // end computed
     methods: {
+        focus() {
+            // console.log('dd');
+            this.$emit(start);
+        },
         start(e) {
             if(this.inputShow) {
                 return;

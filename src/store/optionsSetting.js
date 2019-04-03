@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-02 17:54:46
+ * @Last Modified time: 2019-04-03 16:19:34
  */
 
  // 时间轴组件
@@ -27,6 +27,7 @@ const store = {
     topIndex: -1,
     subIndex: -1,
     tweenIndex: -1,*/
+    loadedFonts: {},
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -39,7 +40,7 @@ const store = {
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
     // 属性变化，更新tween
-    propsChange({state, rootState,commit,dispatdh}, {target}){
+    propsChange({state, rootState,commit,dispatch}, {target}){
       
       let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
       let currentTweenObj = currentLayer.tweenObj;
@@ -77,7 +78,21 @@ const store = {
       // currentTweenObj.target.rotation = 45;
     },
     // 更改图片
-		imageChange({state, rootState,commit,dispatdh}, {img}) {
+		imageChange({state, rootState,commit,dispatch}, {img}) {
+      dispatch('addStep');
+      let has = false;
+      for(let i in window.localImages) {
+        if(window.localImages[i] == img) {
+          has = true;
+        }
+      }
+      if(!has) {
+        let UUID = new util.getUUID().id;
+        window.localImages[UUID] = img;
+      }
+
+      console.log('window.localImages', Object.keys(window.localImages).length);
+
       let topIndex = rootState.tl.topIndex;
       let subIndex = rootState.tl.subIndex;
       let tweenIndex = rootState.tl.tweenIndex;
@@ -167,14 +182,53 @@ const store = {
       }
     },
     // 加载字体
-    loadFont({state, rootState,commit,dispatdh}) {
+    loadFont({state, rootState,commit,dispatch}, {fontFamily, text}) {
+      if(state.loadedFonts[fontFamily]) {
+        dispatch('upadateWordLayerByText', {text});
+        return;
+      }
       WebFont.load({
         custom: {
-          families: ['My Font']
-        }
+          families: [fontFamily]
+        },
+        timeout: 40000,
+        active: ()=>{},
+        ininactive: ()=>{},
+        loading: ()=>{},
+        fontactive: ()=>{
+          state.loadedFonts[fontFamily] = true;
+          dispatch('upadateWordLayerByText', {text});
+        },
+        fontinactive: ()=>{},
       });
     },
-    
+    // 通过text更新该层
+    upadateWordLayerByText({state, rootState,commit,dispatch}, {text}) {
+      let items = [];
+      rootState.project.layers.forEach((layer, lindex)=>{
+        if(layer.type == 'text' && layer.text == text) {
+          items.push({l: layer.tweenObj});
+        } else if (layer.type == 'container') {
+          layer.children.forEach((clayer, clindex)=>{
+            if(clayer.type == 'text' && clayer.text == text) {
+              items.push({l: clayer});
+            } 
+          })
+        }
+      })
+
+      items.forEach((item)=>{
+        window.timeline.removeTween(item.l.tweenObj);
+        let tween = canvasRender.getTween({
+          obj: item.l.obj,
+          item: item.l,
+          timeline: window.timeline,
+          scale: 1,
+          f: 'propsChange'
+        });
+        window.timeline.addTween(tween);
+      })
+    }
 		
 	}// end actions 
 }

@@ -1,7 +1,7 @@
 <template>
-  <div id="work-space" class="scrollbar-overwrite">
+  <div id="work-space" class="scrollbar-overwrite" @click="emptyClick">
     <div class="inline-block" style="width:0px;height: 100%;vertical-align: middle;background-color:red;" v-if="false"></div>
-    <canvas id="canvas" class="inline-block" ref="canvas" @click="togglePlayState">
+    <canvas id="canvas" class="inline-block" ref="canvas" @click="togglePlayState" >
     </canvas>
     <div style="display: inline-block;position: absolute;left: 50%;top: 50%;" v-if="false">
       <div :class="['pause-and-play-tip', playing ? 'pause-tip':'play-tip', 'pointer']" @click="togglePlayState">
@@ -19,7 +19,7 @@ import canvasRender from '../script/canvasRender.js';
 import workSpaceDom from './workSpaceDom/workSpaceDom.vue';
 export default {
   name: 'temp',
-  components: {workSpaceDom},
+  components: {workSpaceDom,},
   data () {
     return {
       msg: 'temp'
@@ -28,6 +28,15 @@ export default {
   computed: {
     project() {
       return this.$store.state.project;
+    },
+    width() {
+      return this.project.width;
+    },
+    height() {
+      return this.project.height;
+    },
+    bgColor() {
+      return this.project.bgColor;
     },
     playing:{
       get() {
@@ -56,6 +65,19 @@ export default {
     togglePlayState() {
       this.playing = !this.playing;
     },
+    // 空白处点击
+    emptyClick(e) {
+      // console.log(e.target);
+      if(e.target.id == 'work-space') {
+        this.$store.state.activeLayerIndex = [-1];
+        this.$store.state.tl.topIndex = -1;
+        this.$store.state.tl.subIndex = -1;
+      }
+    },
+    drawRect() {
+      let shape = window.stage.children[0]
+      shape.graphics.c().f('#ffffff').dr(0, 0, this.width, this.height).f(this.bgColor).dr(0, 0, this.width, this.height);
+    },
     test() {
       this.$store.dispatch('test');
     }
@@ -65,6 +87,21 @@ export default {
   },
   mounted() {
     this.render();
+  },
+  watch: {
+    width(nVal) {
+      this.$refs.canvas.width = nVal;
+      this.drawRect();
+      window.stage.update();
+    },
+    height(nVal) {
+      this.$refs.canvas.height = nVal;
+      this.drawRect();
+      window.stage.update();
+    },
+    bgColor(nVal) {
+      this.drawRect();
+    }
   }
 }
 </script>
@@ -91,7 +128,7 @@ export default {
       right: 0;
       bottom: 0;*/
       // margin-top: 20px;
-
+      box-shadow: 0 0 100px rgba(0, 0, 0, 0.1);
       
     }
     #canvas:hover+div .pause-and-play-tip{

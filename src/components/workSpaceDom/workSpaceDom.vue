@@ -39,6 +39,9 @@ export default {
     c() {
       return window.createjs;
     },
+    project(){
+      return this.$store.state.project;
+    },
     stage() {
       return this.$store.state.stage || {children: []};
     },
@@ -52,8 +55,8 @@ export default {
     },
     stageStyle() {
       return {
-        width: this.size.width + 'px',
-        height: this.size.height + 'px',
+        width: this.project.width + 'px',//this.size.width + 'px',
+        height: this.project.height + 'px', // this.size.height + 'px',
       }
     },
     project() {

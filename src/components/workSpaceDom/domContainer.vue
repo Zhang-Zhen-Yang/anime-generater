@@ -155,6 +155,9 @@ export default {
     u(){
       window.stage.update();
     },
+    as() {
+      this.$store.dispatch('addStep');
+    },
     bindDraggableResizable() {
       // 调整大小
       $(this.domContainerR)
@@ -168,6 +171,7 @@ export default {
           this.resizing = true;
         },
         stop: (e,ui) => {
+          this.as();
           this.resizing = false;
           let {left, top} = ui.position;
           let {width, height} = ui.size;
@@ -213,6 +217,7 @@ export default {
           
         },
         stop: (e, ui) => {
+          this.as();
           let degrees = ui.angle.current / Math.PI * 180;
           if(degrees >= 0) {
             degrees -= 360;
@@ -236,7 +241,8 @@ export default {
         }
       }).find('.ui-rotatable-handle')
       .on('dblclick',() => {
-         let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
+        this.as();
+        let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(currentLayer.tween[this.tweenIndex]) {
             currentLayer.tween[this.tweenIndex].props.rotation = 0;
             this.$store.dispatch('propsChange', {target: this.obj});
@@ -254,6 +260,7 @@ export default {
           this.dragging = true;
         },
         stop: (e, ui)=>{
+          this.as();
           let left = ui.position.left - 0;
           let top = ui.position.top - 0;
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});

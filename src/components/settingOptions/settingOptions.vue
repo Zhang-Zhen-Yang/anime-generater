@@ -4,6 +4,55 @@
       设置
     </div>
     <div id="setting-options-content" slot="e">
+      <!--全局设置-->
+      <template v-if="tlTopIndex == -1">
+        <!--画布大小-->
+        <div class="c-layer-title">
+          <span class="prop-name">画布大小</span>
+        </div>
+        <div style="padding-left: 15px;">
+            <table cellspacing="0" cellpadding="0" style="width: 100%;">
+              <tr>
+                <td style="width: 8em;">宽</td>
+                <td colspan="2">
+                  <num-resize
+                    v-model="projectWidth"
+                    @start="startSetValue"
+                    :min="100"
+                    :max="1280">
+                    <span >
+                      {{ projectWidth }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 8em;">高</td>
+                <td colspan="2">
+                  <num-resize
+                    v-model="projectHeight"
+                    @start="startSetValue"
+                    :min="100"
+                    :max="1280"
+                    @change="">
+                    <span >
+                      {{ projectHeight }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+            </table>
+        </div>
+
+        <div class="c-layer-title">
+          <span class="prop-name">背景颜色</span>
+        </div>
+        <div style="padding-left: 15px;">
+          <color-picker title="颜色" v-model="bgColor" :showTitle="false" @start="startSetValue">
+          </color-picker>
+        </div>
+
+      </template>
       <!--{{ cLayer.type }}-->
 
       <!--图片类型-->
@@ -76,7 +125,7 @@
                 <div class="color-dot" :style="{backgroundColor: shadowColor}"></div>&nbsp;
               </td>
               <td colspan="2">
-                <color-picker title="颜色" v-model="shadowColor" :showTitle="false"></color-picker>
+                <color-picker title="颜色" v-model="shadowColor" :showTitle="false" @start="startSetValue"></color-picker>
               </td>
             </tr>
           </table>
@@ -103,7 +152,7 @@
           <span class="prop-name">颜色</span>
         </div>
         <div style="padding-left: 15px;">
-          <color-picker title="颜色" v-model="color" :showTitle="false">
+          <color-picker title="颜色" v-model="color" :showTitle="false" @start="startSetValue">
           </color-picker>
         </div>
         <!--字体-->
@@ -287,6 +336,32 @@ export default {
     hasProps() {
       return this.currentTween ? this.currentTween.props : null;
     },
+    // 画布宽
+    projectWidth: {
+      get() {
+        return this.project.width;
+      },
+      set(val) {
+        this.project.width = val;
+      }
+    },
+    // 画布高
+    projectHeight: {
+      get() {
+        return this.project.height;
+      },
+      set(val) {
+        this.project.height = val;
+      }
+    },
+    bgColor: {
+      get() {
+        return this.project.bgColor;
+      },
+      set(val) {
+        this.project.bgColor = val;
+      }
+    },
     // 投影 x轴偏移
     shadowOffsetX: {
       get(){
@@ -333,9 +408,12 @@ export default {
         return this.cLayer.text;
       },
       set(val) {
+        this.as();
         this.cLayer.text = val;
         // console.log(this.target);
         this.target.text = val;
+        let fontFamily = this.cLayer.fontFamily;
+        this.$store.dispatch('loadFont', {fontFamily, text: val });
       }
     },
     // 文本颜色
@@ -357,6 +435,7 @@ export default {
         console.log(this.target);
         this.target.font =`normal 100px ${val}`;
         this.cLayer.fontFamily = val;
+        this.$store.dispatch('loadFont', {fontFamily: val, text: this.target.text});
       }
     },
     fontsList() {
@@ -376,6 +455,7 @@ export default {
       },
       set(val) {
         if(this.currentTween) {
+          this.as();
           this.currentTween.ease = val;
           this.$store.dispatch('propsChange', {target: this.target, currentLayer: this.cLayer});
         }
@@ -524,7 +604,12 @@ export default {
     // 属性开始调整，设置时间轴指针的位置
     startSetValue() {
       // alert('dd');
+      this.as();
       this.$store.dispatch('startSetValue');
+    },
+    // 添加历史记录
+    as() {
+      this.$store.dispatch('addStep');
     }
   },
   created() {

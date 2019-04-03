@@ -18,7 +18,7 @@ let obj = {
 
       // 背景
       let bgShape = new c.Shape();
-      bgShape.graphics.f(bgColor).drawRect(0, 0, width, height);
+      bgShape.graphics.f('#ffffff').drawRect(0, 0, width, height).f(bgColor).drawRect(0, 0, width, height);
       stage.addChild(bgShape);
       // 时间轴
       let timeline = new c.Timeline([], 'g', {loop: true});

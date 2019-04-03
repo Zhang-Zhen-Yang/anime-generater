@@ -123,6 +123,9 @@ export default {
     }
   },
   methods: {
+    as() {
+      this.$store.dispatch('addStep');
+    },
     // 绑定拖动事件
     bindDraggable() {
       let thisTimelineTweenItem = this.$refs['timeline-tween-item'];
@@ -140,6 +143,7 @@ export default {
           this.dragging = true;
         },
         stop: (e, ui) => {
+          this.as();
           let left = ui.position.left;
           let totalWidth = (this.$refs['timeline-tween-item'].clientWidth);
           let position = left / totalWidth * this.tlDuration;
@@ -151,6 +155,8 @@ export default {
           let topIndex = this.topIndex;
           let subIndex = this.subIndex;
           this.$store.dispatch('updateTween', {topIndex, subIndex});
+
+          this.$store.dispatch('setActiveTweenVer2', {t: this.tween[tweenIndex], topIndex, subIndex, tweenIndex});
           // alert('kkk');
         },
         drag: (e, ui) => {
@@ -163,7 +169,7 @@ export default {
     setActiveTween(index) {
       let topIndex = this.topIndex;
       let subIndex = this.subIndex;
-      this.$store.dispatch('setActiveTweenVer2', {t: this.tween[index], topIndex, subIndex, tweenIndex: index})
+      this.$store.dispatch('setActiveTweenVer2', {t: this.tween[index], topIndex, subIndex, tweenIndex: index});
     },
     // 添加缓动
     addTween(e) {

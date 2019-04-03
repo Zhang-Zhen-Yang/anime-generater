@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-27 16:50:47
+ * @Last Modified time: 2019-04-03 10:32:26
  */
 
 import http from '../script/http';
@@ -173,6 +173,9 @@ const store = {
 	},
 	// -------------------------------------------------------------------------------------------------------------
 	actions: {
+		initnew({state, commit, dispatch, getters}){
+			window.localImages = {};
+		},
 		// 初始化 网络请求
 		init({state, commit, dispatch, getters}){
 			dispatch('getSettingFromStorage');

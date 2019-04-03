@@ -33,7 +33,10 @@
               <td>5555</td>
               <td>555</td>
               <td class="right">
-                <div class="bg-preset timeline-view-eye timeline-view-eye-visible pointer" @click="toggleVisibleAll"></div>
+                <div
+                  title="显示或隐藏所有图层"
+                  class="bg-preset timeline-view-eye timeline-view-eye-visible pointer"
+                  @click="toggleVisibleAll"></div>
                 <div class="bg-preset timeline-view-layer-lock pointer" @click="toggleEditableAll"></div>
               </td>
             </tr>
@@ -119,7 +122,7 @@ export default {
     },
     // 显示隐藏所有
     toggleVisibleAll() {
-
+      this.$store.dispatch('toggleVisibleAll');
     },
     // 切换可编辑所有
     toggleEditableAll() {

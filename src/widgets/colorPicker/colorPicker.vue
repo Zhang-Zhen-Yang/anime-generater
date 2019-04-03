@@ -48,9 +48,12 @@ export default {
     },
     openPopup(){
       this.showPicker = true;
+      this.$emit('start')
+      console.log('---------------------------------------------------dsfgdsfds')
     },
     closePopup() {
       this.showPicker = false;
+      this.$emit('change')
     },
     focus() {
       this.$emit('focus');

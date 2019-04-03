@@ -136,6 +136,9 @@ export default {
     u(){
       window.stage.update();
     },
+    as() {
+      this.$store.dispatch('addStep');
+    },
     // 绑定缩放和拖动
     bindDraggableResizable() {
       // 调整大小
@@ -150,6 +153,7 @@ export default {
           this.resizing = true;
         },
         stop: (e,ui) => {
+          this.as();
           this.resizing = false;
           let pScaleX = 1;
           let pScaleY = 1;
@@ -210,6 +214,7 @@ export default {
 
         },
         stop: (e, ui) => {
+          this.as();
           let degrees = ui.angle.current / Math.PI * 180;
           if(degrees >= 0) {
             degrees -= 360;
@@ -233,7 +238,8 @@ export default {
         }
       }).find('.ui-rotatable-handle')
       .on('dblclick',() => {
-         let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
+        this.as();
+        let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(currentLayer.tween[this.tweenIndex]) {
             currentLayer.tween[this.tweenIndex].props.rotation = 0;
             this.$store.dispatch('propsChange', {target: this.obj});
@@ -250,6 +256,7 @@ export default {
 
         },
         stop: (e, ui)=>{
+          this.as();
           let pScaleX = 1;
           let pScaleY = 1;
           if(this.isSub) {
