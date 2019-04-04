@@ -17,7 +17,8 @@
         ></domImage>
         <!--容器下的text-->
         <domText
-          v-if="i.type == 'text'"
+          v-if="i.type == 'text'|| i.type == 'shape'"
+          :isShape="i.type == 'shape'"
           :isSub="true"
           :obj="i.obj"
           :index="index"
@@ -284,6 +285,7 @@ export default {
     },
     // 点击击活图层
     setActiveIndex(e) {
+      return;
       console.log(e.target);
       this.$store.state.activeLayerIndex = [this.index];
       this.$store.state.tl.topIndex = this.index;

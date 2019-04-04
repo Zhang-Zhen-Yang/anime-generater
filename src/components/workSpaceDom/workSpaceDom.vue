@@ -14,6 +14,9 @@
       <domText
         :index="index"
         v-if="item.type=='text'&&item.obj" :obj="item.obj"></domText>
+      <domText
+        :index="index"
+        v-if="item.type=='shape'&&item.obj" :obj="item.obj" :isShape="true"></domText>
       <domContainer
         :index="index"
         v-if="item.type=='container'&&item.obj" :obj="item.obj" :item="item"></domContainer>

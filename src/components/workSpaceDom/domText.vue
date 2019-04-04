@@ -1,7 +1,7 @@
 <template>
   <div :style="{position: 'relative', zIndex: index}" v-show="isVisible">
     <div class="dom-text" :style="style" ref="domText"  @click.stop="setActiveIndex">
-      {{ obj.text || 'test' }}
+      {{ obj.text || 'test' }} 
     </div>
     <div :style="dragStyle" class="dom-text-d" ref="domTextD" v-show="isActivity" @click.stop="">
       <div :style="resizeStyle" class="dom-text-r" ref="domTextR"></div>
@@ -38,6 +38,10 @@ export default {
     isSub: {
       type: Boolean,
       default: false,
+    },
+    isShape: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -93,7 +97,7 @@ export default {
       let bounds = this.bounds;
       // console.log('this.obj.getBounds()----------',this.obj.getBounds());
       let width = bounds.width * Math.abs(this.obj.scaleX); //this.obj.image.width * Math.abs(this.obj.scaleX);
-      let height = bounds.height* Math.abs(this.obj.scaleX); //this.obj.image.height * Math.abs(this.obj.scaleY);
+      let height = bounds.height* Math.abs(this.obj.scaleY); //this.obj.image.height * Math.abs(this.obj.scaleY);
       return {
         position: 'absolute',
         left: (left - width / 2) * pScaleX + 'px',

@@ -7,6 +7,7 @@ let demo = {
   ver: 2,
   // 层
   layers: [
+    // 图片图层
     {
       type: 'image',
       obj: null,
@@ -182,6 +183,93 @@ let demo = {
       ]
 
     },
+    // 形状图层
+    {
+      type: 'shape',
+      UUID: '',
+      obj: '',
+      visible: true,
+      editable: true,
+      layerName: '形状',
+      graphics: {
+        // 方形
+        /* type: 'rect',
+        x: 0,
+        y: 0,
+        w: 210,
+        h: 100,
+        radius: 10,*/
+        w: 100,
+        h: 100,
+        rRadius: 0,
+        strokeWidth: 2,
+        stroke: 'orange',
+        fill: 'rgba(100,0,0,0.5)',
+
+        // 圆角方形 drawRoundRect
+        /*
+        x: 0,
+        y: 0,
+        w: 10,
+        h: 10,
+        radius: 5,
+        */
+
+        // 圆形 drawCircle
+        /* type: 'circle',
+        x: 0,
+        y: 0,
+        radius: 100, */
+
+        // 椭圆 drawEllipse
+        
+        /* type: 'ellipse',
+        x: 0,
+        y: 0,
+        w: 100,
+        h: 200*/
+        
+        // 多形状 drawPolyStar
+        type: 'polyStar',
+        x: 0,
+        y: 0,
+        radius: 100,
+        sides: 5, // 边数 >= 3
+        pointSize: 0.9, // 0 - 1 0为边不内陷， 1内陷到看不到内容
+        angle: 0, // 角度
+
+      },
+      tween: [
+        {
+          action: 'to',
+          props: {
+            regX: 0,
+            regY: 0,
+            alpha: 1,
+            x: 100,
+            y: 100,
+            scaleX: 1,
+            scaleY: 1,
+            rotation: 0,
+          },
+          time: 0,
+          ease: 'linear'
+        },
+        {
+          action: 'to',
+          props: {
+            x: 200,
+            y: 200,
+            scaleX: 1,
+            scaleY: 1,
+            alpha: 1,
+            rotation: 0
+          },
+          time: 2000,
+          ease: 'linear'
+        },
+      ]
+    }
   ]
 };
 export default demo;

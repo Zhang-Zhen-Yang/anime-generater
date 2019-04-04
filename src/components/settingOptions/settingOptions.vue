@@ -4,298 +4,455 @@
       设置
     </div>
     <div id="setting-options-content" slot="e">
-      <!--全局设置-->
-      <template v-if="tlTopIndex == -1">
-        <!--画布大小-->
-        <div class="c-layer-title">
-          <span class="prop-name">画布大小</span>
-        </div>
-        <div style="padding-left: 15px;">
+      <div class="divider" style="padding: 10px;">
+        <!--全局设置======================================================================================-->
+        <template v-if="tlTopIndex == -1">
+          <!--画布大小-->
+          <div class="c-layer-title">
+            <span class="prop-name">画布大小</span>
+          </div>
+          <div style="padding-left: 15px;">
+              <table cellspacing="0" cellpadding="0" style="width: 100%;">
+                <tr>
+                  <td style="width: 8em;">宽</td>
+                  <td colspan="2">
+                    <num-resize
+                      v-model="projectWidth"
+                      @start="startSetValue"
+                      :min="100"
+                      :max="1280">
+                      <span >
+                        {{ projectWidth }}
+                      </span>
+                    </num-resize>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width: 8em;">高</td>
+                  <td colspan="2">
+                    <num-resize
+                      v-model="projectHeight"
+                      @start="startSetValue"
+                      :min="100"
+                      :max="1280"
+                      @change="">
+                      <span >
+                        {{ projectHeight }}
+                      </span>
+                    </num-resize>
+                  </td>
+                </tr>
+              </table>
+          </div>
+
+          <div class="c-layer-title">
+            <span class="prop-name">背景颜色</span>
+          </div>
+          <div style="padding-left: 15px;">
+            <color-picker title="颜色" v-model="bgColor" :showTitle="false" @start="startSetValue">
+            </color-picker>
+          </div>
+
+        </template>
+        <!--{{ cLayer.type }}-->
+
+        <!--图片类型==================================================================================-->
+        <template v-if="cLayer.type=='image'">
+          <!--图片-->
+          <div class="c-layer-title">
+            <span class="prop-name">图片</span>
+          </div>
+          <div style="padding-left: 15px;">
+            <mask-replace
+              :text="'选择图片'"
+              :showImageUpload="true"
+              @select="bgImageSelect"
+              @change="imageChange(0, $event)"
+            >
+              <img v-if="cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
+            </mask-replace>
+          </div>
+          <!--投影-->
+          <div class="c-layer-title">
+            <span class="prop-name">投影</span>
+          </div>
+          <div style="padding-left: 15px;">
             <table cellspacing="0" cellpadding="0" style="width: 100%;">
               <tr>
-                <td style="width: 8em;">宽</td>
+                <td style="width: 8em;">offsetX</td>
                 <td colspan="2">
                   <num-resize
-                    v-model="projectWidth"
+                    v-model="shadowOffsetX"
                     @start="startSetValue"
-                    :min="100"
-                    :max="1280">
+                    @change="initChange({type:'shadowOffsetX',value: shadowOffsetX})">
                     <span >
-                      {{ projectWidth }}
+                      {{ shadowOffsetX }}
+                    </span>
+                  </num-resize>
+                  <input type="number" v-if="false" v-model="shadowOffsetX" @change="initChange({type:'shadowOffsetX',value: shadowOffsetX})">
+                </td>
+              </tr>
+              <tr>
+                <td>offsetY</td>
+                <td colspan="2">
+                  <num-resize
+                    v-model="shadowOffsetY"
+                    @start="startSetValue"
+                    @change="initChange({type:'shadowOffsetY',value: shadowOffsetY})">
+                    <span >
+                      {{ shadowOffsetY }}
+                    </span>
+                  </num-resize>
+                  <input type="number" v-if="false" v-model="shadowOffsetY" @change="initChange({type:'shadowOffsetY',value: shadowOffsetY})">
+                </td>
+              </tr>
+              <tr>
+                <td>blur</td>
+                <td colspan="2">
+                  <num-resize
+                    v-model="shadowBlur"
+                    @start="startSetValue"
+                    @change="initChange({type:'shadowBlur',value: shadowBlur})">
+                    <span >
+                      {{ shadowBlur }}
+                    </span>
+                  </num-resize>
+                  <input type="number" v-if="false" v-model="shadowBlur" @change="initChange({type:'shadowBlur',value: shadowBlur})">
+                </td>
+              </tr>
+              <tr>
+                <td>color</td>
+                <td v-if="false">
+                  <div class="color-dot" :style="{backgroundColor: shadowColor}"></div>&nbsp;
+                </td>
+                <td colspan="2">
+                  <color-picker title="颜色" v-model="shadowColor" :showTitle="false" @start="startSetValue"></color-picker>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+        </template>
+
+
+        <!--文本类型=====================================================================================-->
+        <template v-if="cLayer.type=='text'">
+          <!--文本-->
+          <div class="c-layer-title">
+            <span class="prop-name">文本</span>
+          </div>
+          <div style="padding-left: 15px;">
+            <textarea v-model="text" @change="textChange" name="" id="text-textarea" class="scrollbar-overwrite" cols="30" rows="10" style="width: 100%;">
+            </textarea>
+          </div>
+          <!--文本颜色-->
+          <!--<div class="c-layer-title">
+            <span>颜色</span>
+          </div>-->
+          <div class="c-layer-title">
+            <span class="prop-name">颜色</span>
+          </div>
+          <div style="padding-left: 15px;">
+            <color-picker title="颜色" v-model="color" :showTitle="false" @start="startSetValue">
+            </color-picker>
+          </div>
+          <!--字体-->
+          <div class="c-layer-title">
+            <span class="prop-name">字体</span>
+          </div>
+          <div style="padding-left: 15px;">
+            <select name="" id="" v-model="fontFamily" style="background-color:#57595a;color:white;border-radius:2px;">
+              <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
+            </select>
+          </div>
+        </template>
+        
+        <!--形状类型======================================================================================-->
+        <template v-if="cLayer.type=='shape'">
+          
+          <div class="c-layer-title">
+            <span class="prop-name">形状类型</span>
+          </div>
+          <div style="padding-left: 15px;">
+            <select name="" id="" v-model="shapeType" style="background-color:#57595a;color:white;border-radius:2px;">
+              <option value="polyStar">polyStar</option>
+              <option value="circle">circle</option>
+              <option value="rect">rect</option>
+            </select>
+          </div>
+          <div class="c-layer-title">
+            <span class="prop-name">形状属性</span>
+          </div>
+          <div style="padding-left: 15px;">
+            <!--形状属性 多边形-->
+            <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="shapeType == 'polyStar'">
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">边数</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="sides"
+                    :min="3"
+                    :max="100"
+                  >
+                    <span >
+                      {{ sides }}
                     </span>
                   </num-resize>
                 </td>
               </tr>
+              <!--内陷-->
               <tr>
-                <td style="width: 8em;">高</td>
-                <td colspan="2">
+                <td style="width: 8em;">
+                  <span class="prop-name-x">内陷</span>
+                </td>
+                <td>
                   <num-resize
-                    v-model="projectHeight"
-                    @start="startSetValue"
-                    :min="100"
-                    :max="1280"
-                    @change="">
+                    v-model="pointSize"
+                    :stepScale="0.01"
+                    :min="0"
+                    :max="1"
+                  >
                     <span >
-                      {{ projectHeight }}
+                      {{ pointSize }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <!--半径-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">半径</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="radius"
+                    :min="0"
+                    :max="10000"
+                  >
+                    <span >
+                      {{ radius }}
                     </span>
                   </num-resize>
                 </td>
               </tr>
             </table>
-        </div>
+            <!--形状属性 多边形-->
+            <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="shapeType == 'circle'">
+              
+              <!--半径-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">半径</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="radius"
+                    :min="0"
+                    :max="10000"
+                  >
+                    <span >
+                      {{ radius }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+            </table>
 
-        <div class="c-layer-title">
-          <span class="prop-name">背景颜色</span>
-        </div>
-        <div style="padding-left: 15px;">
-          <color-picker title="颜色" v-model="bgColor" :showTitle="false" @start="startSetValue">
-          </color-picker>
-        </div>
+            <!--形状属性 四边形-->
+            <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="shapeType == 'rect'">
+              
+              <!--半径-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">圆角半径</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="rRadius"
+                    :min="0"
+                    :max="10000"
+                  >
+                    <span >
+                      {{ rRadius }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <!--宽-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">width</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="rWidth"
+                    :min="0"
+                    :max="10000"
+                  >
+                    <span >
+                      {{ rWidth }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <!--半径-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">height</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="rHeight"
+                    :min="0"
+                    :max="10000"
+                  >
+                    <span >
+                      {{ rHeight }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+            </table>
+            
 
-      </template>
-      <!--{{ cLayer.type }}-->
-
-      <!--图片类型-->
-      <template v-if="cLayer.type=='image'">
-        <!--图片-->
-        <div class="c-layer-title">
-          <span class="prop-name">图片</span>
-        </div>
-        <div style="padding-left: 15px;">
-          <mask-replace
-            :text="'选择图片'"
-            :showImageUpload="true"
-            @select="bgImageSelect"
-            @change="imageChange(0, $event)"
-          >
-            <img v-if="cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
-          </mask-replace>
-        </div>
-        <!--投影-->
-        <div class="c-layer-title">
-          <span class="prop-name">投影</span>
-        </div>
-        <div style="padding-left: 15px;">
-          <table cellspacing="0" cellpadding="0" style="width: 100%;">
-            <tr>
-              <td style="width: 8em;">offsetX</td>
-              <td colspan="2">
-                <num-resize
-                  v-model="shadowOffsetX"
-                  @start="startSetValue"
-                  @change="initChange({type:'shadowOffsetX',value: shadowOffsetX})">
-                  <span >
-                    {{ shadowOffsetX }}
-                  </span>
-                </num-resize>
-                <input type="number" v-if="false" v-model="shadowOffsetX" @change="initChange({type:'shadowOffsetX',value: shadowOffsetX})">
-              </td>
-            </tr>
-            <tr>
-              <td>offsetY</td>
-              <td colspan="2">
-                <num-resize
-                  v-model="shadowOffsetY"
-                  @start="startSetValue"
-                  @change="initChange({type:'shadowOffsetY',value: shadowOffsetY})">
-                  <span >
-                    {{ shadowOffsetY }}
-                  </span>
-                </num-resize>
-                <input type="number" v-if="false" v-model="shadowOffsetY" @change="initChange({type:'shadowOffsetY',value: shadowOffsetY})">
-              </td>
-            </tr>
-            <tr>
-              <td>blur</td>
-              <td colspan="2">
-                <num-resize
-                  v-model="shadowBlur"
-                  @start="startSetValue"
-                  @change="initChange({type:'shadowBlur',value: shadowBlur})">
-                  <span >
-                    {{ shadowBlur }}
-                  </span>
-                </num-resize>
-                <input type="number" v-if="false" v-model="shadowBlur" @change="initChange({type:'shadowBlur',value: shadowBlur})">
-              </td>
-            </tr>
-            <tr>
-              <td>color</td>
-              <td v-if="false">
-                <div class="color-dot" :style="{backgroundColor: shadowColor}"></div>&nbsp;
-              </td>
-              <td colspan="2">
-                <color-picker title="颜色" v-model="shadowColor" :showTitle="false" @start="startSetValue"></color-picker>
-              </td>
-            </tr>
-          </table>
-        </div>
-
-      </template>
-
-
-      <!--文本类型-->
-      <template v-if="cLayer.type=='text'">
-        <!--文本-->
-        <div class="c-layer-title">
-          <span class="prop-name">文本</span>
-        </div>
-        <div style="padding-left: 15px;">
-          <textarea v-model="text" @change="textChange" name="" id="text-textarea" class="scrollbar-overwrite" cols="30" rows="10" style="width: 100%;">
-          </textarea>
-        </div>
-        <!--文本颜色-->
-        <!--<div class="c-layer-title">
-          <span>颜色</span>
-        </div>-->
-        <div class="c-layer-title">
-          <span class="prop-name">颜色</span>
-        </div>
-        <div style="padding-left: 15px;">
-          <color-picker title="颜色" v-model="color" :showTitle="false" @start="startSetValue">
-          </color-picker>
-        </div>
-        <!--字体-->
-        <div class="c-layer-title">
-          <span class="prop-name">字体</span>
-        </div>
-        <div style="padding-left: 15px;">
-          <select name="" id="" v-model="fontFamily" style="background-color:#57595a;color:white;border-radius:2px;">
-            <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
-          </select>
-        </div>
-
-      </template>
-
-      <template v-if="currentTween&&hasProps&&cLayer.type">
-      <!--节点-->
-      <div class="c-layer-title">
-        <span class="prop-name">节点</span>
+          </div>
+        </template>
       </div>
-      <div style="padding-left: 15px;">
 
-        <!--节点的属性值-->
-        <table cellspacing="0" cellpadding="0" style="width:100%;">
-          <tr>
-            <td style="width: 8em;">
-              <span class="prop-name-x">缓动</span>
-            </td>
-            <td>
-              <select name="" id="" v-model="ease" style="background-color:#57595a;color:white;border-radius:2px;">
-                <option value="" v-for="item,index in eases" :value="item.value">{{ item.name }}</option>
-              </select>
-            </td>
-          </tr>
-          <!--x-->
-          <tr>
-            <td>
-              <span class="prop-name-x">x</span>
-            </td>
-            <td>
-              <num-resize
-                v-model="x"
-                @start="startSetValue"
-                @change="change({type:'x',value: x})">
-                <span >
-                  {{ x }}
-                </span>
-              </num-resize>
-              <input type="number" v-if="false" v-model="x" @change="change({type:'x',value: x})">
-            </td>
-          </tr>
-          <!--y-->
-          <tr>
-            <td>
-              <span class="prop-name-x">y</span>
-            </td>
-            <td>
-              <num-resize
-                v-model="y"
-                @start="startSetValue"
-                @change="change({type:'y',value: y})">
-                <span>
-                  {{ y }}
-                </span>
-              </num-resize>
-            </td>
-          </tr>
-          <!--scaleX-->
-          <tr>
-            <td>
-              <span class="prop-name-x">scaleX</span>
-            </td>
-            <td>
-              <num-resize
-                v-model="scaleX"
-                :stepScale="0.01"
-                @start="startSetValue"
-                @change="change({type:'scaleX',value: scaleX})">
-                <span>
-                  {{ scaleX }}
-                </span>
-              </num-resize>
-            </td>
-          </tr>
-          <!--scaleY-->
-          <tr>
-            <td>
-              <span class="prop-name-x">scaleY</span>
-            </td>
-            <td>
-              <num-resize
-                v-model="scaleY"
-                :stepScale="0.01"
-                @start="startSetValue"
-                @change="change({type:'scaleY',value: scaleY})">
-                <span>
-                  {{ scaleY }}
-                </span>
-              </num-resize>
-            </td>
-          </tr>
-          <!--rotation-->
-          <tr>
-            <td>
-              <span class="prop-name-x">
-                rotation
-              </span>
-            </td>
-            <td>
-              <num-resize
-                v-model="rotation"
-                :stepScale="1"
-                @start="startSetValue"
-                @change="change({type:'rotation',value: rotation})">
-                <span>
-                  {{ rotation }}
-                </span>
-              </num-resize>
-            </td>
-          </tr>
-          <!--alpha-->
-          <tr>
-            <td>
-              <span  class="prop-name-x">
-                alpha
-              </span>
-            </td>
-            <td>
-              <num-resize
-                v-model="alpha"
-                :stepScale="0.01"
-                :max="1"
-                :min="0"
-                @start="startSetValue"
-                @change="change({type:'alpha',value: alpha})">
-                <span>
-                  {{ alpha }}
-                </span>
-              </num-resize>
-            </td>
-          </tr>
-        </table>
+      <div class="divider" style="padding: 10px;" v-if="currentTween&&hasProps&&cLayer.type">
+        <!--属性节点=================================================================================-->
+        <template >
+          <!--节点-->
+          <div class="c-layer-title">
+            <span class="prop-name">节点</span>
+          </div>
+          <div style="padding-left: 15px;">
+
+            <!--节点的属性值-->
+            <table cellspacing="0" cellpadding="0" style="width:100%;">
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">缓动</span>
+                </td>
+                <td>
+                  <select name="" id="" v-model="ease" style="background-color:#57595a;color:white;border-radius:2px;">
+                    <option value="" v-for="item,index in eases" :value="item.value">{{ item.name }}</option>
+                  </select>
+                </td>
+              </tr>
+              <!--x-->
+              <tr>
+                <td>
+                  <span class="prop-name-x">x</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="x"
+                    @start="startSetValue"
+                    @change="change({type:'x',value: x})">
+                    <span >
+                      {{ x }}
+                    </span>
+                  </num-resize>
+                  <input type="number" v-if="false" v-model="x" @change="change({type:'x',value: x})">
+                </td>
+              </tr>
+              <!--y-->
+              <tr>
+                <td>
+                  <span class="prop-name-x">y</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="y"
+                    @start="startSetValue"
+                    @change="change({type:'y',value: y})">
+                    <span>
+                      {{ y }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <!--scaleX-->
+              <tr>
+                <td>
+                  <span class="prop-name-x">scaleX</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="scaleX"
+                    :stepScale="0.01"
+                    @start="startSetValue"
+                    @change="change({type:'scaleX',value: scaleX})">
+                    <span>
+                      {{ scaleX }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <!--scaleY-->
+              <tr>
+                <td>
+                  <span class="prop-name-x">scaleY</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="scaleY"
+                    :stepScale="0.01"
+                    @start="startSetValue"
+                    @change="change({type:'scaleY',value: scaleY})">
+                    <span>
+                      {{ scaleY }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <!--rotation-->
+              <tr>
+                <td>
+                  <span class="prop-name-x">
+                    rotation
+                  </span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="rotation"
+                    :stepScale="1"
+                    @start="startSetValue"
+                    @change="change({type:'rotation',value: rotation})">
+                    <span>
+                      {{ rotation }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <!--alpha-->
+              <tr>
+                <td>
+                  <span  class="prop-name-x">
+                    alpha
+                  </span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="alpha"
+                    :stepScale="0.01"
+                    :max="1"
+                    :min="0"
+                    @start="startSetValue"
+                    @change="change({type:'alpha',value: alpha})">
+                    <span>
+                      {{ alpha }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </template>
       </div>
-      </template>
      <!-- 
       <hr>
       {{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}{{ cTween }}
@@ -440,6 +597,84 @@ export default {
     },
     fontsList() {
       return fontsList;
+    },
+    // =======
+    shapeType: {
+      get() {
+        return this.cLayer.graphics && this.cLayer.graphics.type;
+      },
+      set(val) {
+        this.as();
+        this.cLayer.graphics.type = val;
+        this.updateShape();
+      }
+    },
+    // 半径
+    radius: {
+      get() {
+        return this.cLayer.graphics && this.cLayer.graphics.radius;
+      },
+      set(val) {
+        this.as();
+        this.cLayer.graphics.radius = val;
+        this.updateShape();
+      }
+    },
+    // 圆角半径
+    rRadius: {
+      get() {
+        return this.cLayer.graphics && this.cLayer.graphics.rRadius;
+      },
+      set(val) {
+        this.as();
+        this.cLayer.graphics.rRadius = val;
+        this.updateShape();
+      }
+    },
+    // rect width
+    rWidth: {
+      get() {
+        return this.cLayer.graphics && this.cLayer.graphics.w;
+      },
+      set(val) {
+        this.as();
+        this.cLayer.graphics.w = val;
+        this.updateShape();
+      }
+    },
+    // rect height
+    rHeight: {
+      get() {
+        return this.cLayer.graphics && this.cLayer.graphics.h;
+      },
+      set(val) {
+        this.as();
+        this.cLayer.graphics.h = val;
+        this.updateShape();
+      }
+    },
+
+    // 边数
+    sides: {
+      get() {
+        return this.cLayer.graphics && this.cLayer.graphics.sides;
+      },
+      set(val) {
+        this.as();
+        this.cLayer.graphics.sides = parseInt(val);
+        this.updateShape();
+      }
+    },
+    // 内陷
+    pointSize: {
+      get() {
+        return this.cLayer.graphics && this.cLayer.graphics.pointSize;
+      },
+      set(val) {
+        this.as();
+        this.cLayer.graphics.pointSize = val;
+        this.updateShape();
+      }
     },
     // 当前属性==================================================================
     props() {
@@ -610,6 +845,40 @@ export default {
     // 添加历史记录
     as() {
       this.$store.dispatch('addStep');
+    },
+    updateShape() {
+      let {radius, type} = this.cLayer.graphics;
+      // 圆形
+      if(type == 'circle') {
+        this.target.graphics.clear().f('red').drawCircle(0, 0, radius);
+        this.target.setBounds(
+          0,
+          0,
+          radius * 2,
+          radius * 2
+        );
+      // 多边形
+      } else if(type =='polyStar'){
+        let {sides, pointSize, angle} = this.cLayer.graphics;
+        this.target.graphics.clear().f('red').drawPolyStar(0, 0, radius, sides, pointSize, angle);
+        this.target.setBounds(
+          0,
+          0,
+          radius * 2,
+          radius * 2
+        );
+        // 四边形
+      } else if(type == 'rect') {
+        let {w, h, rRadius} = this.cLayer.graphics;
+        this.target.graphics.clear().f('red').drawRoundRect(-w / 2, -h / 2, w, h, rRadius);
+        this.target.setBounds(
+          0,
+          0,
+          w,
+          h
+        );
+      }
+      
     }
   },
   created() {
@@ -639,7 +908,7 @@ export default {
     background: #484a4b;
   }
   #setting-options-content{
-    padding: 10px;
+    // padding: 10px;
     height: 100%;
     overflow: auto;
     -webkit-user-select: none;
@@ -698,6 +967,20 @@ export default {
     width: 15px;
     height: 15px;
     border-radius:50%;
+  }
+
+  .divider{
+    border-bottom: 1px solid #181818;
+    position: relative;
+  }
+  .divider:after{
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #484a4b;
   }
   
 </style>

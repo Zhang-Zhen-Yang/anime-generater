@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-03 17:38:14
+ * @Last Modified time: 2019-04-04 14:12:43
  */
 
  // 时间轴组件
@@ -243,7 +243,12 @@ const store = {
       rootState.project.layers.push(newLayer);
       let layerLength = rootState.project.layers.length;
       let item = rootState.project.layers[layerLength - 1];
-      canvasRender.addLayer({parentType: 'root', parent: window.stage, item,project: rootState.project,timeline: rootState.timeline});
+      canvasRender.addLayer({
+        parentType: 'root',
+        parent: window.stage,
+        item,project: rootState.project,
+        timeline: rootState.timeline
+      });
     },
     // 删除图层
     removeLayer({state, rootState,commit,dispatch}, {}) {
@@ -543,8 +548,8 @@ const store = {
         let distObj = {
           project: obj,
         };
-        console.log(JSON.stringify(distObj));
-        console.log(state.undoList[state.undoList.length - 1]);
+        // console.log(JSON.stringify(distObj));
+        // console.log(state.undoList[state.undoList.length - 1]);
         if(state.undoList.length > 0 && (JSON.stringify(distObj) == JSON.stringify(state.undoList[state.undoList.length - 1]))) {
           return 
         }

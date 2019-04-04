@@ -218,8 +218,8 @@ let obj = {
 
     // 方形
     if (type === 'rect') {
-      let {w, h, radius = 0} = graphics;
-      shape.graphics.f(fill).drawRoundRect(0, 0, w, h, radius);
+      let {w, h, radius = 0, rRadius = 0} = graphics;
+      shape.graphics.f(fill).drawRoundRect(-w / 2, -h / 2, w, h, rRadius);
       shape.setBounds(
         0,
         0,

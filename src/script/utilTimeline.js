@@ -55,7 +55,10 @@ let Object = {
             return;
         } else {
             for(var i in obj){
-                if (i == 'obj' || i == 'tweenObj') continue; 
+                if (i == 'obj' || i == 'tweenObj') {
+                    newobj[i] = '';
+                    continue;
+                }  
                 newobj[i] = typeof obj[i] === 'object' ? 
                 Object.cloneObj(obj[i]) : obj[i]; 
             }

@@ -27,7 +27,7 @@ export default {
     style() {
       return {
         left: this.contextMenu.x + 'px',
-        top: this.contextMenu.y - 58 + 'px',
+        top: this.contextMenu.y - 88 + 'px',
       }
     },
     

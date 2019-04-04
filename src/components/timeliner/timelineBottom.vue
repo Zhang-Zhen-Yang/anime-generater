@@ -21,13 +21,17 @@ export default {
       msg: 'timeline-bottom',
       menuItems:  [
         {
-          label: '新建图片层',
+          label: '新建图片图层',
           value: 'image',
         },
         {
-          label: '新建文本层',
+          label: '新建文本图层',
           value: 'text',
         },
+        {
+          label: '新建形状图层',
+          value: 'shape',
+        }
       ]
     }
   },
