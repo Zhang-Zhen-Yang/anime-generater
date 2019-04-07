@@ -1,3 +1,5 @@
+import { create } from "domain";
+import util from './util.js';
 let Object = {
     // 通过UUID获取 对象
     getObjByUUID({parent,UUID}) {
@@ -39,12 +41,22 @@ let Object = {
         return currentLayer ? currentLayer.UUID : null;
     },
     // 获取当前对象的值
-    getCurrentProps({obj}) {
+    getCurrentProps({project, obj}) {
         let props = {};
-        let propItems = ['x', 'y', 'alpha', 'scaleX', 'scaleY','rotation'];
+        let propItems = ['x', 'y', 'alpha', 'scaleX', 'scaleY', 'rotation'];
+        let initScale = 1;
+        if(obj instanceof createjs.Bitmap) {
+            initScale = util.getImageScale({img: obj.image, cw: project.width, ch: project.height,type: 'cover'})
+        }
         if(obj) {
             propItems.forEach((item, index)=>{
-                props[item] = obj[item];
+                
+                if(item == 'scaleX' || item == 'scaleY') {
+                    props[item] = obj[item] / initScale;
+
+                } else {
+                    props[item] = obj[item];
+                }
             })
         }
         return props;
@@ -87,6 +99,16 @@ let Object = {
                 })
             }
         })
+    },
+    // 通过时间点来判断缓动应该添加到什么位置
+    getIndexByPosition({currentLayer, position}) {
+        let index = 0;
+        (currentLayer.tween || []).forEach((tween, tindex)=>{
+            if(position > tween.time) {
+                index = tindex;
+            }
+        })
+        return index;
     }
 }
 export default Object;

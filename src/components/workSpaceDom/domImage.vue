@@ -146,14 +146,17 @@ export default {
       .resizable({
         handles: 's,n,e,w,se,sw,ne,nw',
         aspectRatio: true,
+        // 开始调整大小
         start: (e, ui) => {
+          this.as();
+          this.c();
           console.log(ui);
           this.resizeStartRStyle = JSON.parse(JSON.stringify(this.resizeStyle));
           this.resizeStartDStyle = JSON.parse(JSON.stringify(this.dragStyle));
           this.resizing = true;
         },
         stop: (e,ui) => {
-          this.as();
+          
           this.resizing = false;
           let pScaleX = 1;
           let pScaleY = 1;
@@ -211,10 +214,11 @@ export default {
       })// 可旋转
       .rotatable({
         start: ()=>{
-
+          this.as();
+          this.c();
         },
         stop: (e, ui) => {
-          this.as();
+          
           let degrees = ui.angle.current / Math.PI * 180;
           if(degrees >= 0) {
             degrees -= 360;
@@ -253,10 +257,11 @@ export default {
       $(this.domImageD).draggable({
         cancel: this.isSub? '' : 'dom-image-d-sub', // 如果不是container 下的元素，阻止拖动
         start: (e, ui)=>{
-
+          this.as();
+          this.c();
         },
         stop: (e, ui)=>{
-          this.as();
+          
           let pScaleX = 1;
           let pScaleY = 1;
           if(this.isSub) {
@@ -303,6 +308,9 @@ export default {
         this.$store.state.tl.subIndex = -1;
       }      
       // alert('ddd');
+    },
+    c() {
+      this.$store.dispatch('checkAddTweenIf');
     }
   },
   created() {

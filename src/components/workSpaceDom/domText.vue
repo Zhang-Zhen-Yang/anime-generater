@@ -154,12 +154,13 @@ export default {
         aspectRatio: true,
         start: (e, ui) => {
           console.log(ui);
+          this.as();
+          this.c();
           this.resizeStartRStyle = JSON.parse(JSON.stringify(this.resizeStyle));
           this.resizeStartDStyle = JSON.parse(JSON.stringify(this.dragStyle));
           this.resizing = true;
         },
         stop: (e,ui) => {
-          this.as();
           this.resizing = false;
           let pScaleX = 1;
           let pScaleY = 1;
@@ -216,10 +217,10 @@ export default {
       })// 可旋转
       .rotatable({
         start: ()=>{
-
+          this.as();
+          this.c();
         },
         stop: (e, ui) => {
-          this.as();
           let degrees = ui.angle.current / Math.PI * 180;
           if(degrees >= 0) {
             degrees -= 360;
@@ -257,10 +258,10 @@ export default {
       // 可拖动
       $(this.domTextD).draggable({
         start: (e, ui)=>{
-
+          this.as();
+          this.c();
         },
         stop: (e, ui)=>{
-          this.as();
           let pScaleX = 1;
           let pScaleY = 1;
           if(this.isSub) {
@@ -305,6 +306,9 @@ export default {
         this.$store.state.tl.topIndex = this.index;
         this.$store.state.tl.subIndex = -1;
       }  
+    },
+    c() {
+      this.$store.dispatch('checkAddTweenIf');
     }
   },
   created() {

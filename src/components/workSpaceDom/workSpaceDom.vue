@@ -1,3 +1,4 @@
+// 根据stage 中的元素来同步显示dom元素
 <template>
   <div id="work-space-dom" :style="stageStyle">
     <!--{{ stage }}-->

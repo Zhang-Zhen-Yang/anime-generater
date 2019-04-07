@@ -1,7 +1,7 @@
 <template>
   <block-slice slot="e" dir="vertical" :staticIndex="0" :staticValue="35 + 'px'">
     <div id="setting-options-title" slot="s">
-      设置
+      设置{{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}
     </div>
     <div id="setting-options-content" slot="e">
       <div class="divider" style="padding: 10px;">
@@ -350,7 +350,7 @@
                 <td>
                   <num-resize
                     v-model="x"
-                    @start="startSetValue"
+                    @start="propStartSetValue"
                     @change="change({type:'x',value: x})">
                     <span >
                       {{ x }}
@@ -367,7 +367,7 @@
                 <td>
                   <num-resize
                     v-model="y"
-                    @start="startSetValue"
+                    @start="propStartSetValue"
                     @change="change({type:'y',value: y})">
                     <span>
                       {{ y }}
@@ -384,7 +384,7 @@
                   <num-resize
                     v-model="scaleX"
                     :stepScale="0.01"
-                    @start="startSetValue"
+                    @start="propStartSetValue"
                     @change="change({type:'scaleX',value: scaleX})">
                     <span>
                       {{ scaleX }}
@@ -401,7 +401,7 @@
                   <num-resize
                     v-model="scaleY"
                     :stepScale="0.01"
-                    @start="startSetValue"
+                    @start="propStartSetValue"
                     @change="change({type:'scaleY',value: scaleY})">
                     <span>
                       {{ scaleY }}
@@ -420,7 +420,7 @@
                   <num-resize
                     v-model="rotation"
                     :stepScale="1"
-                    @start="startSetValue"
+                    @start="propStartSetValue"
                     @change="change({type:'rotation',value: rotation})">
                     <span>
                       {{ rotation }}
@@ -441,7 +441,7 @@
                     :stepScale="0.01"
                     :max="1"
                     :min="0"
-                    @start="startSetValue"
+                    @start="propStartSetValue"
                     @change="change({type:'alpha',value: alpha})">
                     <span>
                       {{ alpha }}
@@ -464,6 +464,7 @@
 
 <script>
 import util from '../../script/util';
+import utilTimeline from '../../script/utilTimeline';
 import fontsList from '../../script/fontsList';
 import eases from '../../script/eases';
 export default {
@@ -484,11 +485,19 @@ export default {
     topIndex() {
 
     },
+    tweenIndex() {
+      return this.tl.tweenIndex;
+    },
     layers() {
       return this.$store.state.project.layers;
     },
+    currentLayer() {
+      let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
+      return currentLayer;
+    },
     currentTween() {
-      return this.tl.currentTween;
+      // alert(this.currentLayer);
+      return this.currentLayer ? this.currentLayer.tween[this.tl.tweenIndex] : null;
     },
     hasProps() {
       return this.currentTween ? this.currentTween.props : null;
@@ -831,6 +840,7 @@ export default {
     change({type, value}) {
       // alert([type, value]);
       if (!this.target) return;
+      
       this.$store.dispatch('propsChange', {target: this.target, currentLayer: this.cLayer});
     },
     textChange(e){
@@ -840,6 +850,11 @@ export default {
     startSetValue() {
       // alert('dd');
       this.as();
+      this.$store.dispatch('startSetValue');
+    },
+    propStartSetValue() {
+      this.as();
+      this.$store.dispatch('checkAddTweenIf');
       this.$store.dispatch('startSetValue');
     },
     // 添加历史记录

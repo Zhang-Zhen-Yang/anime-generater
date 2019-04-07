@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-04 14:12:43
+ * @Last Modified time: 2019-04-07 09:58:23
  */
 
  // 时间轴组件
@@ -59,7 +59,7 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
-    // 更新位置
+    // 更新图层的位置
 		swipeChild({rootState, state, commit, dispatch}, {fromIndex, fromSubIndex=-1, toIndex, toSubIndex=-1,position}) {
       if(fromIndex == toIndex && fromSubIndex == toSubIndex) {
         return;
@@ -405,6 +405,25 @@ const store = {
       window.timeline.addTween(tween);
       // alert(window.timeline._tweens.length);
     },
+    // 检测是否应该添加缓节点
+    checkAddTweenIf({state,rootState,dispatch}) {
+      console.log('================================================check');
+      let currentPosition = window.timeline.position;
+      let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
+      let currentTween = currentLayer.tween[state.tweenIndex] || null;
+      if(currentTween) {
+        let time = currentTween.time;
+        if(Math.abs(time - currentPosition) >= 0.02) {
+          console.log([time, currentPosition, '=========================================']);
+          // alert('ddd');
+          dispatch('addTween', {
+            topIndex: state.topIndex,
+            subIndex: state.subIndex,
+            position: currentPosition
+          });
+        }
+      }
+    },
     // 添加缓动
     addTween({state,rootState,dispatch},{topIndex, subIndex, position}) {
       dispatch('addStep');
@@ -419,7 +438,9 @@ const store = {
       let currentUUID = utilTimeline.getCurrentUUID({rootState: rootState});
       let currentObj = utilTimeline.getObjByUUID({parent: window.stage,UUID: currentUUID});
       console.log(currentUUID);
+      // 如果添加的位置在总时长后面
       if(position > rootState.timeline.duration) {
+        // 最后一个缓动
         let lastTween = currentLayer.tween[currentLayer.tween.length - 1];
         if(lastTween) {
           currentLayer.tween.push({
@@ -443,18 +464,22 @@ const store = {
             ease: 'linear'
           })
         }
-        
+        dispatch('updateTween', {topIndex, subIndex});
       } else {
         rootState.timeline.gotoAndStop(position);
-        let newProps = utilTimeline.getCurrentProps({obj: currentObj});
-        currentLayer.tween.push({
+        let newProps = utilTimeline.getCurrentProps({project: rootState.project, obj: currentObj});
+        let positionIndex = utilTimeline.getIndexByPosition({currentLayer, position});
+        // alert(positionIndex);
+        currentLayer.tween.splice(positionIndex + 1, 0, {
           action: 'to',
           props: newProps,
           time: position
         })
+        dispatch('updateTween', {topIndex, subIndex});
+        state.tweenIndex = positionIndex + 1;
         // console.log(newProps);
       }
-      dispatch('updateTween', {topIndex, subIndex});
+      
     },
     // 删除当前缓动
     removeTween({state,rootState,dispatch}) {
