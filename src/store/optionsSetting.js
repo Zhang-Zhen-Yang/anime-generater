@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-03 16:19:34
+ * @Last Modified time: 2019-04-12 15:02:33
  */
 
  // 时间轴组件
@@ -81,14 +81,16 @@ const store = {
 		imageChange({state, rootState,commit,dispatch}, {img}) {
       dispatch('addStep');
       let has = false;
-      for(let i in window.localImages) {
-        if(window.localImages[i] == img) {
-          has = true;
+      if(img.indexOf('data:image/')) {
+        for(let i in window.localImages) {
+          if(window.localImages[i] == img) {
+            has = true;
+          }
         }
-      }
-      if(!has) {
-        let UUID = new util.getUUID().id;
-        window.localImages[UUID] = img;
+        if(!has) {
+          let UUID = new util.getUUID().id;
+          window.localImages[UUID] = img;
+        }
       }
 
       console.log('window.localImages', Object.keys(window.localImages).length);

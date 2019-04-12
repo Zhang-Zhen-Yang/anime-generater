@@ -1,9 +1,10 @@
 var path = require('path')
 var webpack = require('webpack')
+var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 module.exports = {
   entry: {
-    build: './src/main.js',
+    'anime.build': './src/main.js',
     // timeliner: './script/timeliner/timeliner.js',
   },
   output: {
@@ -94,6 +95,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports.devtool = '#source-map'
   // http://vue-loader.vuejs.org/en/workflow/production.html
   module.exports.plugins = (module.exports.plugins || []).concat([
+    new CaseSensitivePathsPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"'

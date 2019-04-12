@@ -1,9 +1,10 @@
 /*
  * @Author: zhangzhenyang 
- * @Date: 2019-02-01 09:47:25
- * @Last Modified by: zhangzhenyang
- * @Last Modified time: yyyy-02-dd 09:47:59
+ * @Date: 2019-02-23 08:54:51 
+ * @Last Modified by:   zhangzhenyang 
+ * @Last Modified time: 2019-02-23 08:54:51 
  */
+
 
 import http from '../script/http';
 import api from '../script/api';
@@ -13,7 +14,6 @@ import Vue from 'vue';
 const store = {
 	state: {
 		show: false,
-		step: 2,
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -25,9 +25,7 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
-		setLoadingMask({rootState, state}, {show, text ='上传中···'}) {
-			rootState.dialogDownload.uploading = show;
-		}
+		
 		
 	}// end actions 
 }

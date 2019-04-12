@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @click="appClick">
+  <div id="app" @click="appClick" @dragover="dragover" @drop="drop">
     <block-slice :staticIndex="0" :staticValue="'56px'">
       <!--头部-->
       <topBar slot="s"></topBar>
@@ -27,7 +27,9 @@
       </block-slice>
     </block-slice>
     <dialogGenerate v-if="dialogGenerate.show"></dialogGenerate>
+    <dialogImage v-if="dialogImage.show"></dialogImage>
     <dialogDownload v-show="dialogDownload.show"></dialogDownload>
+    <dialogLoading v-if="uploading"></dialogLoading>
     <contextMenu></contextMenu>
   </div>
 </template>
@@ -37,13 +39,15 @@ import topBar from './components/topBar.vue';
 import timeliner from './components/timeliner/timeliner.vue';
 import settingOptions from './components/settingOptions/settingOptions.vue';
 import workSpace from './components//workSpace.vue';
+import dialogImage from './components/dialogImage/dialogImage';
 import dialogGenerate from './components/dialogGenerate/dialogGenerate';
 import dialogDownload from './components/dialogDownload/dialogDownload';
+import dialogLoading from './components/dialogLoading/dialogLoading';
 import contextMenu from './components/contextMenu';
 import undoredo from './components/undoredo.vue';
 export default {
   name: 'app',
-  components: {timeliner, settingOptions, topBar, workSpace, dialogGenerate, dialogDownload, contextMenu, undoredo},
+  components: {timeliner, settingOptions, topBar, workSpace, dialogGenerate, dialogLoading, dialogImage, dialogDownload, contextMenu, undoredo},
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -54,12 +58,19 @@ export default {
     }
   },
   computed:{
+    dialogImage() {
+      return this.$store.state.dialogImage;
+    },
     dialogGenerate() {
       return this.$store.state.dialogGenerate;
     },
     dialogDownload() {
       return this.$store.state.dialogDownload;
     },
+    // 是否在上传
+    uploading() {
+      return this.$store.state.dialogDownload.uploading;
+    }
   },
   methods: {
     // 键盘事件
@@ -69,6 +80,30 @@ export default {
     // 全局点击
     appClick(e) {
       // console.log(e.target.className);
+    },
+    dragover(e) {
+       e.preventDefault();
+    },
+    drop(e) {
+      e.preventDefault();
+      let files = e.dataTransfer.files;
+      if(files.length > 0) {
+        // console.log(files[0]);
+        let fileName = files[0].name;
+        if(fileName.indexOf('.temp') + 5 == fileName.length) {
+          let fileReader = new FileReader();
+          fileReader.onload = () =>{
+            // console.log(fileReader.result);
+            this.$store.dispatch('loadLocalTemp', {result: fileReader.result});
+            // this.$store.state.project = JSON.parse();
+            // this.$store.commit('update');
+          }
+          fileReader.readAsText(files[0]);
+          // alert('ddddd');
+        }
+      }
+      // console.log(e.dataTransfer);
+      
     }
   },
   mounted() {

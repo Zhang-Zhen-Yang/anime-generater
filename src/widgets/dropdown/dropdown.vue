@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2018-10-31 15:41:31 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2018-11-05 14:18:03
+ * @Last Modified time: 2019-04-12 13:54:54
  */
 <template>
   <div class="hsy-dropdown" :class="cls" :style="{width: width + 'px'}">
@@ -112,9 +112,10 @@ export default {
       return text === '' ? this.placeholder : text
     },
     selectedStyle(){
+      let downDir = "data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M804.534 402.326q0 14.856-10.857 25.712L537.694 684.022q-10.857 10.856-25.713 10.856t-25.713-10.856L230.285 428.038q-10.857-10.856-10.857-25.712t10.857-25.713 25.712-10.857h511.968q14.856 0 25.712 10.857t10.857 25.713z' fill='%2335495E'/%3E%3C/svg%3E";
       return {
         backgroundPosition: (this.width - 20) + 'px, center',
-        background: `url(${window.assets}down-dir.svg) no-repeat right center`,
+        background: `url("${downDir}") no-repeat right center`,
         backgroundSize: '18px auto',
       }
       /* */

@@ -66,7 +66,7 @@
             <mask-replace
               :text="'选择图片'"
               :showImageUpload="true"
-              @select="bgImageSelect"
+              @select="imageSelect"
               @change="imageChange(0, $event)"
             >
               <img v-if="cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
@@ -112,6 +112,7 @@
                   <num-resize
                     v-model="shadowBlur"
                     @start="startSetValue"
+                    :min="0"
                     @change="initChange({type:'shadowBlur',value: shadowBlur})">
                     <span >
                       {{ shadowBlur }}
@@ -817,9 +818,19 @@ export default {
     }
   },
   methods: {
-    bgImageSelect() {
-
+    // 选择图片
+    imageSelect() {
+      this.$store.state.dialogImage.selectedPic = this.cLayer.pic_url;
+      this.$store.state.dialogImage.itemData = this.cLayer;
+      this.$store.state.dialogImage.show = true;
+      this.$store.state.dialogImage.key = 'pic_url';
+      this.$store.state.dialogImage.callback = (pic_url)=>{
+        // alert(pic_url);
+        this.$store.dispatch('imageChange', {img: pic_url});
+      }
+      // this.$store.dispatch('imageChange', {img});
     },
+
     // 选择图片，本地
     imageChange(type, e) {
       let file = new FileReader();

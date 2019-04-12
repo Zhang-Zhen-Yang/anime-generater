@@ -2,12 +2,13 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-03 10:32:26
+ * @Last Modified time: 2019-04-12 11:40:03
  */
 
 import http from '../script/http';
 import api from '../script/api';
 import util from '../script/util';
+import utilTimeline from '../script/utilTimeline';
 // import templates from '../script/templates/templates';
 import {convertStreams, accessWorder, convertImageToVideo} from '../script/convert.1.js';
 import watermark from '../script/watermark';
@@ -18,8 +19,8 @@ import Vue from 'vue';
 // import {covertNew} from '../script/termimal.js';
 
 
-// import dialogGoods from './dialogGoods';
-// import dialogImage from './dialogImage';
+import dialogGoods from './dialogGoods';
+import dialogImage from './dialogImage';
 // import dialogTemplate from './dialogTemplate';
 import dialogAudio from './dialogAudio';
 import dialogGenerate from './dialogGenerate';
@@ -696,17 +697,16 @@ const store = {
 		},
 		// 保存项目到本地
 		saveProject({state, commit}) {
-			let project = JSON.stringify(state.project);
-			// console.log(project);
+			let project = JSON.stringify(utilTimeline.cloneObj(state.project));
 			var blob = new Blob([project]);
 			util.funDownload('', blob, 'project.temp');
 		},
 		
 	},
 	modules: {
-		/*dialogGoods,
+		dialogGoods,
 		dialogImage,
-		dialogTemplate,*/
+		// dialogTemplate,
 		dialogDownload,
 		dialogGenerate,
 		dialogSetting,

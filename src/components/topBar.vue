@@ -7,7 +7,7 @@
     <button id="generate-btn" class="pointer" @click="generate">
       开始生成
     </button>
-    <button v-if="false" id="save-btn" class="pointer" @click="saveProject">
+    <button v-if="true" id="save-btn" class="pointer" @click="saveProject">
       保存项目
     </button>
   </header>
@@ -30,7 +30,7 @@ export default {
       this.$store.dispatch('generate', {});
     },
     saveProject() {
-      // this.$store.dispatch('saveProject', {});
+      this.$store.dispatch('saveProject', {});
     }
   },
   created() {

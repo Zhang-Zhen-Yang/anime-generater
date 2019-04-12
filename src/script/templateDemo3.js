@@ -19,7 +19,7 @@ let demo = {
       shadowOffsetY: 0,
       shadowBlur: 100,
       shadowColor: '#000000',
-      pic_url: 'http://imgs.aixifan.com/content/2019_3_24/1.5533916272933776E9.png',
+      pic_url: 'http://imgs.aixifan.com/content/2019_4_11/1.5549672019131007E9.png',
       tween: [
         {
           action: 'to',
@@ -204,7 +204,7 @@ let demo = {
         rRadius: 0,
         strokeWidth: 2,
         stroke: 'orange',
-        fill: 'rgba(100,0,0,0.5)',
+        fill: 'rgba(0,0,0,0.5)',
 
         // 圆角方形 drawRoundRect
         /*
@@ -216,8 +216,8 @@ let demo = {
         */
 
         // 圆形 drawCircle
-        /* type: 'circle',
-        x: 0,
+       type: 'circle',
+         /* x: 0,
         y: 0,
         radius: 100, */
 
@@ -230,7 +230,7 @@ let demo = {
         h: 200*/
         
         // 多形状 drawPolyStar
-        type: 'polyStar',
+       // type: 'polyStar',
         x: 0,
         y: 0,
         radius: 100,

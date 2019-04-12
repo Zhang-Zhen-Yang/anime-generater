@@ -10,7 +10,7 @@
     <button v-if="false" style="position: absolute;left: 10px;top: 10px;" @click="test">
       test
     </button>
-    <workSpaceDom></workSpaceDom>
+    <workSpaceDom v-show="!playing"></workSpaceDom>
   </div>
 </template>
 

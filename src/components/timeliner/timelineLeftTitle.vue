@@ -16,7 +16,7 @@
                 <tr>
                   <td style="width: 1.5em"></td>
                   <td style="overflow:hidden;text-overflow:ellipsis;" @dblclick="setFocusIndex({e: $event, indexs: [index, -1]})">
-                    <span v-if="!(focusIndex[0] == index && focusIndex[1] == -1)">{{ item.layerName }}</span>
+                    <span v-if="!(focusIndex[0] == index && focusIndex[1] == -1)">{{ item.layerName }} {{ isDropToContainer }}</span>
                     <input ref="layerNameInput" :data-index="index" @blur="focusIndex=[-1, -1]" v-show="focusIndex[0] == index && focusIndex[1] == -1" class="layer-name-input" type="text" v-model="item.layerName">
                   </td>
                 </tr>
@@ -54,9 +54,19 @@
         ></div>
         <!-- 用于检测是否有元素拖动到该图层上 --->
         <div v-if="dragoverMaskIndex == index && dragoverMaskSubIndex == -1" class="drag-over-mask" style="">
-          <div :class="['drag-over-half', dargoverMaskPosition==0?'drag-over-half-top' : '']" @dragover="dargoverMaskPosition=0" @dragmove="dargoverMaskPosition=0"></div>
-          <div :class="['drag-over-half', dargoverMaskPosition==1?'drag-over-half-bottom' : '']" @dragover="dargoverMaskPosition=1" @dragmove="dargoverMaskPosition=1"></div>
+          <div style="background-color:rgba(0,0,0,0.1);" :class="['drag-over-half', dargoverMaskPosition==0?'drag-over-half-top' : '']" @dragover="dargoverMaskPosition=0" @dragmove="dargoverMaskPosition=0">
+            <!--{{ item.type=='container'&&dragoverMaskIndex == index && dragoverMaskSubIndex == -1&&dargoverMaskPosition==1 }}-->
+          </div>
+          <div style="background-color:rgba(255,0,0,0.1);" :class="['drag-over-half', dargoverMaskPosition==1 && !isDropToContainer?'drag-over-half-bottom' : '']" @dragover="dargoverMaskPosition=1" @dragmove="dargoverMaskPosition=1">
+
+
+          </div>
         </div>
+        <!---->
+        <div v-if="item.type=='container'&&dragoverMaskIndex == index && dragoverMaskSubIndex == -1&&dargoverMaskPosition==1&&isDropToContainer"
+          class="dropAsContainer"
+          style="position:absolute;width: 100%;height: 2px;background-color: red;left: 35px;bottom: 0px;"
+        ></div>
         <!---------------------------------------子层--------------------------------------------------------------------->
         <div v-if="item.type=='container' && item.tlShowChildren" style="" class="timeline-layer-title-child-wrap">
 
@@ -134,13 +144,19 @@ export default {
       dragoverMaskSubIndex: -1,
       // 图层的上面还是下面
       dargoverMaskPosition: 0,
-      focusIndex: [-1, -1]
+      focusIndex: [-1, -1],
+      // 移动层时鼠标的x坐标
+      dragStartPageX: 0,
+      dragOverPageX: 0,
     }
   },
   computed: {
     activeLayerIndex() {
       return this.$store.state.activeLayerIndex;
-    }
+    },
+    isDropToContainer() {
+      return this.dragOverPageX - this.dragStartPageX > 35;
+    },
   },
   methods: {
     // 设置要修改哪个层的名字
@@ -184,6 +200,8 @@ export default {
     },
     // 开始拖动
     dragStart(e, item, index) {
+      console.error(e.pageX);
+      this.dragStartPageX = e.pageX;
       e.dataTransfer.setData('index', index);
       e.dataTransfer.effectAllowed = "allow";
       console.log(e);
@@ -194,8 +212,10 @@ export default {
       e.dataTransfer.setData('index', [index, cindex].join(','));
     },
     dragover(e) {
+      this.dragOverPageX = e.pageX;
       e.preventDefault();
     },
+    
     drop(e){
       e.preventDefault();
       console.log(e);
@@ -203,12 +223,23 @@ export default {
       console.log('fromIndexsfromIndexsfromIndexs', fromIndexs);
       let fromIndex = parseInt(fromIndexs[0]);
       let fromSubIndex = parseInt(fromIndexs[1] || -1);
+      let dragoverMaskIndex = this.dragoverMaskIndex;
+      let dragoverMaskSubIndex = this.dragoverMaskSubIndex;
+      let dargoverMaskPosition = this.dargoverMaskPosition;
+
+      if(this.layers[dragoverMaskIndex] && this.layers[dragoverMaskIndex].type=='container' &&dragoverMaskSubIndex == -1&&dargoverMaskPosition==1&&this.isDropToContainer) {
+        // alert('yes');
+        dragoverMaskSubIndex = this.layers[dragoverMaskIndex].children.length - 1;
+
+      }
+      
+
       this.$store.dispatch('swipeChild',{
         fromIndex,
         fromSubIndex,
-        toIndex: this.dragoverMaskIndex,
-        toSubIndex: this.dragoverMaskSubIndex,
-        position: this.dargoverMaskPosition
+        toIndex: dragoverMaskIndex,
+        toSubIndex: dragoverMaskSubIndex,
+        position: dargoverMaskPosition,
       })
       // alert(fromIndex);
       this.dragoverMaskIndex = -1;
@@ -217,14 +248,23 @@ export default {
       console.log([index, subIndex]);
       this.dragoverMaskIndex = index;
       this.dragoverMaskSubIndex = subIndex;
+    },
+    dropInOuter(e) {
+      this.drop(e);
+    },
+    cancelDrop() {
+      // alert('cancelDrop');
+      this.dragoverMaskIndex = -1;
     }
   },
   created() {
     
   },
   mounted() {
-    
-
+    document.body.addEventListener('drop', this.cancelDrop, false);
+  },
+  destroyed() {
+    document.body.removeEventListener('drop', this.cancelDrop, false);
   }
 }
 </script>

@@ -10,7 +10,7 @@ import center from './center/center.vue';
 import fileInput from './fileInput/fileInput.vue';
 import maskReplace from './maskReplace/maskReplace.vue';
 import contentNotice from './contentNotice/contentNotice.vue';
-import materialSpinner from './materialSpinner/materialSpinner.vue';
+import materialSpinner from './materialSpinner/MaterialSpinner.vue';
 import modalDialog from './modalDialog/modalDialog.vue';
 import dialogTab from './dialogTab/dialogTab.vue';
 import dropdown from './dropdown/dropdown.vue';

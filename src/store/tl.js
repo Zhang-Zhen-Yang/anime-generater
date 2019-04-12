@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-07 09:58:23
+ * @Last Modified time: 2019-04-12 15:32:37
  */
 
  // 时间轴组件
@@ -55,7 +55,22 @@ const store = {
 	},
 	// -----------------------------------------------------------------------------------------------------------
 	mutations: {
-		
+		setLocalImagesKeyFromBase64({state}, {image}) {
+      // console.log(image);
+      if(image.indexOf('data:image/') < 0) {
+        return;
+      }
+      let has = false;
+      for(let i in window.localImages) {
+        if(window.localImages[i] == image) {
+          has = true;
+        }
+      }
+      if(!has) {
+        let UUID = new util.getUUID().id;
+        window.localImages[UUID] = image;
+      }
+    }
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
@@ -226,7 +241,9 @@ const store = {
           dispatch('addLayer', {layerType});
           break;
         // 文件夹
-				case 1:
+        case 1:
+          dispatch('addStep');
+          dispatch('addLayer', {layerType: 'container'});
          break;
         // 删除
         case 2:
@@ -473,7 +490,8 @@ const store = {
         currentLayer.tween.splice(positionIndex + 1, 0, {
           action: 'to',
           props: newProps,
-          time: position
+          time: position,
+          ease: 'linear'
         })
         dispatch('updateTween', {topIndex, subIndex});
         state.tweenIndex = positionIndex + 1;
@@ -620,6 +638,36 @@ const store = {
           })
         }
       }
+    },
+    loadLocalTemp({rootState, state, dispatch, commit}, {result}) {
+      /* for(let i in window.localImages) {
+        if(window.localImages[i] == img) {
+          has = true;
+        }
+      }
+      if(!has) {
+        let UUID = new util.getUUID().id;
+        window.localImages[UUID] = img;
+      }*/
+      // console.warn(result);
+      rootState.project = JSON.parse(result);
+      canvasRender.render({
+        canvas: document.getElementById('canvas'),
+        project: rootState.project,
+        state: rootState
+      })
+
+      rootState.project.layers.forEach((layer)=>{
+        if(layer.type == 'image') {
+          commit('setLocalImagesKeyFromBase64', {image: layer.pic_url});
+        } else if(layer.type == 'container'){
+          layer.children.forEach((clayer)=>{
+            if(clayer.type == 'image') {
+              commit('setLocalImagesKeyFromBase64', {image: clayer.pic_url});
+            }
+          })
+        }
+      })
     },
     // 测试
     test({state,rootState,dispatch}) {

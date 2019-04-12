@@ -27,7 +27,7 @@ let obj = {
 
       this.renderLayers({parentType: 'stage', layers, parent: stage, timeline, project});
 
-      c.Ticker.setFPS(24);
+      c.Ticker.setFPS(48);
       c.Ticker.addEventListener('tick', stage);
     }
   },
