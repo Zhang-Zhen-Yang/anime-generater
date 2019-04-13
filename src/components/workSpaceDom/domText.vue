@@ -1,7 +1,7 @@
 <template>
   <div :style="{position: 'relative', zIndex: index}" v-show="isVisible">
     <div class="dom-text" :style="style" ref="domText"  @click.stop="setActiveIndex">
-      {{ obj.text || 'test' }} 
+      <!--{{ obj.text || 'test' }} -->
     </div>
     <div :style="dragStyle" class="dom-text-d" ref="domTextD" v-show="isActivity" @click.stop="">
       <div :style="resizeStyle" class="dom-text-r" ref="domTextR"></div>

@@ -61,7 +61,7 @@ export default {
     methods: {
         focus() {
             // console.log('dd');
-            this.$emit(start);
+            this.$emit('start');
         },
         start(e) {
             if(this.inputShow) {

@@ -34,17 +34,17 @@ let obj = {
   // 对图层进行行渲染
   renderLayers ({parentType, layers, parent, timeline, project}) {
     let {width, height} = project;
-    console.log('layers', layers);
+    // console.log('layers', layers);
     if (parentType === 'container') {
-      console.log('layers------------------------------', layers);
+     //  console.log('layers------------------------------', layers);
     }
     // 图层
     layers.forEach((item, index) => {
-      this.addLayer({parentType, parent,item,project, timeline});
+      this.addLayer({layers, parentType, parent,item,project, timeline,index});
       
     });
   },
-  addLayer({parentType, parent,item, project, timeline}) {
+  addLayer({layers, parentType, parent,item, project, timeline, index}) {
     let container = new c.Container();
       parent.addChild(container);
       let type = item.type;
@@ -67,8 +67,8 @@ let obj = {
             /* item.UUID = UUID; */
             // container.addChild(obj);
             let tween = this.getTween({obj, item, timeline, scale});
-            console.log('UUID', UUID);
-            console.log(obj);
+            // console.log('UUID', UUID);
+            // console.log(obj);
             timeline.addTween(tween);
           }
         });
@@ -104,6 +104,21 @@ let obj = {
             item.UUID = UUID; */
             let tween = this.getTween({obj, item, timeline, scale});
             timeline.addTween(tween);
+
+            // 是否作为遮罩
+            if(item.asMask) {
+              if (index > 0) {
+                obj.set({
+                  visible: false,
+                })
+                let bounds = obj.getBounds();
+                // obj.cache(-bounds.width, -bounds.height, bounds.width, bounds.height);
+                let prevLayer = layers[index - 1];
+                let prevUUID = prevLayer.UUID;
+                let prevObj = parent.children[index].getChildByName(prevUUID);
+                prevObj.mask = obj;
+              }
+            }
           }
         });
         // this.addShape({container, item, timeline, project});
@@ -155,7 +170,7 @@ let obj = {
     item.obj = imgObj;
     if(parentType=='container') {
       // alert('container');
-      console.log('container', imgObj);
+      // console.log('container', imgObj);
       setTimeout(()=>{
         console.log('container-------------------------------------------------------', imgObj);
 
@@ -261,7 +276,7 @@ let obj = {
   },
   /// 添加容器
   getContainer ({container, item, timeline, project, UUID = '', addChild = false, callback}) {
-    console.log('item----------------------------------', item);
+    // console.log('item----------------------------------', item);
     let thisContainer = new c.Container();
     thisContainer.set({
       visible: item.visible,
@@ -300,7 +315,7 @@ let obj = {
       return pT - nT;
     })
 
-    console.log(projectTween);
+    // console.log(projectTween);
     projectTween.forEach((t, tIndex) => {
       if(f =='propsChange'){
         // console.log(t.action);
@@ -324,7 +339,7 @@ let obj = {
               ow = ow * scale;
               oh = oh * scale;
             }
-            console.log([ow, oh]);
+            // console.log([ow, oh]);
 
             props[i] = props[i]
             .replace(/cw/mig, window.stage.canvas.width)
@@ -333,7 +348,7 @@ let obj = {
             .replace(/oh/mig, oh);
 
             props[i] = eval(props[i]);
-            console.log('--------------------', props[i]);
+            // console.log('--------------------', props[i]);
             // console.log(obj.getBounds());
             // console.log(props[i]);
           } else {

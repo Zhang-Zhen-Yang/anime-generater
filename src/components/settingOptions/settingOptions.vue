@@ -196,6 +196,7 @@
                     v-model="sides"
                     :min="3"
                     :max="100"
+                    @start="()=>{as();}"
                   >
                     <span >
                       {{ sides }}
@@ -214,6 +215,7 @@
                     :stepScale="0.01"
                     :min="0"
                     :max="1"
+                    @start="()=>{as();}"
                   >
                     <span >
                       {{ pointSize }}
@@ -231,6 +233,7 @@
                     v-model="radius"
                     :min="0"
                     :max="10000"
+                    @start="()=>{as();}"
                   >
                     <span >
                       {{ radius }}
@@ -238,6 +241,17 @@
                   </num-resize>
                 </td>
               </tr>
+              <!--颜色-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">fill</span>
+                </td>
+                <td>
+                  <color-picker title="颜色" v-model="shapeColor" :showTitle="false" @start="()=>{as();}">
+                  </color-picker>
+                </td>
+              </tr>
+
             </table>
             <!--形状属性 多边形-->
             <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="shapeType == 'circle'">
@@ -252,11 +266,22 @@
                     v-model="radius"
                     :min="0"
                     :max="10000"
+                    @start="()=>{as();}"
                   >
                     <span >
                       {{ radius }}
                     </span>
                   </num-resize>
+                </td>
+              </tr>
+              <!--颜色-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">fill</span>
+                </td>
+                <td>
+                  <color-picker title="颜色" v-model="shapeColor" :showTitle="false" @start="()=>{as();}">
+                  </color-picker>
                 </td>
               </tr>
             </table>
@@ -274,6 +299,7 @@
                     v-model="rRadius"
                     :min="0"
                     :max="10000"
+                    @start="()=>{as();}"
                   >
                     <span >
                       {{ rRadius }}
@@ -291,6 +317,7 @@
                     v-model="rWidth"
                     :min="0"
                     :max="10000"
+                    @start="()=>{as();}"
                   >
                     <span >
                       {{ rWidth }}
@@ -308,11 +335,22 @@
                     v-model="rHeight"
                     :min="0"
                     :max="10000"
+                    @start="()=>{as();}"
                   >
                     <span >
                       {{ rHeight }}
                     </span>
                   </num-resize>
+                </td>
+              </tr>
+              <!--颜色-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">fill</span>
+                </td>
+                <td>
+                  <color-picker title="颜色" v-model="shapeColor" :showTitle="false" @start="()=>{as();}">
+                  </color-picker>
                 </td>
               </tr>
             </table>
@@ -608,7 +646,7 @@ export default {
     fontsList() {
       return fontsList;
     },
-    // =======
+    // ==============================================
     shapeType: {
       get() {
         return this.cLayer.graphics && this.cLayer.graphics.type;
@@ -619,13 +657,22 @@ export default {
         this.updateShape();
       }
     },
+    shapeColor: {
+      get() {
+        return this.cLayer.graphics.fill;
+      },
+      set(val) {
+        this.cLayer.graphics.fill = val;
+        this.updateShape();
+      }
+    },
     // 半径
     radius: {
       get() {
         return this.cLayer.graphics && this.cLayer.graphics.radius;
       },
       set(val) {
-        this.as();
+        // this.as();
         this.cLayer.graphics.radius = val;
         this.updateShape();
       }
@@ -636,7 +683,7 @@ export default {
         return this.cLayer.graphics && this.cLayer.graphics.rRadius;
       },
       set(val) {
-        this.as();
+        // this.as();
         this.cLayer.graphics.rRadius = val;
         this.updateShape();
       }
@@ -647,7 +694,7 @@ export default {
         return this.cLayer.graphics && this.cLayer.graphics.w;
       },
       set(val) {
-        this.as();
+        // this.as();
         this.cLayer.graphics.w = val;
         this.updateShape();
       }
@@ -658,7 +705,7 @@ export default {
         return this.cLayer.graphics && this.cLayer.graphics.h;
       },
       set(val) {
-        this.as();
+        // this.as();
         this.cLayer.graphics.h = val;
         this.updateShape();
       }
@@ -670,7 +717,7 @@ export default {
         return this.cLayer.graphics && this.cLayer.graphics.sides;
       },
       set(val) {
-        this.as();
+        // this.as();
         this.cLayer.graphics.sides = parseInt(val);
         this.updateShape();
       }
@@ -681,7 +728,7 @@ export default {
         return this.cLayer.graphics && this.cLayer.graphics.pointSize;
       },
       set(val) {
-        this.as();
+        //  this.as();
         this.cLayer.graphics.pointSize = val;
         this.updateShape();
       }
@@ -873,10 +920,10 @@ export default {
       this.$store.dispatch('addStep');
     },
     updateShape() {
-      let {radius, type} = this.cLayer.graphics;
+      let {radius, type, fill} = this.cLayer.graphics;
       // 圆形
       if(type == 'circle') {
-        this.target.graphics.clear().f('red').drawCircle(0, 0, radius);
+        this.target.graphics.clear().f(fill).drawCircle(0, 0, radius);
         this.target.setBounds(
           0,
           0,
@@ -886,7 +933,7 @@ export default {
       // 多边形
       } else if(type =='polyStar'){
         let {sides, pointSize, angle} = this.cLayer.graphics;
-        this.target.graphics.clear().f('red').drawPolyStar(0, 0, radius, sides, pointSize, angle);
+        this.target.graphics.clear().f(fill).drawPolyStar(0, 0, radius, sides, pointSize, angle);
         this.target.setBounds(
           0,
           0,
@@ -896,7 +943,7 @@ export default {
         // 四边形
       } else if(type == 'rect') {
         let {w, h, rRadius} = this.cLayer.graphics;
-        this.target.graphics.clear().f('red').drawRoundRect(-w / 2, -h / 2, w, h, rRadius);
+        this.target.graphics.clear().f(fill).drawRoundRect(-w / 2, -h / 2, w, h, rRadius);
         this.target.setBounds(
           0,
           0,

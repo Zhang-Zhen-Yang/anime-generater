@@ -1,5 +1,5 @@
 <template>
-  <div class="timeline-left-title" @dragover="dragover" @drop="drop">
+  <div class="timeline-left-title" @dragover="dragover" @drop.stop="drop">
     <div  v-for="item,index in layers" class="layers" :key="index">
 
       <div @click="setActiveLayer([index])"
@@ -14,9 +14,17 @@
             <div slot="e" style="width: 100%;">
               <table cellspacing="0" cellpadding="0" style="table-layout:fixed;width: 100%">
                 <tr>
-                  <td style="width: 1.5em"></td>
+                  <td style="width: 1.5em">
+                    <!--是否作为遮罩使用-->
+                    <div
+                      v-if="item.type=='shape'"
+                      :class="['clip-icon', 'bg-preset', 'pointer', item.asMask ? '' : 'clip-icon-no-asmask']"
+                      title="作为罩遮"
+                      @click.stop="toggleAsMask(item)">
+                    </div>
+                  </td>
                   <td style="overflow:hidden;text-overflow:ellipsis;" @dblclick="setFocusIndex({e: $event, indexs: [index, -1]})">
-                    <span v-if="!(focusIndex[0] == index && focusIndex[1] == -1)">{{ item.layerName }} {{ isDropToContainer }}</span>
+                    <span v-if="!(focusIndex[0] == index && focusIndex[1] == -1)">{{ item.layerName }} <!--{{ isDropToContainer }}--></span>
                     <input ref="layerNameInput" :data-index="index" @blur="focusIndex=[-1, -1]" v-show="focusIndex[0] == index && focusIndex[1] == -1" class="layer-name-input" type="text" v-model="item.layerName">
                   </td>
                 </tr>
@@ -54,10 +62,10 @@
         ></div>
         <!-- 用于检测是否有元素拖动到该图层上 --->
         <div v-if="dragoverMaskIndex == index && dragoverMaskSubIndex == -1" class="drag-over-mask" style="">
-          <div style="background-color:rgba(0,0,0,0.1);" :class="['drag-over-half', dargoverMaskPosition==0?'drag-over-half-top' : '']" @dragover="dargoverMaskPosition=0" @dragmove="dargoverMaskPosition=0">
+          <div style="background-color:rgba(0,0,0,0);" :class="['drag-over-half', dargoverMaskPosition==0?'drag-over-half-top' : '']" @dragover="dargoverMaskPosition=0" @dragmove="dargoverMaskPosition=0">
             <!--{{ item.type=='container'&&dragoverMaskIndex == index && dragoverMaskSubIndex == -1&&dargoverMaskPosition==1 }}-->
           </div>
-          <div style="background-color:rgba(255,0,0,0.1);" :class="['drag-over-half', dargoverMaskPosition==1 && !isDropToContainer?'drag-over-half-bottom' : '']" @dragover="dargoverMaskPosition=1" @dragmove="dargoverMaskPosition=1">
+          <div style="background-color:rgba(255,0,0,0);" :class="['drag-over-half', dargoverMaskPosition==1 && !isDropToContainer?'drag-over-half-bottom' : '']" @dragover="dargoverMaskPosition=1" @dragmove="dargoverMaskPosition=1">
 
 
           </div>
@@ -83,7 +91,15 @@
               :class="['timeline-layer-title-child', activeLayerIndex.length == 2 && activeLayerIndex[0] == index && activeLayerIndex[1] == cindex? 'activeLayer' : '']">
               <table cellspacing="0" cellpadding="0" style="table-layout:fixed;width: 100%">
                 <tr>
-                  <td style="width: 2.5em"></td>
+                  <td style="width: 2.5em">
+                    <!--是否作为遮罩使用-->
+                    <div
+                      v-if="c.type=='shape'"
+                      :class="['clip-icon', 'bg-preset', 'pointer', c.asMask ? '' : 'clip-icon-no-asmask']"
+                      title="作为罩遮"
+                      @click.stop="toggleAsMask(c)">
+                    </div>
+                  </td>
                   <td style="overflow:hidden;text-overflow:ellipsis;" @dblclick.stop="setFocusIndex({e: $event, indexs: [index, cindex]})">
                     <span v-if="!(focusIndex[0] == index && focusIndex[1] == cindex)">
                       {{ c.layerName }}
@@ -112,7 +128,7 @@
               </table>
             </div>
              <!-- 子层用于检测是否有元素拖动到该图层上 --->
-            <div v-if="dragoverMaskIndex == index && dragoverMaskSubIndex == cindex" class="drag-over-mask-sub" style="background-color: rgba(255, 0, 0, 0.2)">
+            <div v-if="dragoverMaskIndex == index && dragoverMaskSubIndex == cindex" class="drag-over-mask-sub" style="background-color: rgba(255, 0, 0, 0)">
               <div :class="['drag-over-half', dargoverMaskPosition==0?'drag-over-half-top' : '']" @dragover="dargoverMaskPosition=0" @dragmove.stop="dargoverMaskPosition=0"></div>
               <div :class="['drag-over-half', dargoverMaskPosition==1?'drag-over-half-bottom' : '']" @dragover="dargoverMaskPosition=1" @dragmove.stop="dargoverMaskPosition=1"></div>
             </div>
@@ -181,9 +197,14 @@ export default {
     },
     // 
     toggleVisible(item) {
-      item.obj.set({
-        visible: !item.visible
-      })
+      // alert(item.type == 'shape');
+      if(item.type =='shape' && item.asMask) {
+
+      } else {
+        item.obj.set({
+          visible: !item.visible
+        })
+      }
       item.visible = !item.visible;
     },
     // 
@@ -200,7 +221,7 @@ export default {
     },
     // 开始拖动
     dragStart(e, item, index) {
-      console.error(e.pageX);
+      // console.error(e.pageX);
       this.dragStartPageX = e.pageX;
       e.dataTransfer.setData('index', index);
       e.dataTransfer.effectAllowed = "allow";
@@ -255,6 +276,11 @@ export default {
     cancelDrop() {
       // alert('cancelDrop');
       this.dragoverMaskIndex = -1;
+    },
+    // 切换是否作为遮罩
+    toggleAsMask(item) {
+      item.asMask = !item.asMask;
+      this.$store.dispatch('checkAsMask', {layers: this.$store.state.project.layers});
     }
   },
   created() {
@@ -312,6 +338,15 @@ export default {
     background-image: url("data:image/svg+xml,%3Csvg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cstyle/%3E%3C/defs%3E%3Cpath d='M941.808 195.931L512 828.07 82.192 195.93z' fill='%23ffffff'/%3E%3C/svg%3E");
   }
 
+  .clip-icon{
+    width: 20px;
+    height: 18px;
+    margin-top: 2px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M765.091 213.382L223.418 754.967V213.382H765.09zm-500.51 582.72l541.877-541.819v541.819H264.582zM79.42 213.586c.29 0 .524-.204.815-.204h85.003v611.81c0 .408-.174.757-.145 1.164.64 16.146 14.225 28.8 30.4 28.131.29 0 .524-.174.815-.203H806.43v87.272c0 .408-.174.756-.145 1.164a29.178 29.178 0 1 0 58.297-1.134v-.234c0-.29.204-.58.175-.93 0-.233-.116-.378-.145-.582v-85.528h86.924c.406 0 .785.205 1.221.175a29.324 29.324 0 1 0-2.298-58.589c-.29.029-.524.204-.815.204h-85.032v-600l78.254-78.255a29.003 29.003 0 0 0 8.728-21.76 29.295 29.295 0 0 0-30.4-28.131 28.974 28.974 0 0 0-20.77 10.066l-77.15 77.178H223.418V67.928c0-.408.204-.728.204-1.135a29.178 29.178 0 0 0-58.327 1.135h-.058v.203c0 .32-.146.61-.146.931 0 .233.146.407.146.64v85.528H78.4c-.436 0-.815-.263-1.25-.234a29.295 29.295 0 1 0 2.268 58.59z' fill='%23d81e06'/%3E%3C/svg%3E");
+  }
+  .clip-icon-no-asmask{
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M765.091 213.382L223.418 754.967V213.382H765.09zm-500.51 582.72l541.877-541.819v541.819H264.582zM79.42 213.586c.29 0 .524-.204.815-.204h85.003v611.81c0 .408-.174.757-.145 1.164.64 16.146 14.225 28.8 30.4 28.131.29 0 .524-.174.815-.203H806.43v87.272c0 .408-.174.756-.145 1.164a29.178 29.178 0 1 0 58.297-1.134v-.234c0-.29.204-.58.175-.93 0-.233-.116-.378-.145-.582v-85.528h86.924c.406 0 .785.205 1.221.175a29.324 29.324 0 1 0-2.298-58.589c-.29.029-.524.204-.815.204h-85.032v-600l78.254-78.255a29.003 29.003 0 0 0 8.728-21.76 29.295 29.295 0 0 0-30.4-28.131 28.974 28.974 0 0 0-20.77 10.066l-77.15 77.178H223.418V67.928c0-.408.204-.728.204-1.135a29.178 29.178 0 0 0-58.327 1.135h-.058v.203c0 .32-.146.61-.146.931 0 .233.146.407.146.64v85.528H78.4c-.436 0-.815-.263-1.25-.234a29.295 29.295 0 1 0 2.268 58.59z' fill='%23ffffff'/%3E%3C/svg%3E");
+  }
 
 
   /*drag-over-mask*/

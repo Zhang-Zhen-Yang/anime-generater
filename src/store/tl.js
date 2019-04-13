@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-12 15:32:37
+ * @Last Modified time: 2019-04-13 15:46:36
  */
 
  // 时间轴组件
@@ -76,6 +76,13 @@ const store = {
 	actions: {
     // 更新图层的位置
 		swipeChild({rootState, state, commit, dispatch}, {fromIndex, fromSubIndex=-1, toIndex, toSubIndex=-1,position}) {
+      console.log({
+        fromIndex,
+        fromSubIndex,
+        toIndex,
+        toSubIndex,
+        position,
+      })
       if(fromIndex == toIndex && fromSubIndex == toSubIndex) {
         return;
       }
@@ -88,7 +95,7 @@ const store = {
       // 投放的是否是container 下
       let toIsSub = toSubIndex >-1;
 
-      if(!fromIsSub&&toIsSub) {
+      if(!fromIsSub && toIsSub) {
         // 容器不能再放容器
         if(rootState.project.layers[fromIndex].type=='container') {
           return;
@@ -96,7 +103,8 @@ const store = {
       }
 
       let originToItem = toIsSub ? rootState.project.layers[toIndex].children[toSubIndex] :  rootState.project.layers[toIndex];
-      
+      console.log('originToItem', originToItem);
+
       rootState.activeLayerIndex=[0];
       
 
@@ -165,7 +173,7 @@ const store = {
             } else {
               toDistSubIndex = shouldToIndex - 1
             }
-            alert(toDistSubIndex);
+            // alert(toDistSubIndex);
           }
       }
       
@@ -230,7 +238,7 @@ const store = {
      console.log([prevChild, nextChild]);
       // window.stage.swipe();
       window.stage.swapChildren(nextChild, prevChild);*/
-
+      dispatch('checkAsMask', {layers: rootState.project.layers});
 		},
     // 添加图层，文件夹， 删除图层
 		layerAction({state, rootState,commit,dispatch}, {type, layerType}) {
@@ -590,6 +598,11 @@ const store = {
       if(type == 'undo') {
         let distObj = {
           project: obj,
+          playing: rootState.playing,
+          position:rootState.position,
+          topIndex: state.topIndex,
+          subIndex: state.subIndex,
+          tweenIndex: state.tweenIndex,
         };
         // console.log(JSON.stringify(distObj));
         // console.log(state.undoList[state.undoList.length - 1]);
@@ -603,6 +616,11 @@ const store = {
       } else {
         state.redoList.unshift({
           project: obj,
+          playing: rootState.playing,
+          position:rootState.position,
+          topIndex: state.topIndex,
+          subIndex: state.subIndex,
+          tweenIndex: state.tweenIndex,
         })
       }
     },
@@ -617,10 +635,20 @@ const store = {
           //
           utilTimeline.fillLocalImageByKey(fillItem);
           rootState.project = fillItem.project;
+          rootState.playing = fillItem.playing;
+          
           canvasRender.render({
             canvas: document.getElementById('canvas'),
             project: rootState.project,
             state: rootState
+          })
+          /* console.warn([fillItem.playing, fillItem.position])
+          return; */
+          Vue.nextTick(()=>{
+            setTimeout(()=>{
+              rootState.timeline.setPaused(!rootState.playing);
+              rootState.timeline.setPosition(fillItem.position);
+            }, 0)
           })
         }
       // 重做
@@ -631,10 +659,17 @@ const store = {
           
           utilTimeline.fillLocalImageByKey(fillItem);
           rootState.project = fillItem.project;
+          rootState.playing = fillItem.playing;
           canvasRender.render({
             canvas: document.getElementById('canvas'),
             project: rootState.project,
             state: rootState
+          })
+          Vue.nextTick(()=>{
+            setTimeout(()=>{
+              rootState.timeline.setPaused(!rootState.playing);
+              rootState.timeline.setPosition(fillItem.position);
+            }, 0)
           })
         }
       }
@@ -666,6 +701,32 @@ const store = {
               commit('setLocalImagesKeyFromBase64', {image: clayer.pic_url});
             }
           })
+        }
+      })
+    },
+    // 重新设置遮罩
+    checkAsMask({rootState, state, dispatch, commit}, {layers}) {
+      // let layers = rootState.project.layers;
+      layers.forEach((layer, index)=>{
+        if(layer.type=='shape') {
+          if(layer.asMask) {
+            layer.obj.set({
+              visible: false
+            })
+            if(index > 0) {
+              layers[index - 1].obj.mask = layer.obj;
+            }
+          } else {
+              layer.obj.set({
+                visible: layer.visible
+              });
+          }
+        } else {
+          layer.obj.mask = null;
+          console.log('mask', layer.obj.mask);
+        }
+        if(layer.type == 'container') {
+          dispatch('checkAsMask', {layers: layer.children});
         }
       })
     },

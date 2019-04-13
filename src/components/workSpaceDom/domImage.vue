@@ -4,7 +4,7 @@
     <div :style="dragStyle" :class="['dom-image-d', isSub ? 'dom-image-d-sub': '']" ref="domImageD" v-show="isActivity" @click.stop="">
       <div :style="resizeStyle" class="dom-image-r" ref="domImageR">
         <!--{{ isSub ? style : {} }}-->
-        {{ obj.x }}，{{ obj.image.width }}，{{ obj.image.height}}, {{ obj.scaleX }}
+        <!--{{ obj.x }}，{{ obj.image.width }}，{{ obj.image.height}}, {{ obj.scaleX }}-->
       </div>
     </div>
   </div>

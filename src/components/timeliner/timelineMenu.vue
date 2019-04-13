@@ -2,15 +2,17 @@
   <div class="timeline-menu">
     <!---->
     <div style="height:26px">
-      dfdfdfd
+      <!--dfdfdfd-->
     </div>
     <!--播放控制-->
     <div style="height:50px;" class="timeline-subtitle">
       <block-slice slot="e" dir="horizontal" :staticIndex="0" :staticValue="'260px'">
-        <div slot="s" style="position:relative;z-index:1">
+        <div slot="s" style="position:relative;z-index:1;border-bottom:1px solid rgb(82, 82, 82);">
           <table cellspacing="0" cellpadding="0" style="width: 100%;line-height:30px;">
             <tr>
-              <td> 大规模d</td>
+              <td style="width: 15%;">
+                <!--大规模d-->
+              </td>
               <td>
                 <div :class="['timeline-play-pause-icon', playing? 'pause-icon' : 'play-icon']" @click="togglePlayState">
 
@@ -30,8 +32,12 @@
           </table>
           <table cellspacing="0" cellpadding="0" style="margin-top:-6px;width: 98%;background-color:#2c2e2f;">
             <tr>
-              <td>5555</td>
-              <td>555</td>
+              <td>
+                <!--5555-->
+              </td>
+              <td>
+                <!--555-->
+              </td>
               <td class="right">
                 <div
                   title="显示或隐藏所有图层"

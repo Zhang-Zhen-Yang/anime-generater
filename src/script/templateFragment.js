@@ -94,6 +94,7 @@ let obj = {
     visible: true,
     editable: true,
     layerName: '形状',
+    asMask: false,
     graphics: {
       // 方形
       /* type: 'rect',
@@ -102,6 +103,9 @@ let obj = {
       w: 210,
       h: 100,
       radius: 10,*/
+      w: 210,
+      h: 100,
+      rRadius: 0,
       strokeWidth: 2,
       stroke: 'orange',
       fill: 'rgba(0,0,0,0.5)',
