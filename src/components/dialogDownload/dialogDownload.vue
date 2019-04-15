@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-19 10:24:09 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-12 17:47:58
+ * @Last Modified time: 2019-04-15 15:05:22
  */
 
 <template>
@@ -245,7 +245,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .dialog-download-content{
+.dialog-download-content{
     .video-download-icon{
       position: absolute;
       top: 0px;

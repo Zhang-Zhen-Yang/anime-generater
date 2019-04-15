@@ -26,6 +26,12 @@ export default {
         return {};
       }
     },
+    item: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
     index: {
       type: Number,
       default: -1
@@ -133,10 +139,10 @@ export default {
       if(this.isSub) {
         return this.topIndex == this.index && this.subIndex == this.sIndex && !this.playing && !!this.currentTween;
       }
-      return this.topIndex == this.index && !this.playing && !!this.currentTween;
+      return this.topIndex == this.index && !this.playing && !!this.currentTween; //  || (this.ojb instanceof createjs.Shape && this.item.asMask);
     },
     isVisible() {
-      return this.obj.visible;
+      return this.obj.visible; //  || (this.isShape && this.item.asMask);
     }
   },
   methods: {

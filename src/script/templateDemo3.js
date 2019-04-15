@@ -151,6 +151,8 @@ let demo = {
       visible: true,
       editable: true,
       layerName: '层2',
+      width: 300,
+      height: 300,
       // 子对象
       children: [
         {

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-12 11:40:03
+ * @Last Modified time: 2019-04-15 11:15:08
  */
 
 import http from '../script/http';
@@ -176,6 +176,12 @@ const store = {
 	actions: {
 		initnew({state, commit, dispatch, getters}){
 			window.localImages = {};
+			accessWorder().then(()=>{
+				// alert('ddddd');
+				state.asmInitedStatus = 'success';
+			}, ()=>{
+				state.asmInitedStatus = 'error';
+			})
 		},
 		// 初始化 网络请求
 		init({state, commit, dispatch, getters}){
@@ -701,6 +707,30 @@ const store = {
 			var blob = new Blob([project]);
 			util.funDownload('', blob, 'project.temp');
 		},
+		// 保存到后端
+		saveUpload({state, commit}){
+			let obj = utilTimeline.cloneObj(state.project);
+			obj.layers.forEach((layer)=>{
+				if(layer.type == 'image') {
+					layer.pic_url = utilTimeline.getPicKeyByItem(layer);
+				} else if(layer.type == 'container') {
+					layer.children.forEach((clayer)=>{
+						if(clayer.type == 'image') {
+							clayer.pic_url = utilTimeline.getPicKeyByItem(clayer);
+						}
+					})
+				}
+			})
+			let distObj = {
+				project: obj,
+				playing: rootState.playing,
+				position:rootState.position,
+				topIndex: state.topIndex,
+				subIndex: state.subIndex,
+				tweenIndex: state.tweenIndex,
+			};
+			let params = JOSN.stringify(distObj);
+		}
 		
 	},
 	modules: {

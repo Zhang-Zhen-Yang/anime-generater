@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-13 15:46:36
+ * @Last Modified time: 2019-04-15 09:37:28
  */
 
  // 时间轴组件
@@ -75,7 +75,7 @@ const store = {
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
     // 更新图层的位置
-		swipeChild({rootState, state, commit, dispatch}, {fromIndex, fromSubIndex=-1, toIndex, toSubIndex=-1,position}) {
+		swipeChild({rootState, state, commit, dispatch}, {fromIndex, fromSubIndex=-1, toIndex, toSubIndex=-1,position, dropInNoneContainer = false}) {
       console.log({
         fromIndex,
         fromSubIndex,
@@ -118,6 +118,7 @@ const store = {
       let toDistSubIndex = toSubIndex;
       let shouldToIndex, shouldToSubIndex;
 
+      // alert(toIsSub);
       if(toIsSub) {
         shouldToIndex = toIndex;
         if(position == 0) {
@@ -194,8 +195,8 @@ const store = {
       } else {       
         toItem = rootState.project.layers[toDistIndex].children[0];
       }
-      let toObj = originToItem.obj;// toItem.obj;
-      let toObjWithContainer = originToItem.obj.parent; //toItem.obj.parent;
+      let toObj = originToItem ? originToItem.obj : null;// toItem.obj;
+      let toObjWithContainer = originToItem && originToItem.obj ? originToItem.obj.parent : null; //toItem.obj.parent;
      
 
       // 如果是移动到上层
@@ -220,7 +221,11 @@ const store = {
           toObjWithContainer.parent.addChildAt(fromObjWithContainer, toSubIndex + 1);
         }*/
         rootState.project.layers[toDistIndex].children.splice(toDistSubIndex,0,pickItem[0]);
-        toObjWithContainer.parent.addChildAt(fromObjWithContainer, toDistSubIndex);
+        if(dropInNoneContainer) {
+          rootState.project.layers[toIndex].obj.addChildAt(fromObjWithContainer, toDistSubIndex)
+        } else {
+          toObjWithContainer.parent.addChildAt(fromObjWithContainer, toDistSubIndex);
+        }
       }
 
 

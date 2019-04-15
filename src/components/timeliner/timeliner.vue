@@ -1,5 +1,5 @@
 <template>
-  <div class="timeline">
+  <div class="timeline" @contextmenu="contextmenu">
     <block-slice :staticIndex="0" :staticValue="'76px'">
       <!--顶部-->
       <timelineMenu slot="s"></timelineMenu>
@@ -65,6 +65,9 @@ export default {
     drop(e) {
       this.$refs.timelineLeftTitle.dropInOuter(e);
       console.log('dddddd');
+    },
+    contextmenu(e) {
+      e.preventDefault();
     }
   },
   created() {

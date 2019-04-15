@@ -1,4 +1,5 @@
 let obj = {
+
   // 图片==================================================================================
   image: {
       type: 'image',
@@ -183,6 +184,8 @@ let obj = {
       visible: true,
       editable: true,
       layerName: '文件夹',
+      width: 300,
+      height: 300,
       // 子对象
       children: [
       ],

@@ -105,8 +105,8 @@ export default {
     style() {
       let left = this.obj.x + 'px';
       let top = this.obj.y + 'px';
-      let width = this.project.width;
-      let height = this.project.height;
+      let width = this.item.width;//this.project.width;
+      let height = this.item.height;//this.project.height;
       let scaleX = this.obj.scaleX;
       let scaleY = this.obj.scaleY;
       return {
@@ -149,7 +149,8 @@ export default {
       return this.topIndex == this.index && this.subIndex == -1 && !this.playing && this.currentTween;
     },
     isVisible() {
-      return this.obj.visible;
+      // alert(this.ojb instanceof createjs.Shape);
+      return this.obj.visible; // || (this.ojb instanceof createjs.Shape && this.item.asMask);
     }
   },
   methods: {
@@ -178,8 +179,8 @@ export default {
           this.resizing = false;
           let {left, top} = ui.position;
           let {width, height} = ui.size;
-          let scaleX = width / this.project.width;
-          let scaleY = height / this.project.height;
+          let scaleX = width / this.item.width; //this.project.width;
+          let scaleY = height / this.item.height;// this.project.height;
           let x = parseFloat(this.domContainerD.style.left) - 0 + left;
           let y = parseFloat(this.domContainerD.style.top) - 0 + top;
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
@@ -201,8 +202,8 @@ export default {
         resize: (e, ui)=>{
           let {left, top} = ui.position;
           let {width, height} = ui.size;
-          let scaleX = width / this.project.width;//this.obj.image.width;
-          let scaleY = height / this.project.height;//this.obj.image.height;
+          let scaleX = width / this.item.width; //this.project.width;//this.obj.image.width;
+          let scaleY = height / this.item.height;//this.project.height;//this.obj.image.height;
           let x = parseFloat(this.domContainerD.style.left) - 0 + left;
           let y = parseFloat(this.domContainerD.style.top) - 0 + top;
           // console.log([parseFloat(this.domContainerD.style.left), this.domContainerD.style.top]);

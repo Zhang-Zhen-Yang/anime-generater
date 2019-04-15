@@ -1,15 +1,15 @@
 <template>
   <block-slice slot="e" dir="vertical" :staticIndex="0" :staticValue="35 + 'px'">
     <div id="setting-options-title" slot="s">
-      设置{{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}
+      设置<!--{{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}-->
     </div>
     <div id="setting-options-content" slot="e">
       <div class="divider" style="padding: 10px;">
         <!--全局设置======================================================================================-->
         <template v-if="tlTopIndex == -1">
-          <!--画布大小-->
+          <!--画布尺寸-->
           <div class="c-layer-title">
-            <span class="prop-name">画布大小</span>
+            <span class="prop-name">画布尺寸</span>
           </div>
           <div style="padding-left: 15px;">
               <table cellspacing="0" cellpadding="0" style="width: 100%;">
@@ -34,8 +34,7 @@
                       v-model="projectHeight"
                       @start="startSetValue"
                       :min="100"
-                      :max="1280"
-                      @change="">
+                      :max="1280">
                       <span >
                         {{ projectHeight }}
                       </span>
@@ -55,7 +54,52 @@
 
         </template>
         <!--{{ cLayer.type }}-->
-
+        <!--容器类型==================================================================================-->
+        <template v-if="cLayer.type=='container'">
+          <!--图片-->
+          <div class="c-layer-title">
+            <span class="prop-name">容器尺寸</span>
+          </div>
+          <div style="padding-left: 15px;">
+            <!--形状属性 多边形-->
+            <table cellspacing="0" cellpadding="0" style="width:100%;">
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">宽</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="containerWidth"
+                    :min="0"
+                    :max="1000"
+                    @start="()=>{as();}"
+                  >
+                    <span >
+                      {{ containerWidth }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">高</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="containerHeight"
+                    :min="0"
+                    :max="1000"
+                    @start="()=>{as();}"
+                  >
+                    <span >
+                      {{ containerHeight }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </template>
         <!--图片类型==================================================================================-->
         <template v-if="cLayer.type=='image'">
           <!--图片-->
@@ -733,6 +777,24 @@ export default {
         this.updateShape();
       }
     },
+    // 容器宽
+    containerWidth: {
+      get(val){
+        return this.cLayer.width;
+      },
+      set(val) {
+        this.cLayer.width = val;
+      }
+    },
+    // 容器高
+    containerHeight: {
+      get(val){
+        return this.cLayer.height;
+      },
+      set(val) {
+        this.cLayer.height = val;
+      }
+    },
     // 当前属性==================================================================
     props() {
       return this.currentTween ? this.currentTween.props : {};
@@ -867,7 +929,7 @@ export default {
   methods: {
     // 选择图片
     imageSelect() {
-      this.$store.state.dialogImage.selectedPic = this.cLayer.pic_url;
+      this.$store.state.dialogImage.selectedPic = this.cLayer.pic_url.indexOf('data:image/') < 0 ? this.cLayer.pic_url : '';
       this.$store.state.dialogImage.itemData = this.cLayer;
       this.$store.state.dialogImage.show = true;
       this.$store.state.dialogImage.key = 'pic_url';
