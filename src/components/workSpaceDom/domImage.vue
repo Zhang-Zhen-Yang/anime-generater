@@ -203,7 +203,7 @@ export default {
           let x = parseFloat(this.domImageD.style.left) - 0 + left + width / 2;
           let y = parseFloat(this.domImageD.style.top) - 0 + top + height / 2;
           // console.log([parseFloat(this.domImageD.style.left), this.domImageD.style.top]);
-          console.log([this.domImageD.style.left,y]);
+          // console.log([this.domImageD.style.left,y]);
           this.obj.scaleX = scaleX / pScaleX;
           this.obj.scaleY = scaleY / pScaleY;
           this.obj.x = x / pScaleX;

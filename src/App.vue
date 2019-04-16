@@ -73,10 +73,7 @@ export default {
     }
   },
   methods: {
-    // 键盘事件
-    keydown(e) {
-      this.$store.dispatch('keydown',{e});
-    },
+
     // 全局点击
     appClick(e) {
       // console.log(e.target.className);
@@ -138,8 +135,13 @@ export default {
       }
     }, 40);
     document.body.addEventListener('keydown', (e)=>{
-      this.keydown(e);
-    }, false)
+      this.$store.dispatch('keydown',{e});
+    }, false);
+    document.body.addEventListener('keyup', (e)=>{
+      this.$store.dispatch('keyup',{e});
+    }, false);
+
+
     this.$store.dispatch('initnew');
   },
 }

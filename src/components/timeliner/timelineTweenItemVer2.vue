@@ -1,5 +1,6 @@
 <template>
   <div class="timeline-tween-item relative" ref="timeline-tween-item" @dblclick="addTween">
+    <timelineTweensMoveBlock :topIndex="topIndex" :subIndex="subIndex" :tween="tweenLocal"></timelineTweensMoveBlock>
     <div
       v-for="t,index in tweenLocal"
       :style="{left: t.left}"
@@ -43,8 +44,10 @@
 </template>
 
 <script>
+import timelineTweensMoveBlock from './timelineTweensMoveBlock.vue';
 export default {
   name: 'timeline-tween-item',
+  components: {timelineTweensMoveBlock},
   props: {
     anTween: {
       type: Object,
@@ -75,6 +78,9 @@ export default {
   computed: {
     tl() {
       return this.$store.state.tl;
+    },
+    showTweensMoveBlock() {
+      return this.tl.showTweensMoveBlock;
     },
     tlDuration() {
       return this.tl.duration;

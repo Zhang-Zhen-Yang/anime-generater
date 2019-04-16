@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-15 09:37:28
+ * @Last Modified time: 2019-04-16 17:40:39
  */
 
  // 时间轴组件
@@ -17,7 +17,8 @@ import templateFragment from '../script/templateFragment';
 import Vue from 'vue';
 const store = {
 	state: {
-		name: 'timeline',
+    name: 'timeline',
+    showTweensMoveBlock: false,// 是否显示对所有缓动节点的整体移动
 		scale: 0.5,
 		offsetX: 0,
 		// 显示时间轴的
@@ -55,6 +56,7 @@ const store = {
 	},
 	// -----------------------------------------------------------------------------------------------------------
 	mutations: {
+    // 当下载到本地的项目文件重新投放到窗口内时
 		setLocalImagesKeyFromBase64({state}, {image}) {
       // console.log(image);
       if(image.indexOf('data:image/') < 0) {
@@ -437,7 +439,7 @@ const store = {
     },
     // 检测是否应该添加缓节点
     checkAddTweenIf({state,rootState,dispatch}) {
-      console.log('================================================check');
+      // console.log('================================================check');
       let currentPosition = window.timeline.position;
       let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
       let currentTween = currentLayer.tween[state.tweenIndex] || null;
@@ -541,16 +543,45 @@ const store = {
           break;
         // enter
         case 13:
-          
           window.timeline.setPaused(playing);
           rootState.playing = !playing;
+          break;
+        // space
+        case 32:
+          e.preventDefault();
+          state.showTweensMoveBlock = true;
           break;
         default: break;
       }
       // console.log(e);
     },
+    // 按键松开事件
+    keyup({state,rootState,dispatch}, {e}) {
+      let ignoreNodeNames = ['TEXTAREA', 'INPUT']
+      if(ignoreNodeNames.indexOf(e.target.nodeName) > -1) {
+        return;
+      }
+      let kc = e.keyCode;
+      console.log(kc);
+      switch(kc) {
+        // delete
+        case 46:
+          break;
+        // enter
+        case 13:
+          break;
+        // space
+        case 32:
+          e.preventDefault();
+          state.showTweensMoveBlock = false;
+          break;
+        default: break;
+      }
+
+    },
     //显示或隐藏所有图层
     toggleVisibleAll({state,rootState,dispatch}) {
+      // 所有可见层的数量
       let allVisibleCount = 0;
       let allInVisibleCount = 0;
       rootState.project.layers.forEach((layer)=>{
@@ -570,6 +601,7 @@ const store = {
         }
       })
       let toSetValue = true;
+      // 只要有一个可见层就全部设为不可见
       if(allVisibleCount > 0) {
         toSetValue = false;
       }
@@ -588,6 +620,7 @@ const store = {
     // 添加历史记录
     addStep({rootState, state}, {type = 'undo', clearRedo = true}={type: 'undo', clearRedo: true}) {
       // alert('ddd');
+      // 克隆当前项目信息
       let obj = utilTimeline.cloneObj(rootState.project);
       obj.layers.forEach((layer)=>{
         if(layer.type == 'image') {
@@ -600,6 +633,7 @@ const store = {
           })
         }
       })
+      // 撤销
       if(type == 'undo') {
         let distObj = {
           project: obj,
@@ -614,11 +648,13 @@ const store = {
         if(state.undoList.length > 0 && (JSON.stringify(distObj) == JSON.stringify(state.undoList[state.undoList.length - 1]))) {
           return 
         }
-        state.undoList.push(distObj)
+        state.undoList.push(distObj);
+        // 是否清除重做历史列表
         if(clearRedo) {
           state.redoList = [];
         }
       } else {
+        // 重做
         state.redoList.unshift({
           project: obj,
           playing: rootState.playing,
@@ -691,6 +727,7 @@ const store = {
       }*/
       // console.warn(result);
       rootState.project = JSON.parse(result);
+      // 全部重新渲染动画
       canvasRender.render({
         canvas: document.getElementById('canvas'),
         project: rootState.project,
@@ -713,11 +750,15 @@ const store = {
     checkAsMask({rootState, state, dispatch, commit}, {layers}) {
       // let layers = rootState.project.layers;
       layers.forEach((layer, index)=>{
+        // 如果是图形
         if(layer.type=='shape') {
+          // 如果是作为遮置
           if(layer.asMask) {
+            // 不显示在动画中
             layer.obj.set({
               visible: false
             })
+            // 如果不是第一个图层，找到第一个图层的对象并设置其mask
             if(index > 0) {
               layers[index - 1].obj.mask = layer.obj;
             }
@@ -728,7 +769,7 @@ const store = {
           }
         } else {
           layer.obj.mask = null;
-          console.log('mask', layer.obj.mask);
+          // console.log('mask', layer.obj.mask);
         }
         if(layer.type == 'container') {
           dispatch('checkAsMask', {layers: layer.children});

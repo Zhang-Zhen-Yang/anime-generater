@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-12 15:02:33
+ * @Last Modified time: 2019-04-16 17:15:49
  */
 
  // 时间轴组件
@@ -60,7 +60,7 @@ const store = {
       window.timeline.removeTween(currentTweenObj);
       // alert(window.timeline._tweens.length);
 
-      console.warn(currentTweenObj.target);
+      // console.warn(currentTweenObj.target);
       let tween = canvasRender.getTween({
         obj:currentTweenObj.target,
         item: currentLayer,
@@ -68,7 +68,7 @@ const store = {
         scale,
         f: 'propsChange'
       });
-      console.warn('tween', tween);
+      // console.warn('tween', tween);
       
       // tween = cra
       window.timeline.addTween(tween);

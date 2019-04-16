@@ -21,7 +21,7 @@
               <td class="center">
                 {{ position }} / {{ duration }}
               </td>
-              <td>
+              <td style="width: 55px;">
                 <num-resize v-model="tlDuration" :stepScale="0.2">
                   <div style="display:inline-block;border-bottom:1px dashed rgba(255, 255, 255, 0.6);line-height:1.2em;">
                     {{ tlDuration.toFixed(2) }}
@@ -206,6 +206,10 @@ export default {
     background: #2c2e2f;
     td{
       vertical-align: middle;
+    }
+    input{
+      width: 50px;
+      padding-right: 0;
     }
   }
   .timeline-menu:before {

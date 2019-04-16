@@ -167,7 +167,7 @@ export default {
         handles: 's,n,e,w,se,sw,ne,nw',
         aspectRatio: true,
         start: (e, ui) => {
-          console.log(ui);
+          // console.log(ui);
           this.as();
           this.c();
           this.resizeStartRStyle = JSON.parse(JSON.stringify(this.resizeStyle));
@@ -207,7 +207,7 @@ export default {
           let x = parseFloat(this.domContainerD.style.left) - 0 + left;
           let y = parseFloat(this.domContainerD.style.top) - 0 + top;
           // console.log([parseFloat(this.domContainerD.style.left), this.domContainerD.style.top]);
-          console.log([this.domContainerD.style.left,y]);
+          // console.log([this.domContainerD.style.left,y]);
           this.obj.scaleX = scaleX;
           this.obj.scaleY = scaleY;
           this.obj.x = x;

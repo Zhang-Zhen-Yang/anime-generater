@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-19 10:24:09 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-15 15:05:22
+ * @Last Modified time: 2019-04-16 17:13:41
  */
 
 <template>
@@ -65,7 +65,7 @@
                   <div class="relative current-video-cover" style="width: 170px;height: 170px;border:1px solid #1284e7;">
                     <img :src="coverUrl" alt="" style="width:100%;height: 100%;object-fit:contain;object-position:center;">
                     <div class="sub-cover-imgs absolute" style="width: 340px;">
-                      <aspect v-for="goods in goodsList" :css="{width:'25%', display: 'inline-block'}">
+                      <aspect v-for="goods in goodsList" :css="{width:'25%', display: 'inline-block'}" :key="goods.url">
                         <div style="width: 100%;height: 100%;padding:0 0 5px 5px;">
                           <v-center :css="{width: '100%',height: '100%',  border: '1px solid #aaaaaa'}">
                             <img :src="goods.url" class="pointer" alt="" style="max-width: 100%;max-height:100%;vertical-align:middle;" @click="selectCover(goods.url);">
@@ -100,60 +100,6 @@
           </td>
         </tr>
       </table>
-
-
-      <!--
-      <div id="download-wrap" class="btn primary font14 relative" style="margin:5px 0"></div> 
-      <table cellspacing="0" cellpadding="0" style="width: 100%;" class="upload-table">
-        <tr>
-          <td class="font14" style="width: 4em;">标题</td>
-          <td>
-            <input type="text" class="content-item-input" v-model="title" placeholder="请输入标题">
-          </td>
-        </tr>
-        <tr v-if="false">
-          <td class="font14">标签</td>
-          <td>
-            <input type="text" class="content-item-input" v-model="label" placeholder="请输入标签">
-          </td>
-        </tr>
-        <tr>
-          <td class="font14">封面</td>
-          <td>
-            <div class="relative current-video-cover" style="width: 170px;height: 170px;border:1px solid #1284e7;">
-              <img :src="coverUrl" alt="" style="width:100%;height: 100%;object-fit:contain;object-position:center;">
-              <div class="sub-cover-imgs absolute" style="width: 340px;">
-                <aspect v-for="goods in goodsList" :css="{width:'25%', display: 'inline-block'}">
-                  <div style="width: 100%;height: 100%;padding:0 0 5px 5px;">
-                    <v-center :css="{width: '100%',height: '100%',  border: '1px solid #aaaaaa'}">
-                      <img :src="goods.url" class="pointer" alt="" style="max-width: 100%;max-height:100%;vertical-align:middle;" @click="selectCover(goods.url);">
-                    </v-center>
-                  </div>
-                </aspect>
-                <aspect :css="{width:'25%', display: 'inline-block',color: '#1284e7'}">
-                  <div style="width: 100%;height: 100%;padding:0 0 5px 5px;" @click="selectCoverFromDialog">
-                    <v-center :css="{width: '100%',height: '100%',fontSize: '16px', border: '1px solid',cursor: 'pointer'}" >
-                      更多
-                    </v-center>
-                  </div>
-                </aspect>
-                
-              </div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td></td>
-          <td style="text-align: right">
-            <div class="upload-file-btn-wrap">
-              <div class="btn primary font14 relative" @click="uploadFile(0)">发布到宝贝</div>
-              <div class="upload-file-btn btn primary font14 relative" @click="uploadFile(1)">
-                上传到空间
-              </div>
-            </div>
-          </td>
-        </tr>
-      </table>-->
         <a class="my-video-link" target="_blank" href="http://ugc.taobao.com/video/uploadVideo.htm">我的视频</a>
     </div>
     

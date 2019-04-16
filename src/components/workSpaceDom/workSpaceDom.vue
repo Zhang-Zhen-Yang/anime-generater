@@ -93,8 +93,8 @@ export default {
   mounted() {
     this.render();
     setTimeout(()=>{
-      console.log(this.$store.state.stage);
-      console.log(this.c.Bitmap);
+      //console.log(this.$store.state.stage);
+      // console.log(this.c.Bitmap);
     }, 3000)
 
   }

@@ -157,6 +157,7 @@ export default {
         border: 1px solid #2f3132;
         color: #fff;
         padding: 2px 5px;
+        padding-right: 0;
     }
     .property-input:focus{
         outline: none;

@@ -172,8 +172,7 @@ let obj = {
       // alert('container');
       // console.log('container', imgObj);
       setTimeout(()=>{
-        console.log('container-------------------------------------------------------', imgObj);
-
+        // console.log('container-------------------------------------------------------', imgObj);
       }, 3000)
     }
     if (addChild) {
@@ -305,7 +304,7 @@ let obj = {
     // 动画
     let tween = c.Tween.get(obj);
     if(f =='propsChange') {
-      console.log('item.tween-------------------', item.tween);
+      // console.log('item.tween-------------------', item.tween);
     }
     let projectTween = item.tween || [];
     // ver2
@@ -377,7 +376,13 @@ let obj = {
           break;
         // 缓动
         case 'to':
-          tween[currentAction](props, tDuration, c.Ease[t.ease] || c.Ease.linear);
+          // 如果是第一个缓动节点
+          if(tIndex == 0) {
+            tween[currentAction](props, 0, c.Ease[t.ease] || c.Ease.linear);
+            tween.wait(tDuration);
+          } else {
+            tween[currentAction](props, tDuration, c.Ease[t.ease] || c.Ease.linear);
+          }
           break;
         // 等待
         case 'wait':
