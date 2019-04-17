@@ -9,14 +9,18 @@ let obj = {
       visible: true,
       editable: true,
       layerName: '图片',
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      shadowBlur: 0,
+      shadowColor: '#000000',
       tween: [
         {
           action: 'to',
           props: {
             regX: 'ow / 2',
             regY: 'oh / 2',
-            x: 0,
-            y: 0,
+            x: 400,
+            y: 400,
             rotation: 0,
             scaleX: 0.5,
             scaleY: 0.5,
@@ -26,7 +30,7 @@ let obj = {
           time: 0,
           ease: 'linear'
         },
-        {
+        /* {
           action: 'to',
           props: {
             x: 300,
@@ -38,7 +42,7 @@ let obj = {
           },
           time: 9000,
           ease: 'linear'
-        },
+        },*/
       ]
   },
   // 文本=====================================================================================================
@@ -62,8 +66,8 @@ let obj = {
           alpha: 1,
           regX: 'ow / 2',
           regY: 'oh / 2',
-          x: 100,
-          y: 100,
+          x: 400,
+          y: 400,
           scaleX: 1,
           scaleY: 1,
           rotation: 0
@@ -71,7 +75,7 @@ let obj = {
         time: 0,
         ease: 'linear'
       },
-      {
+      /* {
         action: 'to',
         props: {
           alpha: 1,
@@ -83,7 +87,7 @@ let obj = {
         },
         time: 1000,
         ease: 'linear'
-      },
+      },*/
       
     ]
   },
@@ -151,8 +155,8 @@ let obj = {
           regX: 0,
           regY: 0,
           alpha: 1,
-          x: 100,
-          y: 100,
+          x: 400,
+          y: 400,
           scaleX: 1,
           scaleY: 1,
           rotation: 0,
@@ -160,7 +164,7 @@ let obj = {
         time: 0,
         ease: 'linear'
       },
-      {
+      /*{
         action: 'to',
         props: {
           x: 200,
@@ -172,7 +176,7 @@ let obj = {
         },
         time: 2000,
         ease: 'linear'
-      },
+      },*/
     ]
   },
   // 容器 =================================================================================
@@ -203,7 +207,7 @@ let obj = {
           time: 0,
           ease: 'linear',
         },
-        {
+        /*{
           action: 'to',
           props: {
             x: 200,
@@ -215,7 +219,7 @@ let obj = {
           },
           time: 6000,
           ease: 'linear',
-        }
+        }*/
       ]
 
   }

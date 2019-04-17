@@ -7,12 +7,15 @@
 
         <div slot="e" id="timeline-scroll-wrap" style="">
           <block-slice dir="horizontal" :staticValue="'260px'" >
-            <div slot="s" style="width: 100%;height: 100%;background-color:#2c2e2f;" @dragover="dragover" @drop="drop">
+            <div slot="s" style="width: 100%;height: 100%;background-color:#2c2e2f;border-right:1px solid rgba(255, 255, 255,0.3);" @dragover="dragover" @drop="drop">
               <!---->
               <timeline-left-title :layers="layers" ref="timelineLeftTitle"></timeline-left-title>
             </div>
-            <div slot="e" style="width: 100%;height: 100%;padding: 0 0px; overflow:hidden;">
-              <timeline-tween ></timeline-tween>
+            <div slot="e" style="width: 100%;height: 100%;padding: 0 0 0 5px; overflow:hidden;">
+              <div style="position:relative;with: 100%;height: 100%;">
+                <timeline-tween ></timeline-tween>
+
+              </div>
             </div>
           </block-slice>
 

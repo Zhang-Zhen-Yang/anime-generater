@@ -59,8 +59,10 @@
             <!--时间轴刻度-->
             <timeline-scale></timeline-scale>
           </div>
-          <div>
-            <timeline-pointer></timeline-pointer>
+          <div style="padding-left:5px;">
+            <div style="position: relative;">
+              <timeline-pointer></timeline-pointer>
+            </div>
           </div>
         </div>
       </block-slice>

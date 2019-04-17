@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-16 17:40:39
+ * @Last Modified time: 2019-04-17 15:09:36
  */
 
  // 时间轴组件
@@ -18,6 +18,7 @@ import Vue from 'vue';
 const store = {
 	state: {
     name: 'timeline',
+    autoPlay: false,
     showTweensMoveBlock: false,// 是否显示对所有缓动节点的整体移动
 		scale: 0.5,
 		offsetX: 0,
@@ -284,7 +285,7 @@ const store = {
     },
     // 删除图层
     removeLayer({state, rootState,commit,dispatch}, {}) {
-
+      // alert('ddd');
       let activeLayerIndex = rootState.activeLayerIndex;
       let topIndex = typeof activeLayerIndex[0] == 'number' ? activeLayerIndex[0] : -1;
       let subIndex = typeof activeLayerIndex[1] == 'number' ? activeLayerIndex[1] : -1;
@@ -301,6 +302,8 @@ const store = {
         let currentObj = currentContainer.getChildByName(currentUUID);
         currentContainer.removeChild(currentObj);
         window.timeline.removeTween(currentTweenObj);*/
+        let currentTweenObj = currentLayer.tweenObj;
+        window.timeline.removeTween(currentTweenObj);
         
       } else if(topIndex > -1){
         let currentLayer = rootState.project.layers[topIndex] || {};
@@ -309,6 +312,7 @@ const store = {
         let removeItemObj = removeItem[0].obj;
         removeItemObj.parent.parent.removeChild(removeItemObj.parent);
         
+
         /*let currentContainer = window.stage.children[topIndex + 1];
 
         window.stage.removeChild(currentContainer);
@@ -324,8 +328,17 @@ const store = {
             window.timeline.removeTween(childTweenObj);
           })
         }*/
-
+        let currentTweenObj = currentLayer.tweenObj;
+        window.timeline.removeTween(currentTweenObj);
+        if(currentLayer.type == 'container') {
+          // alert('dd');
+          currentLayer.children.forEach((item, index)=>{
+            let childTweenObj = item.tweenObj;
+            window.timeline.removeTween(childTweenObj);
+          })
+        }
       }
+      dispatch('checkAsMask', {layers: rootState.project.layers});
     },
     // 设置当前选中的补间
     setActiveTween({state,rootState,dispatch}, {t, topIndex, subIndex, tweenIndex}) {
@@ -536,7 +549,11 @@ const store = {
       let playing = rootState.playing;
       let kc = e.keyCode;
       console.log(kc);
+      let currentLayer = utilTimeline.getCurrentLayer({rootState});
       switch(kc) {
+        case 8:
+          e.preventDefault();
+          break;
         // delete
         case 46:
           dispatch('removeTween');
@@ -551,6 +568,36 @@ const store = {
           e.preventDefault();
           state.showTweensMoveBlock = true;
           break;
+        // left
+        case 37:
+        // up
+        case 38:
+        // right
+        case 39:
+        // down
+        case 40:
+          if(currentLayer) {
+            // console.log('up');
+            dispatch('checkAddTweenIf');
+            let obj =currentLayer.obj;
+            if(kc == 37) {
+              obj.x -= 1;
+              // currentLayer.tween[state.tweenIndex].x -= 1;//currentLayer.obj.x;
+              // currentLayer.tween[state.tweenIndex].y = 0;//currentLayer.obj.y;
+            } else if(kc == 38){
+              obj.y -= 1; 
+              // currentLayer.tween[state.tweenIndex].y -= 1;//currentLayer.obj.x;
+            } else if (kc == 39){
+              obj.x += 1; 
+              // currentLayer.tween[state.tweenIndex].x += 1;//currentLayer.obj.x;
+            } else if (kc == 40){
+              obj.y += 1;
+              // currentLayer.tween[state.tweenIndex].y += 1;//currentLayer.obj.x;
+            }
+          }
+          e.preventDefault();
+          break;
+        
         default: break;
       }
       // console.log(e);
@@ -563,6 +610,7 @@ const store = {
       }
       let kc = e.keyCode;
       console.log(kc);
+      let currentLayer = utilTimeline.getCurrentLayer({rootState});
       switch(kc) {
         // delete
         case 46:
@@ -574,6 +622,20 @@ const store = {
         case 32:
           e.preventDefault();
           state.showTweensMoveBlock = false;
+          break;
+        // left
+        case 37:
+        // up
+        case 38:
+        // right
+        case 39:
+        // down
+        case 40:
+          if(currentLayer) {
+            currentLayer.tween[state.tweenIndex].props.x = currentLayer.obj.x;
+            currentLayer.tween[state.tweenIndex].props.y = currentLayer.obj.y;
+            dispatch('propsChange', {target: currentLayer.obj});
+          }
           break;
         default: break;
       }

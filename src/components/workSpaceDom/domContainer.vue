@@ -77,6 +77,9 @@ export default {
     project() {
       return this.$store.state.project;
     },
+    zoom() {
+      return this.project.zoom;
+    },
     tl() {
       return this.$store.state.tl;
     },
@@ -103,8 +106,8 @@ export default {
       return this.bounds.height * Math.abs(this.obj.scaleY);
     },
     style() {
-      let left = this.obj.x + 'px';
-      let top = this.obj.y + 'px';
+      let left = this.obj.x * this.zoom + 'px';
+      let top = this.obj.y * this.zoom + 'px';
       let width = this.item.width;//this.project.width;
       let height = this.item.height;//this.project.height;
       let scaleX = this.obj.scaleX;
@@ -113,8 +116,8 @@ export default {
         position: 'absolute',
         left: left,
         top:  top,
-        width: width * scaleX + 'px',
-        height: height * scaleY + 'px',
+        width: width * scaleX * this.zoom + 'px',
+        height: height * scaleY * this.zoom + 'px',
         transformOrigin: '0 0',
         transform: `${this.obj.scaleX < 0 ?'scaleX(-1)': ''} ${this.obj.scaleY < 0 ?'scaleY(-1)': ''} rotateZ(${this.obj.rotation}deg)`,
         border: this.topIndex == this.index ? '1px dashed #aaaaaa' : 'none'
@@ -179,10 +182,10 @@ export default {
           this.resizing = false;
           let {left, top} = ui.position;
           let {width, height} = ui.size;
-          let scaleX = width / this.item.width; //this.project.width;
-          let scaleY = height / this.item.height;// this.project.height;
-          let x = parseFloat(this.domContainerD.style.left) - 0 + left;
-          let y = parseFloat(this.domContainerD.style.top) - 0 + top;
+          let scaleX = width / this.zoom / this.item.width; //this.project.width;
+          let scaleY = height / this.zoom /this.item.height;// this.project.height;
+          let x = (parseFloat(this.domContainerD.style.left) - 0 + left) / this.zoom;
+          let y = (parseFloat(this.domContainerD.style.top) - 0 + top) / this.zoom;
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(!currentLayer) return;
           let initScale = 1;//util.getImageScale({img: this.obj.image, cw: this.project.width, ch: this.project.height,type: 'cover'});
@@ -202,10 +205,10 @@ export default {
         resize: (e, ui)=>{
           let {left, top} = ui.position;
           let {width, height} = ui.size;
-          let scaleX = width / this.item.width; //this.project.width;//this.obj.image.width;
-          let scaleY = height / this.item.height;//this.project.height;//this.obj.image.height;
-          let x = parseFloat(this.domContainerD.style.left) - 0 + left;
-          let y = parseFloat(this.domContainerD.style.top) - 0 + top;
+          let scaleX = width / this.zoom / this.item.width; //this.project.width;//this.obj.image.width;
+          let scaleY = height / this.zoom / this.item.height;//this.project.height;//this.obj.image.height;
+          let x = (parseFloat(this.domContainerD.style.left) - 0 + left) / this.zoom;
+          let y = (parseFloat(this.domContainerD.style.top) - 0 + top) / this.zoom;
           // console.log([parseFloat(this.domContainerD.style.left), this.domContainerD.style.top]);
           // console.log([this.domContainerD.style.left,y]);
           this.obj.scaleX = scaleX;
@@ -272,8 +275,8 @@ export default {
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
-            currentLayer.tween[this.tweenIndex].props.x = left;
-            currentLayer.tween[this.tweenIndex].props.y = top;
+            currentLayer.tween[this.tweenIndex].props.x = left / this.zoom;
+            currentLayer.tween[this.tweenIndex].props.y = top / this.zoom;
             this.$store.dispatch('propsChange', {target: this.obj});
           }
         },
@@ -281,8 +284,8 @@ export default {
           this.dragging = false
           let left = ui.position.left;
           let top = ui.position.top;
-          this.obj.x = left;
-          this.obj.y = top;
+          this.obj.x = left / this.zoom;
+          this.obj.y = top / this.zoom;
           this.u();
           // console.log([left, top]);
         },

@@ -1,7 +1,7 @@
 <template>
   <div id="work-space" class="scrollbar-overwrite" @click="emptyClick">
     <div class="inline-block" style="width:0px;height: 100%;vertical-align: middle;background-color:red;" v-if="false"></div>
-    <canvas id="canvas" class="inline-block" ref="canvas" @click="togglePlayState" >
+    <canvas id="canvas" class="inline-block" ref="canvas" @click="togglePlayState" :style="canvasStyle">
     </canvas>
     <div style="display: inline-block;position: absolute;left: 50%;top: 50%;" v-if="false">
       <div :class="['pause-and-play-tip', playing ? 'pause-tip':'play-tip', 'pointer']" @click="togglePlayState">
@@ -29,6 +29,9 @@ export default {
     project() {
       return this.$store.state.project;
     },
+    tl() {
+      return this.$store.state.tl;
+    },
     width() {
       return this.project.width;
     },
@@ -53,6 +56,13 @@ export default {
     duration() {
       return this.timeline.duration;
     },
+    canvasStyle() {
+      let zoom  = this.project.zoom;
+      return {
+        transform: `scale(${zoom},${zoom})`,
+        transformOrigin: 'center 0'
+      };
+    }
   },
   methods: {
     render() {
@@ -61,6 +71,10 @@ export default {
         project: this.project,
         state: this.$store.state
       })
+      if(!this.tl.autoPlay) {
+        window.timeline.gotoAndStop(0);
+        this.$store.state.playing = false;
+      }
     },
     togglePlayState() {
       this.playing = !this.playing;

@@ -57,10 +57,13 @@ export default {
      return {width: 0, height: 0};
 
     },
+    zoom() {
+      return this.project.zoom;
+    },
     stageStyle() {
       return {
-        width: this.project.width + 'px',//this.size.width + 'px',
-        height: this.project.height + 'px', // this.size.height + 'px',
+        width: this.project.width *  this.zoom+ 'px',//this.size.width + 'px',
+        height: this.project.height * this.zoom + 'px', // this.size.height + 'px',
       }
     },
     project() {

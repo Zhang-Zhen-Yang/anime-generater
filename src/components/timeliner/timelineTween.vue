@@ -77,4 +77,12 @@ export default {
     border-bottom: 1px solid #3D4041;
     height: 25px;
   }
+  /*.timeline-layer-tween:after{
+    content: '';
+    display: block;
+    position: absolute;
+    left: 100%;
+    bottom: 0;
+    border-bottom: 1px solid red;
+  }*/
 </style>

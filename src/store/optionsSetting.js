@@ -2,11 +2,9 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-16 17:15:49
+ * @Last Modified time: 2019-04-17 17:48:00
  */
-
  // 时间轴组件
-
 import http from '../script/http';
 import api from '../script/api';
 
@@ -230,8 +228,40 @@ const store = {
         });
         window.timeline.addTween(tween);
       })
+    },
+    // 设置对齐
+    setAlign({state, rootState,commit,dispatch}, {type}) {
+      dispatch('checkAddTweenIf');
+      let currentLayer = utilTimeline.getCurrentLayer({rootState});
+      let {width, height} = rootState.project;
+      let tweenIndex = rootState.tl.tweenIndex;
+      let bounds = currentLayer.obj.getBounds();
+
+      // alert(type);
+      switch(type) {
+        case 'left':
+          currentLayer.tween[tweenIndex].props.x = bounds().width *  currentLayer.obj.scaleX / 2;
+          break;
+        case 'center':
+          currentLayer.tween[tweenIndex].props.x = width / 2;
+          break;
+        case 'right':
+          currentLayer.tween[tweenIndex].props.x = width - currentLayer.obj.getBounds().width *  currentLayer.obj.scaleX / 2;
+          break;
+        case 'top':
+          currentLayer.tween[tweenIndex].props.y = currentLayer.obj.getBounds().height *  currentLayer.obj.scaleY / 2;
+          break;
+        case 'middle':
+          currentLayer.tween[tweenIndex].props.y = height / 2;
+          break;
+        case 'bottom':
+          currentLayer.tween[tweenIndex].props.y = height - currentLayer.obj.getBounds().height *  currentLayer.obj.scaleY / 2;
+          break;
+        default: break;
+      }
+      // currentLayer.tween[state.tweenIndex].props.y = currentLayer.obj.y;
+      dispatch('propsChange', {target: currentLayer.obj});
     }
-		
 	}// end actions 
 }
 export default store;

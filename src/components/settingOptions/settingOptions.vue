@@ -55,7 +55,7 @@
         </template>
         <!--{{ cLayer.type }}-->
         <!--容器类型==================================================================================-->
-        <template v-if="cLayer.type=='container'">
+        <template v-if="cLayer && cLayer.type=='container'">
           <!--图片-->
           <div class="c-layer-title">
             <span class="prop-name">容器尺寸</span>
@@ -101,7 +101,7 @@
           </div>
         </template>
         <!--图片类型==================================================================================-->
-        <template v-if="cLayer.type=='image'">
+        <template v-if="cLayer && cLayer.type=='image'">
           <!--图片-->
           <div class="c-layer-title">
             <span class="prop-name">图片</span>
@@ -113,7 +113,7 @@
               @select="imageSelect"
               @change="imageChange(0, $event)"
             >
-              <img v-if="cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
+              <img v-if="cLayer && cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
             </mask-replace>
           </div>
           <!--投影-->
@@ -181,7 +181,7 @@
 
 
         <!--文本类型=====================================================================================-->
-        <template v-if="cLayer.type=='text'">
+        <template v-if="cLayer && cLayer.type=='text'">
           <!--文本-->
           <div class="c-layer-title">
             <span class="prop-name">文本</span>
@@ -213,7 +213,7 @@
         </template>
         
         <!--形状类型======================================================================================-->
-        <template v-if="cLayer.type=='shape'">
+        <template v-if="cLayer && cLayer.type=='shape'">
           
           <div class="c-layer-title">
             <span class="prop-name">形状类型</span>
@@ -415,6 +415,42 @@
 
             <!--节点的属性值-->
             <table cellspacing="0" cellpadding="0" style="width:100%;">
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">对齐</span>
+                </td>
+                <td>
+                  <table　cellpadding="0" cellspacing="0" style="width: 100%;">
+                    <tr>
+                      <td>
+                        <div class="align-icon align-left" @click="setAlign('left')">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="align-icon align-center" @click="setAlign('center')">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="align-icon align-right" @click="setAlign('right')">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="align-icon align-top" @click="setAlign('top')">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="align-icon align-middle" @click="setAlign('middle')">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="align-icon align-bottom" @click="setAlign('bottom')">
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                </td>
+              </tr>
               <tr>
                 <td style="width: 8em;">
                   <span class="prop-name-x">缓动</span>
@@ -1013,7 +1049,10 @@ export default {
           h
         );
       }
-      
+    },
+    // 设置对齐
+    setAlign(type) {
+      this.$store.dispatch('setAlign', {type});
     }
   },
   created() {
@@ -1116,6 +1155,31 @@ export default {
     right: 0;
     height: 1px;
     background: #484a4b;
+  }
+
+  .align-icon{
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+
+  }
+  .align-icon.align-left{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='%23626A76'%3E%3Cpath clip-rule='evenodd' d='M11 2H3v5h8V2zM0 16h1V0H0v16zm3-7v5h12V9H3zm11 4H4v-3h10v3z'/%3E%3C/svg%3E");
+  }
+  .align-icon.align-center{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='%23626A76'%3E%3Cpath clip-rule='evenodd' d='M9 9V7h3V2H9V0H8v2H5v5h3v2H2v5h6v2h1v-2h6V9H9zm5 4H3v-3h11v3z'/%3E%3C/svg%3E");
+  }
+  .align-icon.align-right{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='%23626A76'%3E%3Cpath d='M1 14h12V9H1v5zm1-4h10v3H2v-3zm3-8h8v5H5zm10-2h1v16h-1z'/%3E%3C/svg%3E");
+  }
+  .align-icon.align-top{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='%23626A76'%3E%3Cpath clip-rule='evenodd' d='M9 11h5V3H9v8zm-7 4h5V3H2v12zM3 4h3v10H3V4zM0 0v1h16V0H0z'/%3E%3C/svg%3E");
+  }
+  .align-icon.align-middle{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='%23626A76'%3E%3Cpath clip-rule='evenodd' d='M14 7V3H9v4H7V1H2v6H0v1h2v6h5V8h2v4h5V8h2V7h-2zm-8 6H3V2h3v11z'/%3E%3C/svg%3E");
+  }
+  .align-icon.align-bottom{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='%23626A76'%3E%3Cpath d='M9 5h5v8H9zM7 1H2v12h5V1zM6 12H3V2h3v10zm-6 3h16v1H0z'/%3E%3C/svg%3E");
   }
   
 </style>

@@ -65,6 +65,9 @@ export default {
     project() {
       return this.$store.state.project;
     },
+    zoom() {
+      return this.project.zoom;
+    },
     tl() {
       return this.$store.state.tl;
     },
@@ -106,10 +109,10 @@ export default {
       let height = bounds.height* Math.abs(this.obj.scaleY); //this.obj.image.height * Math.abs(this.obj.scaleY);
       return {
         position: 'absolute',
-        left: (left - width / 2) * pScaleX + 'px',
-        top:  (top - height / 2) * pScaleY + 'px',
-        width: width * pScaleX + 'px',
-        height: height * pScaleY + 'px',
+        left: (left - width / 2) * pScaleX * this.zoom + 'px',
+        top:  (top - height / 2) * pScaleY * this.zoom+ 'px',
+        width: width * pScaleX * this.zoom + 'px',
+        height: height * pScaleY * this.zoom + 'px',
         transform: `${this.obj.scaleX < 0 ?'scaleX(-1)': ''} ${this.obj.scaleY < 0 ?'scaleY(-1)': ''} rotateZ(${this.obj.rotation}deg)`
       }
     },
@@ -177,10 +180,10 @@ export default {
           
           let {left, top} = ui.position;
           let {width, height} = ui.size;
-          let scaleX = width / this.bounds.width;
-          let scaleY = height / this.bounds.height;
-          let x = parseFloat(this.domTextD.style.left) - 0 + left + width / 2;
-          let y = parseFloat(this.domTextD.style.top) - 0 + top + height / 2;
+          let scaleX = width / this.zoom / this.bounds.width;
+          let scaleY = height / this.zoom / this.bounds.height;
+          let x = (parseFloat(this.domTextD.style.left) - 0 + left + width / 2) / this.zoom;
+          let y = (parseFloat(this.domTextD.style.top) - 0 + top + height / 2) / this.zoom;
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(!currentLayer) return;
           let initScale = 1;//util.getImageScale({img: this.obj.image, cw: this.project.width, ch: this.project.height,type: 'cover'});
@@ -207,10 +210,10 @@ export default {
 
           let {left, top} = ui.position;
           let {width, height} = ui.size;
-          let scaleX = width / this.bounds.width;//this.obj.image.width;
-          let scaleY = height / this.bounds.height;//this.obj.image.height;
-          let x = parseFloat(this.domTextD.style.left) - 0 + left + width / 2;
-          let y = parseFloat(this.domTextD.style.top) - 0 + top + height / 2;
+          let scaleX = width / this.zoom / this.bounds.width;//this.obj.image.width;
+          let scaleY = height / this.zoom / this.bounds.height;//this.obj.image.height;
+          let x = (parseFloat(this.domTextD.style.left) - 0 + left + width / 2) / this.zoom;
+          let y = (parseFloat(this.domTextD.style.top) - 0 + top + height / 2) / this.zoom;
           // console.log([parseFloat(this.domTextD.style.left), this.domTextD.style.top]);
           console.log([this.domTextD.style.left,y]);
           this.obj.scaleX = scaleX / pScaleX;
@@ -275,8 +278,8 @@ export default {
             pScaleY = this.parentObj.scaleY;
           }
 
-          let left = ui.position.left - 0 + (this.objWidth / 2 * pScaleX);
-          let top = ui.position.top - 0 + (this.objHeight / 2 * pScaleY);
+          let left = ui.position.left / this.zoom - 0 + (this.objWidth / 2 * pScaleX);
+          let top = ui.position.top / this.zoom - 0 + (this.objHeight / 2 * pScaleY);
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
@@ -292,8 +295,8 @@ export default {
             pScaleX = this.parentObj.scaleX;
             pScaleY = this.parentObj.scaleY;
           }
-          let left = ui.position.left - 0 + (this.objWidth / 2 * pScaleX);
-          let top = ui.position.top - 0 + (this.objHeight / 2 * pScaleY);
+          let left = ui.position.left / this.zoom - 0 + (this.objWidth / 2 * pScaleX);
+          let top = ui.position.top /this.zoom - 0 + (this.objHeight / 2 * pScaleY);
           this.obj.x = left / pScaleX;
           this.obj.y = top / pScaleY;
           this.u();
