@@ -249,8 +249,10 @@ let demo = {
           props: {
             scaleX: 1,
             scaleY: 1,
-            x: 0,
-            y: 0,
+            x: 400,
+            y: 400,
+            regX: 'ow / 2',
+            regY: 'oh / 2',
             rotation: 0,
             alpha: 1
           },

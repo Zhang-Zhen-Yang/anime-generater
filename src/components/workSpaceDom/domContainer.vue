@@ -106,19 +106,19 @@ export default {
       return this.bounds.height * Math.abs(this.obj.scaleY);
     },
     style() {
-      let left = this.obj.x * this.zoom + 'px';
-      let top = this.obj.y * this.zoom + 'px';
+      let left = this.obj.x ;
+      let top = this.obj.y ;
       let width = this.item.width;//this.project.width;
       let height = this.item.height;//this.project.height;
       let scaleX = this.obj.scaleX;
       let scaleY = this.obj.scaleY;
       return {
         position: 'absolute',
-        left: left,
-        top:  top,
+        left: (left - this.objWidth / 2) * this.zoom + 'px',
+        top:  (top - this.objHeight / 2) * this.zoom + 'px',
         width: width * scaleX * this.zoom + 'px',
         height: height * scaleY * this.zoom + 'px',
-        transformOrigin: '0 0',
+        // transformOrigin: '0 0',
         transform: `${this.obj.scaleX < 0 ?'scaleX(-1)': ''} ${this.obj.scaleY < 0 ?'scaleY(-1)': ''} rotateZ(${this.obj.rotation}deg)`,
         border: this.topIndex == this.index ? '1px dashed #aaaaaa' : 'none'
       }
@@ -128,6 +128,7 @@ export default {
         return this.resizeStartDStyle;
       }
       if(this.dragging){
+        console.log(this.dragStartDStyle);
         return this.dragStartDStyle;
       }
       let style = {
@@ -184,8 +185,9 @@ export default {
           let {width, height} = ui.size;
           let scaleX = width / this.zoom / this.item.width; //this.project.width;
           let scaleY = height / this.zoom /this.item.height;// this.project.height;
-          let x = (parseFloat(this.domContainerD.style.left) - 0 + left) / this.zoom;
-          let y = (parseFloat(this.domContainerD.style.top) - 0 + top) / this.zoom;
+          let x = (parseFloat(this.domContainerD.style.left) - 0 + left + width / 2) / this.zoom;
+          let y = (parseFloat(this.domContainerD.style.top) - 0 + top + height / 2) / this.zoom;
+
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(!currentLayer) return;
           let initScale = 1;//util.getImageScale({img: this.obj.image, cw: this.project.width, ch: this.project.height,type: 'cover'});
@@ -207,12 +209,14 @@ export default {
           let {width, height} = ui.size;
           let scaleX = width / this.zoom / this.item.width; //this.project.width;//this.obj.image.width;
           let scaleY = height / this.zoom / this.item.height;//this.project.height;//this.obj.image.height;
-          let x = (parseFloat(this.domContainerD.style.left) - 0 + left) / this.zoom;
-          let y = (parseFloat(this.domContainerD.style.top) - 0 + top) / this.zoom;
+
+          let x = (parseFloat(this.domContainerD.style.left) - 0 + left + width/2) / this.zoom;
+          let y = (parseFloat(this.domContainerD.style.top) - 0 + top + height / 2) / this.zoom;
           // console.log([parseFloat(this.domContainerD.style.left), this.domContainerD.style.top]);
           // console.log([this.domContainerD.style.left,y]);
           this.obj.scaleX = scaleX;
           this.obj.scaleY = scaleY;
+
           this.obj.x = x;
           this.obj.y = y;
           this.u();
@@ -264,28 +268,39 @@ export default {
         start: (e, ui)=>{
           this.as();
           this.c();
-          this.dragStartRStyle = JSON.parse(JSON.stringify(this.resizeStyle));
-          this.dragStartDStyle = JSON.parse(JSON.stringify(this.dragStyle));
+          let dragStartRStyle = JSON.parse(JSON.stringify(this.resizeStyle));
+          this.dragStartRStyle = dragStartRStyle;
+
+          let dragStartDStyle = JSON.parse(JSON.stringify(this.dragStyle));
+          delete dragStartDStyle.left;
+          delete dragStartDStyle.top;
+          this.dragStartDStyle = dragStartDStyle;
+
           this.dragging = true;
         },
         stop: (e, ui)=>{
           
-          let left = ui.position.left - 0;
-          let top = ui.position.top - 0;
+          /*let left = ui.position.left - 0  + (this.objWidth / 2 * this.obj.scaleX);
+          let top = ui.position.top - 0 + (this.objHeight / 2 * this.obj.scaleY);*/
+          let left = ui.position.left / this.zoom - 0 + (this.objWidth / 2);
+          let top = ui.position.top / this.zoom - 0 + (this.objHeight / 2);
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
-            currentLayer.tween[this.tweenIndex].props.x = left / this.zoom;
-            currentLayer.tween[this.tweenIndex].props.y = top / this.zoom;
+            currentLayer.tween[this.tweenIndex].props.x = left;
+            currentLayer.tween[this.tweenIndex].props.y = top;
             this.$store.dispatch('propsChange', {target: this.obj});
           }
         },
         drag: (e, ui) => {
           this.dragging = false
-          let left = ui.position.left;
-          let top = ui.position.top;
-          this.obj.x = left / this.zoom;
-          this.obj.y = top / this.zoom;
+          // let left = (ui.position.left - 0 + (this.objWidth / 2 * this.obj.scaleX));
+          let left = ui.position.left / this.zoom - 0 + (this.objWidth / 2);
+          // let top = (ui.position.top - 0 + (this.objHeight / 2 * this.obj.scaleY));
+          let top = ui.position.top / this.zoom - 0 + (this.objHeight / 2);
+          // console.log([left, top])
+          this.obj.x = left;
+          this.obj.y = top;
           this.u();
           // console.log([left, top]);
         },

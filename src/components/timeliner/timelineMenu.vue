@@ -109,7 +109,7 @@ export default {
         let toSetValue = val * 1000;
         console.log([toSetValue, this.durationNum]);
         if(toSetValue >= this.durationNum && (toSetValue < this.durationNum * 2 || toSetValue < 9000)) {
-          this.tl.duration = toSetValue;
+          this.tl.duration = Math.ceil(toSetValue);
         }
       }
     },

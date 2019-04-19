@@ -125,7 +125,7 @@ export default {
         input(e) {
             let value = parseFloat(e.target.value || 0);
             this.$emit('input', value);
-            // console.log(e.target.value);
+            console.log(e.target.value);
         },
         change(e) {
             let value = parseFloat(e.target.value || 0);

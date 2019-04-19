@@ -280,8 +280,14 @@ let obj = {
     thisContainer.set({
       visible: item.visible,
     })
+    thisContainer.setBounds(
+      0,
+      0,
+      item.width,
+      item.height);
     item.obj = thisContainer;
     thisContainer.name = UUID;
+
     let shape = new c.Shape();
     shape.graphics.f('red').drawRect(0, 0, 100, 100);
     // thisContainer.addChild(shape);

@@ -61,7 +61,6 @@
             <span class="prop-name">容器尺寸</span>
           </div>
           <div style="padding-left: 15px;">
-            <!--形状属性 多边形-->
             <table cellspacing="0" cellpadding="0" style="width:100%;">
               <tr>
                 <td style="width: 8em;">
@@ -423,27 +422,27 @@
                   <table　cellpadding="0" cellspacing="0" style="width: 100%;">
                     <tr>
                       <td>
-                        <div class="align-icon align-left" @click="setAlign('left')">
+                        <div class="align-icon align-left" @click="setAlign('left')" title="左对齐">
                         </div>
                       </td>
                       <td>
-                        <div class="align-icon align-center" @click="setAlign('center')">
+                        <div class="align-icon align-center" @click="setAlign('center')" title="水平居中">
                         </div>
                       </td>
                       <td>
-                        <div class="align-icon align-right" @click="setAlign('right')">
+                        <div class="align-icon align-right" @click="setAlign('right')" title="右对齐">
                         </div>
                       </td>
                       <td>
-                        <div class="align-icon align-top" @click="setAlign('top')">
+                        <div class="align-icon align-top" @click="setAlign('top')" title="顶对齐">
                         </div>
                       </td>
                       <td>
-                        <div class="align-icon align-middle" @click="setAlign('middle')">
+                        <div class="align-icon align-middle" @click="setAlign('middle')" title="垂直居中">
                         </div>
                       </td>
                       <td>
-                        <div class="align-icon align-bottom" @click="setAlign('bottom')">
+                        <div class="align-icon align-bottom" @click="setAlign('bottom')" title="底对齐">
                         </div>
                       </td>
                     </tr>
@@ -820,6 +819,11 @@ export default {
       },
       set(val) {
         this.cLayer.width = val;
+        this.cLayer.obj.setBounds(0,0,val,this.cLayer.height);
+        this.cLayer.obj.set({
+          regX: this.cLayer.width / 2,
+          regY: this.cLayer.height / 2,
+        });
       }
     },
     // 容器高
@@ -829,6 +833,11 @@ export default {
       },
       set(val) {
         this.cLayer.height = val;
+        this.cLayer.obj.setBounds(0,0,this.cLayer.width,val);
+        this.cLayer.obj.set({
+          regX: this.cLayer.width / 2,
+          regY: this.cLayer.height / 2,
+        });
       }
     },
     // 当前属性==================================================================
