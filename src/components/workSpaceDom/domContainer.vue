@@ -2,9 +2,11 @@
 <template>
   <div v-show="isVisible">
     <div :style="dragStyle" class="dom-container-d" ref="domContainerD" v-show="isActivity">
-      <div :style="resizeStyle" class="dom-container-r" ref="domContainerR"></div>
+      <div :style="resizeStyle" class="dom-container-r" ref="domContainerR">
+      </div>
     </div>
     <div class="dom-container" :style="style" ref="domContainer" @click="setActiveIndex">
+      <div class="bg-preset rotate-center-icon" v-if="topIndex == index"></div>
       <template v-for="i,iindex in item.children">
         <!--容器下的image-->
         <domImage
@@ -337,5 +339,14 @@ export default {
   }
   .dom-container-r{
     border: 1px dashed #1284e7;
+  }
+  .rotate-center-icon {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M512 384c-70.827 0-128 57.173-128 128s57.173 128 128 128 128-57.173 128-128-57.173-128-128-128m298.667 426.667H640V896h170.667C857.6 896 896 857.6 896 810.667V640h-85.333m0-512H640v85.333h170.667V384H896V213.333C896 166.4 857.6 128 810.667 128m-597.334 85.333H384V128H213.333C166.4 128 128 166.4 128 213.333V384h85.333m0 256H128v170.667C128 857.6 166.4 896 213.333 896H384v-85.333H213.333V640z' fill='%231296db'/%3E%3C/svg%3E");
   }
 </style>

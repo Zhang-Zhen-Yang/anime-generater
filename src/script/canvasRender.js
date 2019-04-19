@@ -1,4 +1,5 @@
 import util from './util';
+import VideoCaptureClass from './videoCapture';
 let c = window.createjs;
 let obj = {
   render ({canvas = null, project = {}, state}) {
@@ -160,6 +161,19 @@ let obj = {
             timeline.addTween(tween);
           }
         });
+      } else if (type === 'video') {
+        this.getVideo({
+          container,
+          item,
+          timeline,
+          project,
+          UUID,
+          addChild: true,
+          callback: ({obj, scale}) => {
+            let tween = this.getTween({obj, item, timeline, scale});
+            timeline.addTween(tween);
+          }
+        }) 
       }
   },
   // 添加图片类型=================================================================
@@ -305,6 +319,50 @@ let obj = {
       project
     });
   },
+  getVideo({container, item, timeline, project, UUID = '', addChild = false, callback}) {
+    let videoCapture = new VideoCaptureClass({
+      src: item.src,
+      start_time: item.start_time / 1000,
+      end_time: item.end_time / 1000,
+      interval: item.interval / 1000,
+    })
+    let videoContainer = new c.Container();
+    videoContainer.setBounds(0, 0, 300, 150);
+    item.obj = videoContainer;
+    if (addChild) {
+      container.addChild(videoContainer);
+    }
+    callback({
+      obj: videoContainer
+    });
+    let promise = videoCapture.start();
+    promise.then((res)=>{
+      if(res.success) {
+        videoContainer.setBounds(0, 0, res.width, res.height);
+        videoContainer.set({
+          regX: res.width / 2,
+          regY: res.height / 2,
+        })
+        let data = {
+          images: res.list,
+          frames: {width:res.width, height:res.height},
+          animations: {
+              stand:0,
+              run:[1,res.list.length, 'run', item.interval / 100],
+              // jump:[6,8,"run"]
+          }
+        };
+        var spriteSheet = new createjs.SpriteSheet(data);
+        var animation = new createjs.Sprite(spriteSheet, "run");
+        item.sprite = animation;
+        // animation.gotoAndStop(0);
+        videoContainer.addChild(animation);
+        console.log(res);
+      }
+    }, () => {
+
+    });
+  },
   // 设置动画补间 =====================================================================
   getTween ({obj, item, timeline, scale = 1,f}) {
     // 动画
@@ -384,8 +442,13 @@ let obj = {
         case 'to':
           // 如果是第一个缓动节点
           if(tIndex == 0) {
+            if(item.sprite) {
+              item.sprite.gotoAndStop(0);
+            }
             tween[currentAction](props, 0, c.Ease[t.ease] || c.Ease.linear);
-            tween.wait(tDuration);
+            tween.wait(tDuration).call(()=>{
+              item.sprite && item.sprite.gotoAndPlay(0);
+            });
           } else {
             tween[currentAction](props, tDuration, c.Ease[t.ease] || c.Ease.linear);
           }

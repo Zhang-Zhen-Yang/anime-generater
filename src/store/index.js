@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-15 11:15:08
+ * @Last Modified time: 2019-04-19 09:02:04
  */
 
 import http from '../script/http';
@@ -65,8 +65,6 @@ const store = {
 		timeline: null,
 		// 是否在播放视频
 		playing: true,
-		
-		
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -81,7 +79,6 @@ const store = {
 		queryObj() {
 			return util.getQueryString();
 		},
-
 	},
 	// -----------------------------------------------------------------------------------------------------------
 	mutations: {
@@ -151,7 +148,6 @@ const store = {
 						item.value = item.value.replace(/[0-9]+\.?[0-9]*/, state.goods.promotionPrice);
 					}
 				})
-
 				state.update();
 			}
 		},

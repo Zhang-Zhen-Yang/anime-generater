@@ -81,7 +81,7 @@ export default {
                 return;
             }
             this.distance = e.pageX - this.x;
-            let totalValue = this.distance * this.stepScale + this.initValue;
+            let totalValue = parseFloat((this.distance * this.stepScale + this.initValue).toFixed(this.toFixed));
             if(totalValue <= this.min) {
                 this.$emit('input', this.min);
             } else if(totalValue >= this.max) {
@@ -101,7 +101,7 @@ export default {
             }
             // console.log('end');
             this.distance = e.pageX - this.x;
-            let totalValue = this.distance * this.stepScale + this.initValue;
+            let totalValue = parseFloat((this.distance * this.stepScale + this.initValue).toFixed(this.toFixed));
             if(totalValue <= this.min) {
                 this.$emit('change', this.min)
             } else if(totalValue >= this.max){

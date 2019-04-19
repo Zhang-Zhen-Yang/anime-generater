@@ -1,5 +1,5 @@
 <template>
-  <div id="work-space" class="scrollbar-overwrite" @click="emptyClick">
+  <div id="work-space" class="scrollbar-overwrite" @mousedown="emptyClick">
     <div class="inline-block" style="width:0px;height: 100%;vertical-align: middle;background-color:red;" v-if="false"></div>
     <canvas id="canvas" class="inline-block" ref="canvas" @click="togglePlayState" :style="canvasStyle">
     </canvas>

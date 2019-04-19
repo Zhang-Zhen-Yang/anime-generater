@@ -471,7 +471,7 @@
                     @start="propStartSetValue"
                     @change="change({type:'x',value: x})">
                     <span >
-                      {{ x }}
+                      {{ x.toFixed(2) }}
                     </span>
                   </num-resize>
                   <input type="number" v-if="false" v-model="x" @change="change({type:'x',value: x})">
@@ -488,7 +488,7 @@
                     @start="propStartSetValue"
                     @change="change({type:'y',value: y})">
                     <span>
-                      {{ y }}
+                      {{ y.toFixed(2) }}
                     </span>
                   </num-resize>
                 </td>
@@ -505,7 +505,7 @@
                     @start="propStartSetValue"
                     @change="change({type:'scaleX',value: scaleX})">
                     <span>
-                      {{ scaleX }}
+                      {{ scaleX.toFixed(4) }}
                     </span>
                   </num-resize>
                 </td>
@@ -522,7 +522,7 @@
                     @start="propStartSetValue"
                     @change="change({type:'scaleY',value: scaleY})">
                     <span>
-                      {{ scaleY }}
+                      {{ scaleY.toFixed(4) }}
                     </span>
                   </num-resize>
                 </td>

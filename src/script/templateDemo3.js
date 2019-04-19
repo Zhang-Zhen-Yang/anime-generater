@@ -273,8 +273,58 @@ let demo = {
           ease: 'linear',
         }
       ]
-
     },
+    // 影片
+    {
+      type: 'video',
+      obj: null,
+      UUID: '',
+      visible: true,
+      editable: true,
+      layerName: '视频',
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      shadowBlur: 100,
+      shadowColor: '#000000',
+      src: `${window.assets}video.mp4`,
+      // src: 'https://tbm-auth.alicdn.com/IIII1iCvvtm2UjjI3Kw/JxYS29AhMzDempx9vuU@@hd_hq.mp4?auth_key=1555665769-0-0-a1889ec246c00fec6029ef95792300c1',
+      interval: 50,
+      start_time: 100000,
+      end_time: 115000,
+      sprite: null,
+      list: [],
+      tween: [
+        {
+          action: 'to',
+          props: {
+            x: 400,
+            y: 400,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            alpha: 1,
+            rotation: 0,
+            regX: 'ow / 2',
+            regY: 'oh / 2'
+          },
+          time: 0,
+          ease: 'linear',
+        },
+        {
+          action: 'to',
+          props: {
+            x: 100,
+            y: 300,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            alpha: 1,
+            rotation: 0
+          },
+          time: 6000,
+          ease: 'linear',
+        },
+
+      ]
+    }
     
   ]
 };

@@ -67,7 +67,7 @@ let Object = {
             return;
         } else {
             for(var i in obj){
-                if (i == 'obj' || i == 'tweenObj') {
+                if (i == 'obj' || i == 'tweenObj' || i == 'sprite') {
                     newobj[i] = '';
                     continue;
                 }  

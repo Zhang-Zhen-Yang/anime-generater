@@ -21,6 +21,10 @@
       <domContainer
         :index="index"
         v-if="item.type=='container'&&item.obj" :obj="item.obj" :item="item"></domContainer>
+      <domText
+        :index="index"
+        v-if="item.type=='video'&&item.obj" :obj="item.obj" :item="item" :isShape="true"></domText>
+      
     </div>
 
   </div>
