@@ -9,6 +9,7 @@ import pageBottom from './pageBottom/index.vue';
 import center from './center/center.vue';
 import fileInput from './fileInput/fileInput.vue';
 import maskReplace from './maskReplace/maskReplace.vue';
+import maskReplaceVideo from './maskReplaceVideo/maskReplaceVideo.vue';
 import contentNotice from './contentNotice/contentNotice.vue';
 import materialSpinner from './materialSpinner/MaterialSpinner.vue';
 import modalDialog from './modalDialog/modalDialog.vue';
@@ -32,6 +33,7 @@ const options = {
 	'v-center': center,
 	fileInput,
 	maskReplace,
+	maskReplaceVideo,
 	contentNotice,
 	materialSpinner,
 	modalDialog,

@@ -11,3 +11,6 @@ yarn-error.log
 *.njsproj
 *.sln
 assets/video.mp4
+assets/mad.mp4
+audio/one.wav
+audio/two.wav

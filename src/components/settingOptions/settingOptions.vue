@@ -210,8 +210,17 @@
             </select>
           </div>
         </template>
-        
-        <!--形状类型======================================================================================-->
+        <!--视频类型========================================================================================-->
+        <template v-if="cLayer && cLayer.type=='video'" mute>
+          <!--视频-->
+          <div class="c-layer-title">
+            <span class="prop-name">视频</span>
+          </div>
+          
+            <videoRangeSelect :layer="cLayer"></videoRangeSelect>
+          
+        </template>
+        <!--形状类型========================================================================================-->
         <template v-if="cLayer && cLayer.type=='shape'">
           
           <div class="c-layer-title">
@@ -585,8 +594,10 @@ import util from '../../script/util';
 import utilTimeline from '../../script/utilTimeline';
 import fontsList from '../../script/fontsList';
 import eases from '../../script/eases';
+import videoRangeSelect from './videoRangeSelect.vue';
 export default {
   name: 'setting-options',
+  components: {videoRangeSelect},
   data () {
     return {
       msg: 'setting-options',

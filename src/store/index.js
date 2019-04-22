@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-19 09:02:04
+ * @Last Modified time: 2019-04-20 15:35:25
  */
 
 import http from '../script/http';
@@ -26,7 +26,9 @@ import dialogAudio from './dialogAudio';
 import dialogGenerate from './dialogGenerate';
 import dialogSetting from './dialogSetting';
 import dialogDownload from './dialogDownload';
+import dialogVideoClip from './dialogVideoClip';
 import tl from './tl';
+import test from './test.js';
 import optionsSetting from './optionsSetting';
 import demo from '../script/templateDemo.js';
 import demo2 from '../script/templateDemo2.js';
@@ -739,6 +741,8 @@ const store = {
 		dialogAudio,
 		tl,
 		os: optionsSetting,
+		dialogVideoClip,
+		test,
 	}
 }
 export default store;

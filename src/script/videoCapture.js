@@ -7,7 +7,7 @@ class VideoCapture {
         this.end_time = end_time;
         this.interval = interval;
         this.cancel = false
-        this.video.style="position:absolute;left:0;top:0;background-color: white;width: 300px;";
+        this.video.style="position:absolute;left:0;top:100px;background-color: white;width: 300px;";
         document.body.appendChild(this.video);
     }
     start() {
@@ -49,7 +49,7 @@ class VideoCapture {
                         setTimeout(()=>{
                             this.video.currentTime += this.interval;
                             this.current_time = this.video.currentTime;
-                        }, 5)
+                        }, 0);
 
                     }
                 }

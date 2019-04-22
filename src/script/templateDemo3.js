@@ -287,12 +287,65 @@ let demo = {
       shadowBlur: 100,
       shadowColor: '#000000',
       src: `${window.assets}video.mp4`,
-      // src: 'https://tbm-auth.alicdn.com/IIII1iCvvtm2UjjI3Kw/JxYS29AhMzDempx9vuU@@hd_hq.mp4?auth_key=1555665769-0-0-a1889ec246c00fec6029ef95792300c1',
+      // src: 'https://tbm-auth.alicdn.com/IIII1iCvvtm2UjjI3Kw/JxYS29AhMzDempx9vuU@@hd_hq.mp4?auth_key=1555732426-0-0-0a40a70867ff932519d177f16cb32dee',
       interval: 50,
-      start_time: 100000,
-      end_time: 115000,
+      start_time: 8000,
+      end_time: 10000,
       sprite: null,
       list: [],
+      lastAction: 'init',
+      tween: [
+        {
+          action: 'to',
+          props: {
+            x: 400,
+            y: 400,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            alpha: 1,
+            rotation: 0,
+            regX: 'ow / 2',
+            regY: 'oh / 2'
+          },
+          time: 0,
+          ease: 'linear',
+        },
+        {
+          action: 'to',
+          props: {
+            x: 100,
+            y: 300,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            alpha: 1,
+            rotation: 0
+          },
+          time: 6000,
+          ease: 'linear',
+        },
+
+      ]
+    },
+    // 影片2
+    {
+      type: 'video',
+      obj: null,
+      UUID: '',
+      visible: true,
+      editable: true,
+      layerName: '视频',
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      shadowBlur: 100,
+      shadowColor: '#000000',
+      src: `${window.assets}video.mp4`,
+      // src: 'https://tbm-auth.alicdn.com/IIII1iCvvtm2UjjI3Kw/JxYS29AhMzDempx9vuU@@hd_hq.mp4?auth_key=1555732426-0-0-0a40a70867ff932519d177f16cb32dee',
+      interval: 50,
+      start_time: 28000,
+      end_time: 29000,
+      sprite: null,
+      list: [],
+      lastAction: 'init',
       tween: [
         {
           action: 'to',

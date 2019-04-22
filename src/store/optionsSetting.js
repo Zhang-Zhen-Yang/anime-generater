@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-18 15:46:26
+ * @Last Modified time: 2019-04-22 15:04:17
  */
  // 时间轴组件
 import http from '../script/http';
@@ -11,6 +11,7 @@ import api from '../script/api';
 import util from '../script/util';
 import utilTimeline from '../script/utilTimeline';
 import canvasRender from '../script/canvasRender';
+import VideoCaptureClass from '../script/videoCapture';
 import Vue from 'vue';
 const store = {
 	state: {
@@ -43,6 +44,7 @@ const store = {
       let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
       let currentTweenObj = currentLayer.tweenObj;
       if(!currentTweenObj) return;
+      let currentVideoTweenObj = currentLayer.videoTweenObj;
 
       let scale = 1;
       if(currentLayer.type == 'image' && target.image) {
@@ -56,6 +58,7 @@ const store = {
 
       // alert(window.timeline._tweens.length);
       window.timeline.removeTween(currentTweenObj);
+      window.timeline.removeTween(currentVideoTweenObj);
       // alert(window.timeline._tweens.length);
 
       // console.warn(currentTweenObj.target);
@@ -69,7 +72,9 @@ const store = {
       // console.warn('tween', tween);
       
       // tween = cra
-      window.timeline.addTween(tween);
+      tween.forEach((t)=>{
+        window.timeline.addTween(t);
+      })
       // alert(window.timeline._tweens.length);
       // currentLayer.tweenObj = tween;
       // window.timeline.updateDuration();
@@ -180,6 +185,46 @@ const store = {
           }
         });
       }
+    },
+    // 更改视频片段
+    videoChange({state, rootState,commit,dispatch},{start_time, end_time, src, item, callback}) {
+      item.start_time = start_time;
+      item.end_time = end_time;
+      item.src = src;
+      let videoCapture = new VideoCaptureClass({
+        src: item.src,
+        start_time: item.start_time / 1000,
+        end_time: item.end_time / 1000,
+        interval: item.interval / 1000,
+      })
+      let videoContainer = item.obj;
+
+      let promise = videoCapture.start();
+      promise.then((res)=>{
+        if(res.success) {
+          videoContainer.setBounds(0, 0, res.width, res.height);
+          videoContainer.set({
+            regX: res.width / 2,
+            regY: res.height / 2,
+          })
+          item.list = res.list;
+
+          let tweenObj = item.tweenObj;
+          let videoTweenObj = item.videoTweenObj;
+          timeline.removeTween(tweenObj);
+          timeline.removeTween(videoTweenObj);
+          let tween = canvasRender.getTween({obj: item.obj, item, timeline: window.timeline, scale:1});
+          tween.forEach((i)=>{
+            timeline.addTween(i);
+          })
+          item.lastAction = 'success';
+        } else {
+          item.lastAction = 'error';
+        }
+      }, () => {
+        item.lastAction = 'error';
+      });
+
     },
     // 加载字体
     loadFont({state, rootState,commit,dispatch}, {fontFamily, text}) {

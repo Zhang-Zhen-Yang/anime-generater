@@ -30,6 +30,7 @@
     <dialogImage v-if="dialogImage.show"></dialogImage>
     <dialogDownload v-show="dialogDownload.show"></dialogDownload>
     <dialogLoading v-if="uploading"></dialogLoading>
+    <dialogVideoClip v-if="dialogVideoClip.show"></dialogVideoClip>
     <contextMenu></contextMenu>
   </div>
 </template>
@@ -43,11 +44,24 @@ import dialogImage from './components/dialogImage/dialogImage';
 import dialogGenerate from './components/dialogGenerate/dialogGenerate';
 import dialogDownload from './components/dialogDownload/dialogDownload';
 import dialogLoading from './components/dialogLoading/dialogLoading';
+import dialogVideoClip from './components/dialogVideoClip/dialogVideoClip';
 import contextMenu from './components/contextMenu';
 import undoredo from './components/undoredo.vue';
 export default {
   name: 'app',
-  components: {timeliner, settingOptions, topBar, workSpace, dialogGenerate, dialogLoading, dialogImage, dialogDownload, contextMenu, undoredo},
+  components: {
+    timeliner,
+    settingOptions,
+    topBar,
+    workSpace,
+    dialogGenerate,
+    dialogLoading,
+    dialogImage,
+    dialogDownload,
+    dialogVideoClip,
+    contextMenu,
+    undoredo
+  },
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -66,6 +80,9 @@ export default {
     },
     dialogDownload() {
       return this.$store.state.dialogDownload;
+    },
+    dialogVideoClip() {
+      return this.$store.state.dialogVideoClip;
     },
     // 是否在上传
     uploading() {
@@ -143,6 +160,8 @@ export default {
 
 
     this.$store.dispatch('initnew');
+
+    this.$store.dispatch('convertAudioTest');
   },
 }
 </script>

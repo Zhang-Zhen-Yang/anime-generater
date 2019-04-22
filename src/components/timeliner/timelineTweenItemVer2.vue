@@ -1,5 +1,6 @@
 <template>
   <div class="timeline-tween-item relative" ref="timeline-tween-item" @dblclick="addTween">
+    <timelineTweenVideoLength v-if="anTween.type == 'video'" :item="anTween" :tween="tweenLocal"></timelineTweenVideoLength>
     <timelineTweensMoveBlock :topIndex="topIndex" :subIndex="subIndex" :tween="tweenLocal"></timelineTweensMoveBlock>
     <div
       v-for="t,index in tweenLocal"
@@ -45,9 +46,10 @@
 
 <script>
 import timelineTweensMoveBlock from './timelineTweensMoveBlock.vue';
+import timelineTweenVideoLength from './timelineTweenVideoLength.vue';
 export default {
   name: 'timeline-tween-item',
-  components: {timelineTweensMoveBlock},
+  components: {timelineTweensMoveBlock, timelineTweenVideoLength},
   props: {
     anTween: {
       type: Object,

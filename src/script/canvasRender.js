@@ -70,7 +70,9 @@ let obj = {
             let tween = this.getTween({obj, item, timeline, scale});
             // console.log('UUID', UUID);
             // console.log(obj);
-            timeline.addTween(tween);
+            tween.forEach((i)=>{
+              timeline.addTween(i);
+            })
           }
         });
         // 文本类型
@@ -87,7 +89,9 @@ let obj = {
             /* obj.name = UUID;
             item.UUID = UUID; */
             let tween = this.getTween({obj, item, timeline, scale});
-            timeline.addTween(tween);
+            tween.forEach((i)=>{
+              timeline.addTween(i);
+            })
           }
         });
         // 形状类型
@@ -104,7 +108,9 @@ let obj = {
             /* obj.name = UUID;
             item.UUID = UUID; */
             let tween = this.getTween({obj, item, timeline, scale});
-            timeline.addTween(tween);
+            tween.forEach((i)=>{
+              timeline.addTween(i);
+            })
 
             // 是否作为遮罩
             if(item.asMask) {
@@ -137,7 +143,9 @@ let obj = {
             /* obj.name = UUID;
             item.UUID = UUID; */
             let tween = this.getTween({obj, item, timeline, scale});
-            timeline.addTween(tween);
+            tween.forEach((i)=>{
+              timeline.addTween(i);
+            })
             if (index > 0) {
               let prevLayer = layers[index - 1];
               console.log(layers);
@@ -158,7 +166,9 @@ let obj = {
           addChild: true,
           callback: ({obj, scale}) => {
             let tween = this.getTween({obj, item, timeline, scale});
-            timeline.addTween(tween);
+            tween.forEach((i)=>{
+              timeline.addTween(i);
+            })
           }
         });
       } else if (type === 'video') {
@@ -171,7 +181,9 @@ let obj = {
           addChild: true,
           callback: ({obj, scale}) => {
             let tween = this.getTween({obj, item, timeline, scale});
-            timeline.addTween(tween);
+            tween.forEach((i)=>{
+              timeline.addTween(i);
+            })
           }
         }) 
       }
@@ -320,14 +332,10 @@ let obj = {
     });
   },
   getVideo({container, item, timeline, project, UUID = '', addChild = false, callback}) {
-    let videoCapture = new VideoCaptureClass({
-      src: item.src,
-      start_time: item.start_time / 1000,
-      end_time: item.end_time / 1000,
-      interval: item.interval / 1000,
-    })
+    
     let videoContainer = new c.Container();
     videoContainer.setBounds(0, 0, 300, 150);
+    videoContainer.name = UUID;
     item.obj = videoContainer;
     if (addChild) {
       container.addChild(videoContainer);
@@ -335,33 +343,67 @@ let obj = {
     callback({
       obj: videoContainer
     });
-    let promise = videoCapture.start();
-    promise.then((res)=>{
-      if(res.success) {
-        videoContainer.setBounds(0, 0, res.width, res.height);
-        videoContainer.set({
-          regX: res.width / 2,
-          regY: res.height / 2,
-        })
-        let data = {
-          images: res.list,
-          frames: {width:res.width, height:res.height},
-          animations: {
-              stand:0,
-              run:[1,res.list.length, 'run', item.interval / 100],
-              // jump:[6,8,"run"]
-          }
-        };
-        var spriteSheet = new createjs.SpriteSheet(data);
-        var animation = new createjs.Sprite(spriteSheet, "run");
-        item.sprite = animation;
-        // animation.gotoAndStop(0);
-        videoContainer.addChild(animation);
-        console.log(res);
-      }
-    }, () => {
+    let shape = new c.Shape();
+    videoContainer.addChild(shape);
 
-    });
+    if(item.lastAction == 'success' || item.lastAction == 'initing') {
+      
+    } else {
+      item.lastAction = 'initing';
+      let videoCapture = new VideoCaptureClass({
+        src: item.src,
+        start_time: item.start_time / 1000,
+        end_time: item.end_time / 1000,
+        interval: item.interval / 1000,
+      })
+      let promise = videoCapture.start();
+      promise.then((res)=>{
+        if(res.success) {
+          videoContainer.setBounds(0, 0, res.width, res.height);
+          videoContainer.set({
+            regX: res.width / 2,
+            regY: res.height / 2,
+          })
+          item.list = res.list;
+
+          let tweenObj = item.tweenObj;
+          let videoTweenObj = item.videoTweenObj;
+          timeline.removeTween(tweenObj);
+          timeline.removeTween(videoTweenObj);
+          let tween = this.getTween({obj: item.obj, item, timeline, scale:1});
+          tween.forEach((i)=>{
+            timeline.addTween(i);
+          })
+        
+          /*let data = {
+            images: res.list,
+            frames: {width:res.width, height:res.height},
+            animations: {
+                stand:0,
+                run:[1,res.list.length, 'run', item.interval / 100],
+                // jump:[6,8,"run"]
+            }
+          };
+          var spriteSheet = new createjs.SpriteSheet(data);
+          var animation = new createjs.Sprite(spriteSheet, "run");
+          item.sprite = animation;
+          // animation.gotoAndStop(0);
+  
+  
+  
+  
+          videoContainer.addChild(animation);
+          console.log(res);
+          */
+          item.lastAction = 'success';
+        } else {
+          item.lastAction = 'error';
+        }
+      }, () => {
+        item.lastAction = 'error';
+      });
+
+    }
   },
   // 设置动画补间 =====================================================================
   getTween ({obj, item, timeline, scale = 1,f}) {
@@ -442,9 +484,9 @@ let obj = {
         case 'to':
           // 如果是第一个缓动节点
           if(tIndex == 0) {
-            if(item.sprite) {
+            /*if(item.sprite) {
               item.sprite.gotoAndStop(0);
-            }
+            }*/
             tween[currentAction](props, 0, c.Ease[t.ease] || c.Ease.linear);
             tween.wait(tDuration).call(()=>{
               item.sprite && item.sprite.gotoAndPlay(0);
@@ -460,8 +502,39 @@ let obj = {
         default: break;
       }
     });
+    let videoTween = null;
+    if(item.type == 'video') {
+      console.log('obj',obj);
+      let shapeObj = obj.children[0];
+      videoTween = c.Tween.get(shapeObj);
+      // alert(item.list.length);
+      let firstTime = projectTween[0] ? projectTween[0].time : 0;
+      let videoWidth = 0;
+      let videoHeight = 0;
+      
+      item.list.forEach((clipListItem, index)=>{
+        if(index == 0) {
+          // alert(shapeObj);
+          videoWidth = clipListItem.width
+          videoHeight = clipListItem.height
+          shapeObj.graphics.clear();
+          shapeObj.graphics.bf(clipListItem).r(0,0, videoWidth, videoHeight);
+          videoTween.wait(firstTime);
+        } 
+        console.log(firstTime + index*item.interval);
+        videoTween.wait(item.interval).call(()=>{
+          shapeObj.graphics.clear();
+          shapeObj.graphics.bf(clipListItem).r(0, 0, videoWidth, videoHeight);
+        });
+      })
+    }
+    item.videoTweenObj = videoTween;
     item.tweenObj = tween;
-    return tween;
+    if(videoTween) {
+      return [tween, videoTween];
+    } else {
+      return [tween];
+    }
     // timeline.addTween(tween);
   }
 };

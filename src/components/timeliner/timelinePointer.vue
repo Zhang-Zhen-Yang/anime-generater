@@ -30,6 +30,7 @@ export default {
     return {
       msg: 'timeline-pointer',
       dragging: false,
+      lastTime: 0,
     }
   },
   computed: {
@@ -197,14 +198,25 @@ export default {
         stop: (e, ui) => {
           console.log(ui);
           this.dragging = false;
-          this.setPosition();
-        },
-        drag: (e, ui) => {
           let left = ui.position.left;
           let totalWidth = this.$refs['timeline-pointer'].clientWidth;
           let position = parseInt(left / totalWidth * this.tlDuration);
-          // console.log(position);
           window.timeline.setPosition(position);
+
+          this.setPosition();
+        },
+        drag: (e, ui) => {
+          let now = Date.now();
+          if((now - this.lastTime) > 50) {
+            console.log(now - this.lastTime);
+            this.lastTime = now;
+            // console.log('dd');
+           let left = ui.position.left;
+            let totalWidth = this.$refs['timeline-pointer'].clientWidth;
+            let position = parseInt(left / totalWidth * this.tlDuration);
+            // console.log(position);
+            window.timeline.setPosition(position);
+          }
         }
       })
     })
@@ -243,13 +255,6 @@ export default {
 
   }
 
-  .timeline-pointer-cursor{
-    width: 10px;
-    height: 13px;
-    background-size:contain;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='26' viewBox='0 0 20 26'%3E%3Cpath fill='%231284e7' fill-rule='evenodd' d='M2 0h16a2 2 0 0 1 2 2v14.917a1 1 0 0 1-.367.774L10 25.573.367 17.691A1 1 0 0 1 0 16.917V2a2 2 0 0 1 2-2z'/%3E%3C/svg%3E");
-    transform: translate(-50%, 0);
-  }
 
 
   // 

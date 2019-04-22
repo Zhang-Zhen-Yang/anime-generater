@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-17 15:09:36
+ * @Last Modified time: 2019-04-20 10:54:28
  */
 
  // 时间轴组件
@@ -418,23 +418,28 @@ const store = {
       let tweenIndex =  state.tweenIndex;
       let currentLayer;
       let currentTweenObj;
+      let currentVideoTweenObj;
       let obj;
       let scale = 1;
       let UUID;
+      // 子
       if(topIndex >-1 && subIndex > -1) {
         currentLayer = rootState.project.layers[topIndex].children[subIndex];
         UUID = currentLayer.UUID;
         currentTweenObj = currentLayer.tweenObj;
+        currentVideoTweenObj = currentLayer.videoTweenObj;
         // obj = window.stage.children[topIndex + 1].children[0].children[subIndex].children[0];
 
+        // 顶部
       } else if(topIndex > -1){
         currentLayer = rootState.project.layers[topIndex];
         UUID = currentLayer.UUID;
         currentTweenObj = currentLayer.tweenObj;
+        currentVideoTweenObj = currentLayer.videoTweenObj;
         // obj = window.stage.children[topIndex + 1].children[0];
       }
-      
       obj = utilTimeline.getObjByUUID({parent: window.stage, UUID});
+      // alert(obj);
       if(currentLayer.type == 'image') {
         scale = util.getImageScale({
           img: obj.image,
@@ -443,11 +448,15 @@ const store = {
           type: 'cover'
         });
       }
+
       let tween = canvasRender.getTween({obj, item: currentLayer, timeline: window.timeline, scale});
       // alert(window.timeline._tweens.length);
       window.timeline.removeTween(currentTweenObj);
+      window.timeline.removeTween(currentVideoTweenObj);
       // alert(window.timeline._tweens.length);
-      window.timeline.addTween(tween);
+      tween.forEach((t)=>{
+        window.timeline.addTween(t);
+      })
       // alert(window.timeline._tweens.length);
     },
     // 检测是否应该添加缓节点

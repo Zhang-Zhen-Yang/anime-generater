@@ -62,12 +62,12 @@ let Object = {
         return props;
     },
     cloneObj(obj){
-        var str, newobj = obj.constructor === Array ? [] : {};
+        var str, newobj = Array.isArray(obj) ? [] : {};
         if(typeof obj !== 'object'){
             return;
         } else {
             for(var i in obj){
-                if (i == 'obj' || i == 'tweenObj' || i == 'sprite') {
+                if (i == 'obj' || i == 'tweenObj' || i == 'videoTweenObj' || i == 'sprite' || i == 'list') {
                     newobj[i] = '';
                     continue;
                 }  

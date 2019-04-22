@@ -261,8 +261,73 @@ function convertImageToVideo(imagesArray, audio, {f, t, b}, callback) {
 			worker = null;
 		}
 	};
-
-
 }
 
-export { convertStreams, accessWorder, convertImageToVideo };
+function combineAudio(array, callback) {
+	var worker;	
+	if (!worker) {
+		worker = processInWebWorker();
+	}
+	let files = [
+		{
+			name: `input${0}.wav`,
+			data: array[0],
+		},
+		{
+			name: `input${1}.wav`,
+			data: array[1],
+		}
+	];
+	/*array.map((item, index)=>{
+		console.log(`input${index}.wav`);
+		return {
+			name: `input${index}.wav`,
+			data: item,
+		}
+	})*/
+
+	// 背景音乐和人声合并
+	// let commands = `-i input0.wav -i input1.wav -filter_complex amerge output.wav`;
+	// let commands = `-i input0.wav -i input1.wav -acodec copy output.wav`;
+	//let commands = `-i input1.wav -i input0.wav  -filter_complex amix=inputs=2:duration=longest:dropout_transition=2 output.wav`;
+	let commands = `-i input1.wav -i input0.wav  -filter_complex mergeplanes output.wav`;
+	// let commands = `ffmpeg -filters`;
+	
+	let args = util.parseArguments(commands);
+
+	let postMessage = ()=>{
+		worker.postMessage({
+			type: 'command',
+			arguments:  args,
+			files
+		})
+	}
+	// console.log(files);
+	worker.onmessage = function(event) {
+		var message = event.data;
+		if(callback) {
+			callback(message);
+		}
+		if (message.type == "ready") {
+			log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file has been loaded.');
+			// workerReady = true;
+			postMessage();
+		} else if (message.type == "stdout") {
+			log(message.data);
+		} else if (message.type == "start") {
+			log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file received ffmpeg command.');
+		} else if (message.type == "done") {
+			log(JSON.stringify(message));
+			var result = message.data[0];
+			log(JSON.stringify(result));
+			var blob = new Blob([result.data], {
+				type: 'audio/wav'
+			});
+			log(JSON.stringify(blob));
+			PostBlob(blob);
+			worker = null;
+		}
+	};
+}
+
+export { convertStreams, accessWorder, convertImageToVideo, combineAudio };
