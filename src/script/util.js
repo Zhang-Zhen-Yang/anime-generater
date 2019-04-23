@@ -108,6 +108,15 @@ const util = {
             fileReader.readAsArrayBuffer(blob);
         });
 	},
+	blobToArrayBuffer: function(blob){
+        let fileReader = new FileReader();
+        return new Promise((resolve, reject) => {
+            fileReader.onloadend = () => {
+                resolve(fileReader.result);
+            };
+            fileReader.readAsArrayBuffer(blob);
+        });
+	},
 	base64ToArrayBuffer: function(base64) {
 		var binary_string =  window.atob(base64);
 		var len = binary_string.length;

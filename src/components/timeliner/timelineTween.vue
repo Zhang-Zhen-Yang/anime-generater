@@ -1,5 +1,9 @@
 <template>
   <div id="timeline-layer-tweens" :style="{width: width, left: left}">
+    <!--语音图层-->
+    <div class="timeline-voice-tweens">
+      <timelineTweenVoiceItem></timelineTweenVoiceItem>
+    </div>
     <div v-for="item,index in layers"  :key="index">
       <div class="timeline-layer-tween">
         <timelineTweenItem v-if="projectVer == 1" :anTween="item" :topIndex="index">
@@ -23,9 +27,10 @@
 <script>
 import timelineTweenItem from './timelineTweenItem';
 import timelineTweenItemVer2 from './timelineTweenItemVer2';
+import timelineTweenVoiceItem from './timelineTweenVoiceItem';
 export default {
   name: 'timeline-layer-tweens',
-  components: {timelineTweenItem, timelineTweenItemVer2},
+  components: {timelineTweenItem, timelineTweenItemVer2, timelineTweenVoiceItem},
   data () {
     return {
       msg: 'temp'
@@ -85,4 +90,9 @@ export default {
     bottom: 0;
     border-bottom: 1px solid red;
   }*/
+  .timeline-voice-tweens{
+    height: 25px;
+    border-bottom: 1px solid #3D4041;
+    border-top: 1px solid #3D4041;
+  }
 </style>

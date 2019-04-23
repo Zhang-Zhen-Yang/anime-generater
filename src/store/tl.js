@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-20 10:54:28
+ * @Last Modified time: 2019-04-23 15:15:26
  */
 
  // 时间轴组件
@@ -30,6 +30,7 @@ const store = {
     topIndex: -1,
     subIndex: -1,
     tweenIndex: -1,
+    voiceIndex: -1,
     // 菜单
     contextMenu: {
       show: true,
@@ -384,6 +385,7 @@ const store = {
       state.topIndex = topIndex;
       state.subIndex = subIndex;
       state.tweenIndex = tweenIndex;
+      state.voiceIndex = -1;
       if(topIndex >-1 && subIndex > -1) {
         rootState.activeLayerIndex = [topIndex, subIndex];
         let layers = rootState.project.layers[topIndex].children[subIndex] || {};

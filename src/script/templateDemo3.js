@@ -5,6 +5,23 @@ let demo = {
   bgColor: '#ffffff',
   zoom: 0.6, // 画布的缩放
   ver: 2,
+  // tts
+  voices: [
+    {
+      time: 0,
+      tex: '偶像大师',
+      per: 0, // 人声
+      data: '',
+      duration: 0,
+    },
+    {
+      time: 6000,
+      tex: '文豪野犬',
+      per: 0,
+      data: '',
+      duration: 0
+    },
+  ],
   // 层
   layers: [
     // 图片图层

@@ -3,7 +3,10 @@
     <div id="setting-options-title" slot="s">
       设置<!--{{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}-->
     </div>
-    <div id="setting-options-content" slot="e">
+    <div v-if="voiceIndex > -1" id="setting-options-content" slot="e">
+      <voiceOptions></voiceOptions>
+    </div>
+    <div v-else id="setting-options-content" slot="e">
       <div class="divider" style="padding: 10px;">
         <!--全局设置======================================================================================-->
         <template v-if="tlTopIndex == -1">
@@ -595,9 +598,10 @@ import utilTimeline from '../../script/utilTimeline';
 import fontsList from '../../script/fontsList';
 import eases from '../../script/eases';
 import videoRangeSelect from './videoRangeSelect.vue';
+import voiceOptions from './voiceOptions.vue';
 export default {
   name: 'setting-options',
-  components: {videoRangeSelect},
+  components: {videoRangeSelect, voiceOptions},
   data () {
     return {
       msg: 'setting-options',
@@ -610,6 +614,9 @@ export default {
     },
     tl() {
       return this.$store.state.tl;
+    },
+    voiceIndex() {
+      return this.tl.voiceIndex;
     },
     topIndex() {
 

@@ -74,7 +74,7 @@ export default {
       return {
         width: '100%',
         minHeight: '100%',
-        height: `${25 * (this.layersTotalCount + 1)}px`,
+        height: `${25 * (this.layersTotalCount + 2)}px`,
         backgroundColor: '#2c2e2f',
         borderRight: '1px solid rgba(255, 255, 255,0.3)',
       }
@@ -83,7 +83,7 @@ export default {
       return {
         width: '100%',
         minHeight: '100%',
-        height: `${25 * (this.layersTotalCount + 1)}px`,
+        height: `${25 * (this.layersTotalCount + 2)}px`,
         padding: '0 0 0 5px',
         overflow: 'hidden',
       }

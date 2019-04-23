@@ -86,6 +86,7 @@ export default {
         this.$store.state.activeLayerIndex = [-1];
         this.$store.state.tl.topIndex = -1;
         this.$store.state.tl.subIndex = -1;
+        this.$store.state.tl.voiceIndex = -1;
       }
     },
     drawRect() {

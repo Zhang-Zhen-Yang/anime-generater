@@ -305,6 +305,8 @@ export default {
         this.$store.state.activeLayerIndex = [this.index, this.sIndex];
         this.$store.state.tl.topIndex = this.index;
         this.$store.state.tl.subIndex = this.sIndex;
+        this.$store.state.tl.voiceIndex = -1;
+        // alert(this.$store.state.tl.voiceIndex);
         if(!this.project.layers[this.index].children[this.sIndex].tween[this.tweenIndex]) {
           this.$store.state.tl.tweenIndex = 0;
         }
@@ -312,6 +314,8 @@ export default {
         this.$store.state.activeLayerIndex = [this.index];
         this.$store.state.tl.topIndex = this.index;
         this.$store.state.tl.subIndex = -1;
+        this.$store.state.tl.voiceIndex = -1;
+        // alert(this.$store.state.tl.voiceIndex);
         if(!this.project.layers[this.index].tween[this.tweenIndex]) {
           this.$store.state.tl.tweenIndex = 0;
         }

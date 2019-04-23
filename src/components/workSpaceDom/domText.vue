@@ -310,10 +310,13 @@ export default {
         this.$store.state.activeLayerIndex = [this.index, this.sIndex];
         this.$store.state.tl.topIndex = this.index;
         this.$store.state.tl.subIndex = this.sIndex;
+        this.$store.state.tl.voiceIndex = -1;
+        
       } else {
         this.$store.state.activeLayerIndex = [this.index];
         this.$store.state.tl.topIndex = this.index;
         this.$store.state.tl.subIndex = -1;
+        this.$store.state.tl.voiceIndex = -1;
       }  
     },
     c() {

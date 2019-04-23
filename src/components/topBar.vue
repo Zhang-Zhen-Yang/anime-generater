@@ -4,6 +4,7 @@
     <span>图文视频</span>
     <h2 style="float: left;"></h2>
     <!--<span>主图视频</span>-->
+    <button @click="getTTSAudio">test</button>
     <button id="generate-btn" class="pointer" @click="generate">
       开始生成
     </button>
@@ -31,6 +32,9 @@ export default {
     },
     saveProject() {
       this.$store.dispatch('saveProject', {});
+    },
+    getTTSAudio() {
+      this.$store.dispatch('getTTSAudio');
     }
   },
   created() {

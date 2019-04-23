@@ -68,13 +68,83 @@ WaveEditor.prototype.getChunkSize3 = function(buffer) {
     return EndianDecToDecimal(chunkSize3);
 }
 WaveEditor.prototype.getRawData = function(buffer) {
-    var chunkSize3 = new Uint8Array(buffer, 40, 4);
-    var SAMPLES = new Uint8Array(buffer, 44, EndianDecToDecimal(chunkSize3)); //Raw data
+		var chunkSize3 = new Uint8Array(buffer, 40, 4);
+		console.log(chunkSize3);
+		console.log('EndianDecToDecimal', EndianDecToDecimal(chunkSize3));
+		console.log('buffer', buffer);
+		console.log(buffer.byteLength);
+
+		var EndianDecToDecimalLength = EndianDecToDecimal(chunkSize3);
+		var total = (EndianDecToDecimalLength + 44) > buffer.byteLength ? (buffer.byteLength - 44) : EndianDecToDecimalLength;
+    var SAMPLES = new Uint8Array(buffer, 44, total); //Raw data
     return SAMPLES;
 }
 WaveEditor.prototype.getDuration = function(buffer) {
     return Math.floor(this.getRawData(buffer).byteLength / this.getByteRate(buffer));
 }
+// my 在前面添加空白音频
+WaveEditor.prototype.delay = function(arr, time, mode, filename) {
+    var BufferHolder = []; //An empty array to hold the buffers.
+    var headerBuf = new ArrayBuffer(44);
+    var dv = new DataView(headerBuf);
+    wStr(dv, 0, 4, this.getChunkID(arr[0]));
+    wStr(dv, 8, 4, this.getFormat(arr[0]));
+    wStr(dv, 12, 4, this.getChunkID2(arr[0]));
+    w32(dv, 16, 4, this.getChunkSize2(arr[0]));
+    w16(dv, 20, 2, this.getAudioFormat(arr[0]));
+    w16(dv, 22, 2, this.getNumChannels(arr[0]));
+    w32(dv, 24, 4, this.getSampleRate(arr[0]));
+    w32(dv, 28, 4, this.getByteRate(arr[0]));
+    w16(dv, 32, 2, this.getBlockAlign(arr[0]));
+    w16(dv, 34, 2, this.getBitsPerSample(arr[0]));
+    wStr(dv, 36, 4, this.getChunkID3(arr[0]));
+    //Strip the header (44bytes) from the rest of the buffers.
+    //So we are left with just the raw data.
+    //The total gives the datasize.
+    var dataLen = 0;
+    for (b = 0; b < arr.length; b++) {
+        try {
+            let rawData = this.getRawData(arr[b]);
+            BufferHolder.push(rawData);
+            dataLen += rawData.byteLength;
+        } catch (e) {
+            console.warn(e);
+        }
+    }
+
+    var emptyuint8Array = new Uint8Array( parseInt(time *  this.getByteRate(arr[0])));
+
+    BufferHolder.unshift(emptyuint8Array);
+    dataLen += emptyuint8Array.byteLength;
+
+
+    //console.log(dataLen +'a '+ BufferHolder.length);
+    w32(dv, 4, 4, dataLen + 36);
+    w32(dv, 40, 4, dataLen);
+    if (mode === 'download') {
+        //.......................................DOWNLOAD..............................................///
+        var blob = new Blob([headerBuf].concat(BufferHolder), {
+            type: 'audio/wav'
+        });
+        downloadLink = document.createElement('a');
+        downloadLink.download = filename;
+        downloadLink.href = window.webkitURL.createObjectURL(blob);
+        downloadLink.click();
+    } else if (mode === 'play') {
+        var blob = new Blob([headerBuf].concat(BufferHolder), {
+            type: 'audio/wav'
+        });
+        var aud = new Audio();
+        aud.src = window.webkitURL.createObjectURL(blob);
+        aud.play();
+    } else if (mode === 'blob') {
+        var blob = new Blob([headerBuf].concat(BufferHolder), {
+            type: 'audio/wav'
+        });
+        return blob;
+    } else {}
+}
+
 WaveEditor.prototype.appendBuffers = function(arr, mode, filename) {
     var BufferHolder = []; //An empty array to hold the buffers.
     var headerBuf = new ArrayBuffer(44);

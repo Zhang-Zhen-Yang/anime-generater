@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-20 15:35:25
+ * @Last Modified time: 2019-04-23 17:58:14
  */
 
 import http from '../script/http';
@@ -27,6 +27,8 @@ import dialogGenerate from './dialogGenerate';
 import dialogSetting from './dialogSetting';
 import dialogDownload from './dialogDownload';
 import dialogVideoClip from './dialogVideoClip';
+import dialogVoice from './dialogVoice';
+
 import tl from './tl';
 import test from './test.js';
 import optionsSetting from './optionsSetting';
@@ -387,6 +389,15 @@ const store = {
 		},
 		// 生成（new）
 		generateNew({state, commit, dispatch, getters}) {
+
+			let voices = state.project.voices;
+
+
+
+
+
+
+
 			let datas = [];
 			console.log('new');
 
@@ -742,6 +753,7 @@ const store = {
 		tl,
 		os: optionsSetting,
 		dialogVideoClip,
+		dialogVoice,
 		test,
 	}
 }
