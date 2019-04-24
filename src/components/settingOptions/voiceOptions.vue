@@ -81,7 +81,7 @@ export default {
               }
             }
           })
-          console.log(res);
+          // console.log(res);
         }
       })
     }
@@ -92,7 +92,7 @@ export default {
     
   },
   mounted() {
-    alert('dddd');
+    // alert('dddd');
     this.setLocalValue();
   },
   watch: {

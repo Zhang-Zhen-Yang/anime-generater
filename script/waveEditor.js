@@ -121,6 +121,8 @@ WaveEditor.prototype.delay = function(arr, time, mode, filename) {
     //console.log(dataLen +'a '+ BufferHolder.length);
     w32(dv, 4, 4, dataLen + 36);
     w32(dv, 40, 4, dataLen);
+
+    // callback &&callback([headerBuf].concat(BufferHolder));
     if (mode === 'download') {
         //.......................................DOWNLOAD..............................................///
         var blob = new Blob([headerBuf].concat(BufferHolder), {
@@ -143,6 +145,7 @@ WaveEditor.prototype.delay = function(arr, time, mode, filename) {
         });
         return blob;
     } else {}
+    // return [headerBuf].concat(BufferHolder);
 }
 
 WaveEditor.prototype.appendBuffers = function(arr, mode, filename) {

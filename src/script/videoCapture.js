@@ -1,3 +1,4 @@
+import util from './util';
 class VideoCapture {
     constructor({src, start_time, end_time, interval}) {
         this.video = document.createElement('video');
@@ -18,21 +19,34 @@ class VideoCapture {
                 console.log(this.video.duration);
                 console.log(this.video.videoWidth);
                 console.log(this.video.videoHeight);
+                let videoWidth = this.video.videoWidth;
+                let videoHeight = this.video.videoHeight;
+                let scale = util.getImageScale({img: {
+                    width: videoWidth,
+                    height: videoHeight,
+                }, cw: 800, ch: 800, type: 'contain'});
+                console.log(scale);
+                if(scale > 1) {
+                    scale = 1;
+                }
+                let distWidth = videoWidth * scale;
+                let distHeight = videoHeight * scale;
+                console.log([distWidth, distHeight]);
                 this.video.oncanplay = ()=>{
                     console.log('current:'+this.video.currentTime);
                     let canvas = document.createElement('canvas');
-                    canvas.width = this.video.videoWidth;
-                    canvas.height = this.video.videoHeight;
+                    canvas.width = distWidth; // videoWidth;
+                    canvas.height = distWidth; // videoHeight;
                     let ctx = canvas.getContext('2d');
-                    ctx.drawImage(this.video, 0, 0);
+                    ctx.drawImage(this.video, 0, 0, distWidth, distHeight);
                     canvasList.push(canvas);
                     if(this.cancel) {
                         resolve({
                             success: false,
                             cancel: true,
                             list: canvasList,
-                            width: this.video.videoWidth,
-                            height: this.video.videoHeight,
+                            width: distWidth, //videoWidth,
+                            height: distHeight, // videoHeight,
                         })
                     }
                     // 当前时间大于等于结束时间
@@ -42,13 +56,24 @@ class VideoCapture {
                             success: true,
                             cancel: false,
                             list: canvasList,
-                            width: this.video.videoWidth,
-                            height: this.video.videoHeight,
+                            width: distWidth, //this.video.videoWidth,
+                            height: distHeight, // this.video.videoHeight,
                         })
                     } else {
                         setTimeout(()=>{
-                            this.video.currentTime += this.interval;
-                            this.current_time = this.video.currentTime;
+                            let nextTime = this.video.currentTime + this.interval;
+                            if(nextTime >= this.video.duration) {
+                                resolve({
+                                    success: true,
+                                    cancel: false,
+                                    list: canvasList,
+                                    width: distWidth, //this.video.videoWidth,
+                                    height: distHeight, // this.video.videoHeight,
+                                })
+                            } else {
+                                this.video.currentTime = nextTime;
+                                this.current_time = nextTime;
+                            }
                         }, 0);
 
                     }

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:32:17 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-22 15:03:47
+ * @Last Modified time: 2019-04-24 11:16:10
  */
 
 <template>
@@ -137,6 +137,16 @@ export default {
     // 设置滑块的位置
     setBlock() {
       if(this.duration > 0) {
+        console.log([this.end_time, this.start_time, this.duration*1000]);
+        // 如果截取的视频片段大于视频总长
+        if(this.end_time - this.start_time > this.duration*1000) {
+          this.end_time = this.start_time + this.duration*1000;
+        }
+        // 如果结束时间大于总长
+        if(this.end_time > this.duration*1000) {
+          this.start_time = this.duration*1000 - (this.end_time - this.start_time);
+          this.end_time = this.duration*1000;
+        }
         let videoClientWidth = this.$refs.video.clientWidth
         let left = this.start_time / this.duration / 1000 * videoClientWidth;
         let width = (this.end_time - this.start_time) / 1000 / this.duration * videoClientWidth;

@@ -97,6 +97,9 @@ function btts(param, options) {
                 if(xhr.response.type === 'audio/wav') {
                     isFunction(opt.onMySuccess) && opt.onMySuccess(xhr.response);
                 }
+                if(xhr.response.type === 'audio/mp3') {
+                    isFunction(opt.onMp3MySuccess) && opt.onMp3MySuccess(xhr.response);
+                }
 
                 // 用来处理错误
                 if (xhr.response.type === 'application/json') {

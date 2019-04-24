@@ -2,15 +2,16 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-23 17:58:14
+ * @Last Modified time: 2019-04-24 17:44:44
  */
 
 import http from '../script/http';
 import api from '../script/api';
 import util from '../script/util';
 import utilTimeline from '../script/utilTimeline';
+import canvasRender from '../script/canvasRender';
 // import templates from '../script/templates/templates';
-import {convertStreams, accessWorder, convertImageToVideo} from '../script/convert.1.js';
+import {convertStreams, accessWorder, convertImageToVideo, combineAudio} from '../script/convert.1.js';
 import watermark from '../script/watermark';
 import Vue from 'vue';
 
@@ -35,6 +36,7 @@ import optionsSetting from './optionsSetting';
 import demo from '../script/templateDemo.js';
 import demo2 from '../script/templateDemo2.js';
 import demo3 from '../script/templateDemo3.js'; // 新
+import demoEmpty from '../script/templateEmpty'; // 空白模板
 const store = {
 	state: {
 		goods: {
@@ -63,7 +65,7 @@ const store = {
 			show: false,
 		},
 		// 模板
-		project: demo3,
+		project: demoEmpty,
 		activeLayerIndex: [0],
 		stage: null,
 		timeline: null,
@@ -176,6 +178,28 @@ const store = {
 	actions: {
 		initnew({state, commit, dispatch, getters}){
 			window.localImages = {};
+			state.project = demo3;
+			state.project.voices.forEach((item, index)=>{
+				console.log(item);
+				dispatch('fetchTTSAudio', {
+					tex: item.tex,
+					oldTex: item.tex,
+					callback: (res)=>{
+						if(res.success) {
+							item.data = res.blob;
+							item.duration = res.duration;
+						} else {
+
+						}
+					}
+				})
+			})
+			canvasRender.render({
+				canvas: document.getElementById('canvas'),
+				project: state.project,
+				state: state
+			})
+			window.timeline.gotoAndStop(0);
 			accessWorder().then(()=>{
 				// alert('ddddd');
 				state.asmInitedStatus = 'success';
@@ -387,17 +411,77 @@ const store = {
 			}
 			
 		},
-		// 生成（new）
-		generateNew({state, commit, dispatch, getters}) {
-
+		getGenerateVoice({state, commit, dispatch, getters}, {callback}) {
 			let voices = state.project.voices;
 
+			voices.forEach((item)=>{
+				console.log(item);
+			})
+			
+			let allVoicesPromises = voices.filter((item)=>{return !!item.data})
+			
+			if(allVoicesPromises.length == 0) {
+				callback({
+					success: true,
+					res: null
+				})
+			}
+			
+			allVoicesPromises = allVoicesPromises.map((item)=>{
+				return new Promise((resolve, reject)=>{
+					util.blobToArrayBuffer(item.data).then((data)=>{
+						resolve({
+							data,
+							time: item.time,
+						})
+					})
+				},()=>{})
+			})
 
+			Promise.all(allVoicesPromises).then((res)=>{
+				let padVoices = res.map((item)=>{
+					let appender = new WaveEditor();
+					return appender.delay([item.data], parseInt(item.time / 10) / 100, 'blob', 'AppendedWav');
+				})
 
+				
+				let allPadVoicesArrayBuffer = padVoices.map((item)=>{
+					return util.blobToArrayBuffer(item);
+				})
 
+				Promise.all(allPadVoicesArrayBuffer).then((res)=>{
+					console.log(res);
+					let appender = new WaveEditor();
+					//return appender.mix(res, 'play', 'AppendedWav');
+					combineAudio(
+						// res.map((item)=>{return new Uint8Array(item)}),
+						[window.music, new Uint8Array(res[0])],
+						(res)=>{
+							console.log(res);
+							if(res.type == 'done') {
+								let blob = new Blob([res.data[0].data], {
+									type: 'audio/wav'
+								});
+								util.funDownload('', blob, 'test.wav');
+								util.blobToArrayBuffer(blob).then((data)=>{
+									console.log('=======================================',data);
+									callback({
+										success: true,
+										res: data
+									})
+								})
 
+							}
+						}
+					);
+					
 
-
+				})
+				
+			})
+			
+		},
+		getGenerateImage({state, commit, dispatch, getters}, {callback}) {
 			let datas = [];
 			console.log('new');
 
@@ -437,101 +521,7 @@ const store = {
 					byteArray[i] = bytes.charCodeAt(i);
 				}
 				datas.push(byteArray);
-
-
-				// 获取图片数据(2)
-				/*window.canvas.toBlob((res)=>{
-					// console.log('res', res.toString());
-					util.blobToUint8Array(res).then((r)=>{
-						datas.push(r);
-						//============================================
-						if(thisPosition + tseperate < duration) {
-							setTimeout(()=>{
-								state.timeline.gotoAndStop(thisPosition + tseperate);
-							}, 0);
-						} else { // 播放结束
-							state.recording = false;
-							state.timeline.off('change',tickHandler);
-							// console.log(datas.length);
-							console.log('获取图片帧完毕');
-							if(state.playing) {
-								state.timeline.gotoAndPlay(0);
-							} else{
-								state.timeline.gotoAndStop(0);
-							}
-							let audioCode = null;
-							try{
-								if(state.dialogAudio.audioFrom == 'net') {
-									if(state.dialogAudio.selectedAudioID != null) {
-										audioCode = getters.idMapAudio[state.dialogAudio.selectedAudioID];
-									}
-								} else if(state.dialogAudio.audioFrom == 'local'){
-									audioCode = state.dialogAudio.audioData;
-								}
-		
-								if(audioCode) {
-									let bytes = atob(audioCode);
-									var bytesCode = new ArrayBuffer(bytes.length);
-									// 转换为类型化数组
-									var byteArray = new Uint8Array(bytesCode);
-									
-									// 将base64转换为ascii码
-									for (var i = 0; i < bytes.length; i++) {
-										byteArray[i] = bytes.charCodeAt(i);
-									}
-									audioCode = byteArray;
-								}
-							}catch(e) {
-								console.error(e);
-							}
-							let {width, height} = state.stage.canvas;
-							let total = width * height;
-							// 比特率
-							// let bit = (total / 1000 * 5) | 0;
-							let bit = (total / 1000 * state.dialogSetting.quality / 10) | 0;
-							state.dialogGenerate.step = 2;
-							// 转换图片到视频
-							convertImageToVideo(
-								datas,
-								audioCode,
-								{
-									f: f,
-									t: state.timeline.duration / 1000,
-									b: bit
-								},
-								(msg)=>{
-									if (msg.type == "ready") {
-										
-									} else if (msg.type == "stdout") {
-										
-									} else if (msg.type == "start") {
-									} else if (msg.type == "done") {
-										state.dialogGenerate.show = false;
-										setTimeout(()=>{
-											commit('showSnackbar', {
-												text: '视频生成完毕,请点击下方的链接下载！',
-											});
-											// alert();
-										},0)
-									}
-								}
-							);
-						}
-
-
-
-						//============================================
-
-					});
-
-
-				}, 'image/jpeg', 0.9);
-
-
-				return; 
-				*/
-				
-				
+							
 				if(thisPosition + tseperate < duration) {
 					setTimeout(()=>{
 						state.timeline.gotoAndStop(thisPosition + tseperate);
@@ -546,7 +536,11 @@ const store = {
 					} else{
 						state.timeline.gotoAndStop(0);
 					}
-					let audioCode = null;
+					callback({
+						success: true,
+						res: datas,
+					})
+					/*let audioCode = null;
 					try{
 						if(state.dialogAudio.audioFrom == 'net') {
 							if(state.dialogAudio.selectedAudioID != null) {
@@ -570,47 +564,92 @@ const store = {
 						}
 					}catch(e) {
 						console.error(e);
-					}
-					let {width, height} = state.stage.canvas;
-					let total = width * height;
-					// 比特率
-					// let bit = (total / 1000 * 5) | 0;
-					let bit = (total / 1000 * state.dialogSetting.quality / 10 * f / 10) | 0;
-					state.dialogGenerate.step = 2;
-					// 转换图片到视频
-					convertImageToVideo(
-						datas,
-						audioCode,
-						{
-							f: f,
-							t: state.timeline.duration / 1000,
-							b: bit
-						},
-						(msg)=>{
-							if (msg.type == "ready") {
-								
-							} else if (msg.type == "stdout") {
-								
-							} else if (msg.type == "start") {
-							} else if (msg.type == "done") {
-								state.dialogGenerate.show = false;
-								setTimeout(()=>{
-									commit('showSnackbar', {
-										text: '视频生成完毕,请点击链接下载！',
-									});
-									// alert();
-								},0)
-								state.dialogDownload.show = true;
-								Vue.nextTick(()=>{
-
-								})
-							}
-						}
-					);
+					}*/
+					
 				}
 				
 			});
 			state.timeline.gotoAndStop(0);
+		},
+		// 生成（new）
+		generateNew({state, commit, dispatch, getters}) {
+
+			let voice = {
+				done: false,
+				success: false,
+				res: ''
+			}
+			let image = {
+				done: false,
+				success: false,
+				res: ''
+			}
+
+			dispatch('getGenerateVoice', {
+				callback:(res)=>{
+					voice.done = true;
+					voice.success = res.success;
+					voice.res = res.res;
+					if (image.done) {
+						dispatch('generateVideoFromImageAndVoice', {voice: voice.res, image: image.res})
+					}
+				}
+			});
+			dispatch('getGenerateImage', {
+				callback:(res)=>{
+					image.done = true;
+					image.success = res.success;
+					image.res = res.res;
+					if (voice.done) {
+						dispatch('generateVideoFromImageAndVoice', {voice: voice.res, image: image.res})
+					}
+				}
+				
+			});
+			
+		},
+		generateVideoFromImageAndVoice({state, commit, dispatch, getters}, {voice, image}) {
+			let {width, height} = state.stage.canvas;
+			let total = width * height;
+			let f = state.dialogSetting.frames;
+			// 每帧占用的时间
+			let tseperate = 1000 / f;
+			// 比特率
+			// let bit = (total / 1000 * 5) | 0;
+			let bit = (total / 1000 * state.dialogSetting.quality / 10 * f / 10) | 0;
+			state.dialogGenerate.step = 2;
+			console.log('voice voice voice voice ',voice);
+			console.log('777777777777777777777777777777777777777777777',new Uint8Array(voice));
+			// 转换图片到视频
+			convertImageToVideo(
+				image,
+				voice? new Uint8Array(voice) : null,
+				{
+					f: f,
+					t: state.timeline.duration / 1000,
+					b: bit
+				},
+				(msg)=>{
+					if (msg.type == "ready") {
+						
+					} else if (msg.type == "stdout") {
+						
+					} else if (msg.type == "start") {
+					} else if (msg.type == "done") {
+						state.dialogGenerate.show = false;
+						setTimeout(()=>{
+							commit('showSnackbar', {
+								text: '视频生成完毕,请点击链接下载！',
+							});
+							// alert();
+						},0)
+						state.dialogDownload.show = true;
+						Vue.nextTick(()=>{
+
+						})
+					}
+				}
+			);
 		},
 		// 更新时间轴
 		updateTimeline({state, commit, dispatch, getters}, {timeline}) {

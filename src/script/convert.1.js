@@ -289,8 +289,8 @@ function combineAudio(array, callback) {
 	// 背景音乐和人声合并
 	// let commands = `-i input0.wav -i input1.wav -filter_complex amerge output.wav`;
 	// let commands = `-i input0.wav -i input1.wav -acodec copy output.wav`;
-	//let commands = `-i input1.wav -i input0.wav  -filter_complex amix=inputs=2:duration=longest:dropout_transition=2 output.wav`;
-	let commands = `-i input1.wav -i input0.wav  -filter_complex mergeplanes output.wav`;
+	let commands = `-i input1.wav -i input0.wav  -filter_complex amix=inputs=2:duration=longest:dropout_transition=2 -ar 24k -ab 768k output.wav`;
+	// let commands = `-i input1.wav -i input0.wav  -filter_complex amerge output.wav`;
 	// let commands = `ffmpeg -filters`;
 	
 	let args = util.parseArguments(commands);

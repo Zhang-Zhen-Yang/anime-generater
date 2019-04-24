@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:40:11 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-22 10:10:32
+ * @Last Modified time: 2019-04-24 16:34:51
  */
 
 // 测试
@@ -12,6 +12,7 @@ import api from '../script/api';
 import {convertStreams, accessWorder, convertImageToVideo, combineAudio} from '../script/convert.1.js';
 import util from '../script/util';
 import Vue from 'vue';
+import { join } from 'path';
 const store = {
 	state: {
 		show: false,
@@ -31,7 +32,7 @@ const store = {
 			let two = 'http://localhost:8080/audio/two.wav';
 			let results = [];
 
-			dispatch('request', {link: one, callback: (res)=>{
+			/* dispatch('request', {link: one, callback: (res)=>{
 				results.push(res);
 			}});
 			dispatch('request', {link: two, callback: (res)=>{
@@ -40,7 +41,13 @@ const store = {
 
 			setTimeout(()=>{
 				// combineAudio(results);
-			}, 2000)
+			}, 2000)*/
+			dispatch('request', {link: 'http://localhost:8080/assets/music.wav', callback: (res)=>{
+				window.music = res;
+				console.log('222222222222222222222222222222222222222',res);
+				// results.push(res);
+			}});
+
 			
 		},
 		request({state, rootState,commit,dispatch}, {link, callback}) {
@@ -53,6 +60,7 @@ const store = {
 				var arrayBuffer = oReq.response;
 				if (arrayBuffer) {
 					// alert('dddd');
+					console.log('1111111111111111111111111111111111111',arrayBuffer);
 					let data = new Uint8Array(arrayBuffer);
 					callback(data);
 				}

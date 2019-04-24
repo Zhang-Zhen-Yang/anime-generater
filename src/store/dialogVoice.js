@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-23 17:18:26
+ * @Last Modified time: 2019-04-24 17:49:49
  */
 // 文本转语音 百度tts
 
@@ -47,13 +47,15 @@ const store = {
 				onInit: function (htmlAudioElement) {
 				},
 				onMySuccess: function(res) {
-					alert('成功');
+					// alert('成功');
 					console.log(res);
+					//  Stream #0:1: Audio: aac, 16000 Hz, mono, fltp, 128 kb/s
+					// util.funDownload('', res, 'wordddddddddddf.wav')
 					util.blobToArrayBuffer(res).then((r)=>{
 						console.log(r);
 						var appender = new WaveEditor();
 
-						appender.delay([r], 0.5, 'download', 'AppendedWav');
+						// appender.delay([r], 0.5, 'download', 'AppendedWav');
 						callback({
 							success: true,
 							oldTex,
@@ -63,6 +65,9 @@ const store = {
 						})
 					});
 
+				},
+				onMp3MySuccess: function(res) {
+					util.funDownload('', res, 'wordddddddddddf.mp3')
 				},
 				onError: function(text) {
 					alert(text);
@@ -149,3 +154,92 @@ export default store;
 	per	选填	发音人选择, 0为普通女声，1为普通男生，3为情感合成-度逍遥，4为情感合成-度丫丫，默认为普通女声
 	aue	选填	3为mp3格式(默认)； 4为pcm-16k；5为pcm-8k；6为wav（内容同pcm-16k）; 注意aue=4或者6是语音识别要求的格式，但是音频内容不是语音识别要求的自然人发音，所以识别效果会受影响。
  */
+
+
+
+ /**
+  * 可用
+  * 
+  * 婚礼音乐震撼开场曲.wav
+	容器：Wave
+	总码率：768 kb/s
+	大小：3.48 MiB
+	时长：37 s 991 ms
+
+	音频()：PCM
+	大小：3.48 MiB (100%)
+	码率：768 kb/s
+	采样率：24.0 kHz
+	声道数：2
+
+	====详细信息====
+
+	Format                                   : PCM
+	Format settings, Endianness              : Little
+	Format settings, Sign                    : Signed
+	Codec ID                                 : 1
+	Duration                                 : 37 s 991 ms
+	Bit rate mode                            : Constant
+	Bit rate                                 : 768 kb/s
+	Channel(s)                               : 2 channels
+	Sampling rate                            : 24.0 kHz
+	Bit depth                                : 16 bits
+	Stream size                              : 3.48 MiB (100%)
+  * 
+  * 
+  * 不可用
+  * wordddddddddddf.wav
+	容器：Wave
+	总码率：256 kb/s
+	大小：44.0 KiB
+	时长：1 s 405 ms
+
+	音频()：PCM
+	大小：43.9 KiB (100%)
+	码率：256 kb/s
+	采样率：16.0 kHz
+	声道数：1
+
+	====详细信息====
+
+	Format                                   : PCM
+	Format settings, Endianness              : Little
+	Format settings, Sign                    : Signed
+	Codec ID                                 : 1
+	Duration                                 : 1 s 405 ms
+	Bit rate mode                            : Constant
+	Bit rate                                 : 256 kb/s
+	Channel(s)                               : 1 channel
+	Sampling rate                            : 16.0 kHz
+	Bit depth                                : 16 bits
+	Stream size                              : 43.9 KiB (100%)
+  * 
+
+	test.wav
+	容器：Wave
+	总码率：256 kb/s
+	大小：326 KiB
+	时长：10 s 430 ms
+
+	音频()：PCM
+	大小：326 KiB (100%)
+	码率：256 kb/s
+	采样率：16.0 kHz
+	声道数：1
+
+	====详细信息====
+
+	Format                                   : PCM
+	Format settings, Endianness              : Little
+	Format settings, Sign                    : Signed
+	Codec ID                                 : 1
+	Duration                                 : 10 s 430 ms
+	Bit rate mode                            : Constant
+	Bit rate                                 : 256 kb/s
+	Channel(s)                               : 1 channel
+	Sampling rate                            : 16.0 kHz
+	Bit depth                                : 16 bits
+	Stream size                              : 326 KiB (100%)
+
+
+  */
