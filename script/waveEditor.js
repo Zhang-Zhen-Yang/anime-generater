@@ -80,7 +80,7 @@ WaveEditor.prototype.getRawData = function(buffer) {
     return SAMPLES;
 }
 WaveEditor.prototype.getDuration = function(buffer) {
-    return Math.floor(this.getRawData(buffer).byteLength / this.getByteRate(buffer));
+    return (this.getRawData(buffer).byteLength / this.getByteRate(buffer));
 }
 // my 在前面添加空白音频
 WaveEditor.prototype.delay = function(arr, time, mode, filename) {

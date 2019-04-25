@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-24 17:49:49
+ * @Last Modified time: 2019-04-25 13:47:49
  */
 // 文本转语音 百度tts
 
@@ -17,6 +17,7 @@ import btts from '../script/baidu_tts_cors';
 const store = {
 	state: {
 		show: false,
+		tok: '24.e829d1ce750c342c063fbca11bca0879.2592000.1558517552.282335-16069189',
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -28,16 +29,16 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
-		fetchTTSAudio({state, commit, dispatch, getters}, {tex, oldTex, callback}){
+		fetchTTSAudio({state, commit, dispatch, getters}, {tex, oldTex, spd=5, pit=5, per=0, callback}){
 			btts({
 				tex: tex,
-				tok: '24.e829d1ce750c342c063fbca11bca0879.2592000.1558517552.282335-16069189',
+				tok: state.tok,
 				cuid: '1234567JAVA',
 				ctp: 1,
-				spd: 5,
-				pit: 5,
-				vol: 15,
-				per: 0,
+				spd: spd,
+				pit: pit,
+				vol: 10,
+				per: per,
 				aue: 6,
 			}, {
 				volume: 0.3,
@@ -54,7 +55,7 @@ const store = {
 					util.blobToArrayBuffer(res).then((r)=>{
 						console.log(r);
 						var appender = new WaveEditor();
-
+						
 						// appender.delay([r], 0.5, 'download', 'AppendedWav');
 						callback({
 							success: true,
@@ -62,6 +63,9 @@ const store = {
 							tex,
 							duration: appender.getDuration(r),
 							blob: res,
+							spd: spd,
+							per: per,
+							pit,
 						})
 					});
 
@@ -243,3 +247,5 @@ export default store;
 
 
   */
+
+ // ffmpeg -i voice1.m4a  -filter_complex adelay="1000|1000"  output.m4a    得以把 voice1.m4a  前面延迟（空白）1000毫秒     中间“|”  表示 左右声道都延迟1000毫秒   后得到一个 output.m4a文件 ，它的时间长度 这个文件比voice1.m4a多出了前面空白的的的1000毫秒，

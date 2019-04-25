@@ -1,6 +1,6 @@
 <template>
   <div class="voice-play-block">
-    <audio :src="src" ref="audio" @ended="ended"></audio>
+    <audio :src="src" ref="audio" @ended="ended" @loadedmetadata="loadedmetadata"></audio>
     {{ position }}
   </div>
 </template>
@@ -15,6 +15,7 @@ export default {
         return {
           data: '',
           duration: '',
+          time: 0,
         }
       }
     }
@@ -22,7 +23,7 @@ export default {
   data () {
     return {
       msg: 'voice-play-block',
-
+      duration: 0,
     }
   },
   computed: {
@@ -46,6 +47,10 @@ export default {
     }
   },
   methods: {
+    loadedmetadata() {
+      this.duration = this.audio.duration
+      // console.log(this.audio.duration);
+    },
     setAudio() {
 
     },
@@ -70,22 +75,32 @@ export default {
     position(nval, oval) {
       // 如果正在播放
       if(this.playing) {
-        if( (nval >=  this.item.time)  && (nval <= (this.item.time + this.item.duration*1000)) ) {
+        if( (nval >=  this.item.time)  && (nval <= (this.item.time + this.duration*1000)) ) {
           if(this.audio ) {
             if(this.audio.paused){
               this.audio.play();
             } else {
               // this.audio.pause();
             }
-          } 
+          }
+          if(Math.abs(this.audio.currentTime * 1000 + this.item.time - nval) > 100) {
+            this.audio.currentTime = (nval - this.item.time) / 1000;
+          }
         } else {
           if(this.audio) {
             this.audio.pause();
             this.audio.currentTime = 0;
           } 
         }
+        
       } else {
 
+      }
+    },
+    playing(nval, oval) {
+      console.log(nval);
+      if(!nval) {
+        this.audio.pause();
       }
     }
 

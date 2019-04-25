@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-19 10:24:09 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-16 17:13:41
+ * @Last Modified time: 2019-04-25 14:06:49
  */
 
 <template>
@@ -93,7 +93,7 @@
         </tr>
         <tr>
           <td class="left">
-            <div id="download-wrap" class="btn primary font14 relative" style="margin:5px 0"></div> 
+            <div id="download-wrap" class="btn primary font14 relative" style="margin:5px 0;white-space:nowrap;"></div> 
           </td>
           <td class="font14 left">
             <span>下载到电脑本地，可用于其他平台推广</span>

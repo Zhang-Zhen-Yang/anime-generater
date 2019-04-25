@@ -1,14 +1,16 @@
 <template>
   <div class="voice-item-wrap" ref="voiceItemWrap" @dblclick="addTween">
     <div
-      class="voice-item"
       v-for="item,index in voicesLocal"
+      :class="['voice-item', voiceIndex == index ? 'active-voice-item': '']"
       :data-index="index"
+      :title="item.tex ? item.tex : '请输入文本并点击生成相应音频'"
       :style="{left: item.left, width: item.width}"
       @click="setVoiceIndex(index)">
-      {{ item.tex }}
+      {{ item.tex }} {{ item.duration }}
       <voicePlayBlock :item="item"></voicePlayBlock>
     </div>
+    <voicePlayBlock :item="bgMusicItem"></voicePlayBlock>
   </div>
 </template>
 
@@ -47,6 +49,9 @@ export default {
     tlTweenIndex() {
       return this.tl.tweenIndex;
     },
+    voiceIndex() {
+      return this.tl.voiceIndex;
+    },
     timeline(){
       return this.$store.state.timeline;
     },
@@ -73,6 +78,14 @@ export default {
           duration: item.duration,
         }
       })
+    },
+    // 背景音乐
+    bgMusicItem() {
+      return {
+        data: this.$store.state.bgMusic,
+        time: 0,
+        duration: 0,
+      }
     }
   },
   methods: {
@@ -86,12 +99,14 @@ export default {
       let position = offsetX / totalWidth * this.tlDuration;
       console.log(position);
       this.voices.push({
-      time: position,
-      tex: '偶像大师',
-      per: 0, // 人声
-      data: '',
-      duration: 3,
-    },)
+        time: position,
+        tex: '',
+        per: 0, // 人声
+        data: '',
+        duration: 0,
+      })
+
+      this.tl.voiceIndex = this.voices.length - 1;
       // this.$store.dispatch('addTween', {topIndex: this.topIndex, subIndex: this.subIndex, position});
 
       // console.log(position);
@@ -105,7 +120,7 @@ export default {
     bindView() {
       this.$voiceItemWrap.find('.voice-item').draggable({
         axis: 'x',
-        container: 'parent',
+        containment: 'parent',
         start: (e, ui)=>{
 
         },
@@ -144,7 +159,9 @@ export default {
     voicesLocal: {
       deep: true,
       handler() {
-        this.bindView();
+        this.$nextTick(()=>{
+          this.bindView();
+        })
       }
     }
   }
@@ -160,14 +177,22 @@ export default {
       position: absolute;
       height: 22px;
       top: 1px;
-      background-color: #6ECEDF;
+      // background-color: #6ECEDF;
+      background-color: #de698c;
       color: white;
       font-size: 12px;
-      white-space: nowrap;
-      line-height: 23px;
+      line-height: 21px;
       cursor: move;
       border-radius: 2px;
       min-width: 22px;
+      border: 1px solid rgba(0,0,0,0.5);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding: 0 0 0 5px;
+    }
+    .active-voice-item{
+      border: 1px solid rgba(255,0,0,1);
     }
   }
 </style>

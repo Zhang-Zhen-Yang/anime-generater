@@ -13,6 +13,13 @@
             </div>
             <!--工作区-->
             <workSpace slot="e"></workSpace>
+
+          
+
+
+
+
+
           </block-slice>
           <!--时间轴-->
           <div slot="s" style="width: 100%;height: 100%;" id="timeline-wrap" ref="timelineWrap">
@@ -47,6 +54,7 @@ import dialogLoading from './components/dialogLoading/dialogLoading';
 import dialogVideoClip from './components/dialogVideoClip/dialogVideoClip';
 import contextMenu from './components/contextMenu';
 import undoredo from './components/undoredo.vue';
+import audioTrigger from './components/audioTrigger.vue';
 export default {
   name: 'app',
   components: {
@@ -60,7 +68,8 @@ export default {
     dialogDownload,
     dialogVideoClip,
     contextMenu,
-    undoredo
+    undoredo,
+    audioTrigger
   },
   data () {
     return {

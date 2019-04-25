@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:40:11 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-24 16:34:51
+ * @Last Modified time: 2019-04-25 14:32:47
  */
 
 // 测试
@@ -43,7 +43,8 @@ const store = {
 				// combineAudio(results);
 			}, 2000)*/
 			dispatch('request', {link: 'http://localhost:8080/assets/music.wav', callback: (res)=>{
-				window.music = res;
+				// window.music = res;
+				rootState.bgMusic = res;
 				console.log('222222222222222222222222222222222222222',res);
 				// results.push(res);
 			}});
@@ -54,15 +55,19 @@ const store = {
 
 			var oReq = new XMLHttpRequest();
 			oReq.open("GET", link, true);
-			oReq.responseType = "arraybuffer";
+			oReq.responseType = 'blob';//"arraybuffer";
 
 			oReq.onload = function (oEvent) {
-				var arrayBuffer = oReq.response;
+				/*var arrayBuffer = oReq.response;
 				if (arrayBuffer) {
 					// alert('dddd');
 					console.log('1111111111111111111111111111111111111',arrayBuffer);
 					let data = new Uint8Array(arrayBuffer);
 					callback(data);
+				}*/
+				let blob = oReq.response;
+				if(blob) {
+					callback(blob);
 				}
 			};
 

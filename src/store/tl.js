@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-23 15:15:26
+ * @Last Modified time: 2019-04-25 11:14:15
  */
 
  // 时间轴组件
@@ -542,13 +542,24 @@ const store = {
     removeTween({state,rootState,dispatch}) {
       dispatch('addStep');
       // alert('removeTween');
-      let topIndex = state.topIndex;
-      let subIndex = state.subIndex;
-      let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
-      let tweenIndex = state.tweenIndex;
-      if(currentLayer && currentLayer.tween && currentLayer.tween[tweenIndex]) {
-        currentLayer.tween.splice(tweenIndex,1);
-        dispatch('updateTween', {topIndex, subIndex});
+      let voiceIndex = state.voiceIndex;
+      if(voiceIndex > -1) {
+        let voices = rootState.project.voices;
+        if(voices[voiceIndex]) {
+          voices.splice(voiceIndex,1);
+          if(!voices[voiceIndex]) {
+            state.voiceIndex = voiceIndex - 1;
+          }
+        }
+      } else {
+        let topIndex = state.topIndex;
+        let subIndex = state.subIndex;
+        let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
+        let tweenIndex = state.tweenIndex;
+        if(currentLayer && currentLayer.tween && currentLayer.tween[tweenIndex]) {
+          currentLayer.tween.splice(tweenIndex,1);
+          dispatch('updateTween', {topIndex, subIndex});
+        }
       }
     },
     // 鼠标按下事件

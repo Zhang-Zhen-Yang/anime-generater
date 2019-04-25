@@ -11,15 +11,17 @@
       test
     </button>
     <workSpaceDom v-show="!playing"></workSpaceDom>
+    <audioTrigger></audioTrigger>
   </div>
 </template>
 
 <script>
 import canvasRender from '../script/canvasRender.js';
 import workSpaceDom from './workSpaceDom/workSpaceDom.vue';
+import audioTrigger from './audioTrigger.vue';
 export default {
   name: 'temp',
-  components: {workSpaceDom,},
+  components: {workSpaceDom, audioTrigger},
   data () {
     return {
       msg: 'temp'

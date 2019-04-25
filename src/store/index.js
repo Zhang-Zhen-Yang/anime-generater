@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-24 17:44:44
+ * @Last Modified time: 2019-04-25 14:27:15
  */
 
 import http from '../script/http';
@@ -66,6 +66,8 @@ const store = {
 		},
 		// 模板
 		project: demoEmpty,
+		// 背景音乐
+		bgMusic: '',
 		activeLayerIndex: [0],
 		stage: null,
 		timeline: null,
@@ -453,9 +455,11 @@ const store = {
 					console.log(res);
 					let appender = new WaveEditor();
 					//return appender.mix(res, 'play', 'AppendedWav');
+					let distAudioList = res.map((item)=>{return new Uint8Array(item)});
+					distAudioList.push(window.music);
 					combineAudio(
-						// res.map((item)=>{return new Uint8Array(item)}),
-						[window.music, new Uint8Array(res[0])],
+						distAudioList,
+						//[window.music, new Uint8Array(res[0])],
 						(res)=>{
 							console.log(res);
 							if(res.type == 'done') {
@@ -618,8 +622,8 @@ const store = {
 			// let bit = (total / 1000 * 5) | 0;
 			let bit = (total / 1000 * state.dialogSetting.quality / 10 * f / 10) | 0;
 			state.dialogGenerate.step = 2;
-			console.log('voice voice voice voice ',voice);
-			console.log('777777777777777777777777777777777777777777777',new Uint8Array(voice));
+			// console.log('voice voice voice voice ',voice);
+			// console.log('777777777777777777777777777777777777777777777',new Uint8Array(voice));
 			// 转换图片到视频
 			convertImageToVideo(
 				image,

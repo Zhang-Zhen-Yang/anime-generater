@@ -224,7 +224,7 @@ function convertImageToVideo(imagesArray, audio, {f, t, b}, callback) {
 		"data": audio
 	})
 
-	let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t} output.mp4`;
+	let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t}  -af volume=5dB output.mp4`;
 
 	let args = util.parseArguments(commands);
 
@@ -268,7 +268,7 @@ function combineAudio(array, callback) {
 	if (!worker) {
 		worker = processInWebWorker();
 	}
-	let files = [
+	/* let files = [
 		{
 			name: `input${0}.wav`,
 			data: array[0],
@@ -277,19 +277,23 @@ function combineAudio(array, callback) {
 			name: `input${1}.wav`,
 			data: array[1],
 		}
-	];
-	/*array.map((item, index)=>{
+	];*/
+	let files = array.map((item, index)=>{
 		console.log(`input${index}.wav`);
 		return {
 			name: `input${index}.wav`,
 			data: item,
 		}
-	})*/
+	})
+	let audioCount = array.length;
+	let inputs = array.map((item, index)=>{
+		return `-i input${index}.wav`
+	})
 
 	// 背景音乐和人声合并
 	// let commands = `-i input0.wav -i input1.wav -filter_complex amerge output.wav`;
 	// let commands = `-i input0.wav -i input1.wav -acodec copy output.wav`;
-	let commands = `-i input1.wav -i input0.wav  -filter_complex amix=inputs=2:duration=longest:dropout_transition=2 -ar 24k -ab 768k output.wav`;
+	let commands = `${inputs.join(' ')} -filter_complex amix=inputs=${audioCount}:duration=longest:dropout_transition=${audioCount} -ar 24k -ab 768k output.wav`;
 	// let commands = `-i input1.wav -i input0.wav  -filter_complex amerge output.wav`;
 	// let commands = `ffmpeg -filters`;
 	

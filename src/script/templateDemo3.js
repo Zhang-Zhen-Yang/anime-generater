@@ -9,16 +9,20 @@ let demo = {
   voices: [
     {
       time: 0,
-      tex: '偶像大师',
+      tex: '姬川友紀',
       per: 0, // 人声
+      spd: 5, // 语速
+      pit: 5,// 音调
       data: '',
       duration: 0,
     },
     {
-      time: 6000,
-      tex: '文豪野犬',
+      time: 3000,
+      tex: '淺粉色之戀',
       per: 0,
       data: '',
+      spd: 5, // 音速
+      pit: 5,// 音调
       duration: 0
     },
   ],

@@ -8,7 +8,7 @@ class VideoCapture {
         this.end_time = end_time;
         this.interval = interval;
         this.cancel = false
-        this.video.style="position:absolute;left:0;top:100px;background-color: white;width: 300px;";
+        this.video.style="position:absolute;left:70px;top:100px;background-color: white;width: 200px;opacity: 0.5";
         document.body.appendChild(this.video);
     }
     start() {
