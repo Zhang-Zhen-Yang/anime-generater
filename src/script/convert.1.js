@@ -224,7 +224,8 @@ function convertImageToVideo(imagesArray, audio, {f, t, b}, callback) {
 		"data": audio
 	})
 
-	let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t}  -af volume=5dB output.mp4`;
+	// let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t}  -af volume=5dB output.mp4`;
+	let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t} -af volume=4dB output.mp4`;
 
 	let args = util.parseArguments(commands);
 
@@ -263,7 +264,7 @@ function convertImageToVideo(imagesArray, audio, {f, t, b}, callback) {
 	};
 }
 
-function combineAudio(array, callback) {
+function combineAudio(array, callback, duration) {
 	var worker;	
 	if (!worker) {
 		worker = processInWebWorker();
@@ -293,7 +294,18 @@ function combineAudio(array, callback) {
 	// 背景音乐和人声合并
 	// let commands = `-i input0.wav -i input1.wav -filter_complex amerge output.wav`;
 	// let commands = `-i input0.wav -i input1.wav -acodec copy output.wav`;
-	let commands = `${inputs.join(' ')} -filter_complex amix=inputs=${audioCount}:duration=longest:dropout_transition=${audioCount} -ar 24k -ab 768k output.wav`;
+	console.log('duration', duration);
+	let volume =  array.map((item, index)=>{
+		let isLast = index + 1 == array.length;
+		return `[${index}:a]volume=${isLast ? 0.7 : 2}[a${index +1}]`;
+	}).join(';');
+	let inputsVolume = array.map((item, index)=>{
+		return `[a${index+1}]`
+	}).join('')
+	// let commands = `${inputs.join(' ')} -filter_complex amix=inputs=${audioCount}:duration=longest:dropout_transition=${audioCount} -ar 24k -ab 768k output.wav`;
+	// let commands = `${inputs.join(' ')} -filter_complex ${volume};${inputsVolume}amix=inputs=${audioCount}:duration=longest:dropout_transition=${audioCount} -ar 24k -ab 768k output.wav`;
+	let commands = `${inputs.join(' ')} -filter_complex ${volume};${inputsVolume}amix=inputs=${audioCount}:duration=longest:dropout_transition=${2} -ar 24k -ab 768k output.wav`;
+	console.log(commands);
 	// let commands = `-i input1.wav -i input0.wav  -filter_complex amerge output.wav`;
 	// let commands = `ffmpeg -filters`;
 	

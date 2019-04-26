@@ -26,6 +26,29 @@ const store = {
 		audioUrl: '',
 		audioType: 'audio/mp3',
 
+		audioList: [
+			{
+				name: '绯闻女孩 - Good Day',
+				url: 'audio/绯闻女孩 - Good Day.mp3',
+			},
+			{
+				name: '欧美群星-Ima Boss(Meek Mill and Rick Ross)',
+				url: 'audio/欧美群星-Ima Boss(Meek Mill and Rick Ross).mp3',
+			},
+			{
+				name: 'wav 欧美群星-Ima Boss(Meek Mill and Rick Ross)',
+				url: 'audio/欧美群星-Ima Boss(Meek Mill and Rick Ross)_WAV.wav',
+			},
+			{
+				name: '早晨轻松愉快的音乐',
+				url: 'audio/早晨轻松愉快的音乐.wav',
+			},
+			{
+				name: '鈴木雅之,伊原六花 - ラブ・ドラマティック (TV Size)',
+				url: 'audio/鈴木雅之,伊原六花 - ラブ・ドラマティック (TV Size).mp3',
+			},
+		]
+
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -48,6 +71,48 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
+		// 获取背景音乐
+		fetchBgMusic({rootState, state, commit,dispatch}, {item}) {
+			dispatch('request', {
+				link: item.url,
+				callback:(res)=>{
+					rootState.bgMusic = res;
+					rootState.bgMusicName = item.name;
+				}
+			})
+		},
+
+		request({state, rootState,commit,dispatch}, {link, callback}) {
+
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", link, true);
+			xhr.responseType = 'blob';//"arraybuffer";
+
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4) {
+					if (xhr.status == 200 || xhr.status == 304) {
+						let blob = xhr.response;
+						if(blob) {
+							callback(blob);
+						}
+					} else {
+						commit('showSnackbar', {
+							text: '加载出错！',
+						});
+					}
+				}
+			}
+			/* xhr.onload = function (oEvent) {
+				let blob = xhr.response;
+				if(blob) {
+					callback(blob);
+				}
+			}; */
+
+			xhr.send(null);
+		},
+
+
 		// 获取宝贝列表
 		fetchTemplates({rootState, state, commit},{pageNo = 1}){
 			

@@ -4,13 +4,14 @@
       v-for="item,index in voicesLocal"
       :class="['voice-item', voiceIndex == index ? 'active-voice-item': '']"
       :data-index="index"
+      :data-width="item.width"
       :title="item.tex ? item.tex : '请输入文本并点击生成相应音频'"
       :style="{left: item.left, width: item.width}"
       @click="setVoiceIndex(index)">
-      {{ item.tex }} {{ item.duration }}
+      {{ item.tex }} {{ /*item.duration */}}
       <voicePlayBlock :item="item"></voicePlayBlock>
     </div>
-    <voicePlayBlock :item="bgMusicItem"></voicePlayBlock>
+    <!-- <voicePlayBlock :item="bgMusicItem"></voicePlayBlock> -->
   </div>
 </template>
 
@@ -132,7 +133,12 @@ export default {
           // console.log(position);
           let voiceIndex = $(e.target).data('index');
           console.log(voiceIndex);
-          this.voices[voiceIndex].time = position;
+          this.$nextTick(()=>{
+            this.voices[voiceIndex].time = position;
+            $(e.target).css({
+              width: $(e.target).attr('data-width'),
+            })
+          })
           // console.log();
           /* this.dragging = false;
           let topIndex = this.topIndex;
@@ -179,20 +185,23 @@ export default {
       top: 1px;
       // background-color: #6ECEDF;
       background-color: #de698c;
+      background-color: #37393A;
       color: white;
       font-size: 12px;
       line-height: 21px;
       cursor: move;
       border-radius: 2px;
       min-width: 22px;
-      border: 1px solid rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,0,0,0.3);
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       padding: 0 0 0 5px;
     }
     .active-voice-item{
-      border: 1px solid rgba(255,0,0,1);
+      // border: 1px solid rgba(255,0,0,1);
+      border: 1px solid #6ECEDF;
+      background-color: #6ECEDF;
     }
   }
 </style>

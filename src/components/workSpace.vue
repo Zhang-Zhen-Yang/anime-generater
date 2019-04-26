@@ -1,16 +1,19 @@
 <template>
-  <div id="work-space" class="scrollbar-overwrite" @mousedown="emptyClick">
-    <div class="inline-block" style="width:0px;height: 100%;vertical-align: middle;background-color:red;" v-if="false"></div>
-    <canvas id="canvas" class="inline-block" ref="canvas" @click="togglePlayState" :style="canvasStyle">
-    </canvas>
-    <div style="display: inline-block;position: absolute;left: 50%;top: 50%;" v-if="false">
-      <div :class="['pause-and-play-tip', playing ? 'pause-tip':'play-tip', 'pointer']" @click="togglePlayState">
+  <div id="work-space" @mousedown="emptyClick" style="">
+    <div id="work-space-inner" style="position:absolute;width: 100%;height:100%;overflow:auto;padding-top:20px;" class="scrollbar-overwrite">
+      <div class="inline-block" style="width:0px;height: 100%;vertical-align: middle;background-color:red;" v-if="false"></div>
+      <canvas id="canvas" class="inline-block" ref="canvas" @click="togglePlayState" :style="canvasStyle">
+      </canvas>
+      <div style="display: inline-block;position: absolute;left: 50%;top: 50%;" v-if="false">
+        <div :class="['pause-and-play-tip', playing ? 'pause-tip':'play-tip', 'pointer']" @click="togglePlayState">
+        </div>
       </div>
+      <button v-if="false" style="position: absolute;left: 10px;top: 10px;" @click="test">
+        test
+      </button>
+      <workSpaceDom v-show="!playing"></workSpaceDom>
     </div>
-    <button v-if="false" style="position: absolute;left: 10px;top: 10px;" @click="test">
-      test
-    </button>
-    <workSpaceDom v-show="!playing"></workSpaceDom>
+    <audioList></audioList>
     <audioTrigger></audioTrigger>
   </div>
 </template>
@@ -19,9 +22,10 @@
 import canvasRender from '../script/canvasRender.js';
 import workSpaceDom from './workSpaceDom/workSpaceDom.vue';
 import audioTrigger from './audioTrigger.vue';
+import audioList from './audioList.vue';
 export default {
   name: 'temp',
-  components: {workSpaceDom, audioTrigger},
+  components: {workSpaceDom, audioTrigger, audioList},
   data () {
     return {
       msg: 'temp'
@@ -84,7 +88,7 @@ export default {
     // 空白处点击
     emptyClick(e) {
       // console.log(e.target);
-      if(e.target.id == 'work-space') {
+      if(e.target.id == 'work-space' || e.target.id == 'work-space-inner') {
         this.$store.state.activeLayerIndex = [-1];
         this.$store.state.tl.topIndex = -1;
         this.$store.state.tl.subIndex = -1;
@@ -129,8 +133,8 @@ export default {
     height: 100%;
     text-align:center;
     position: relative;
-    overflow: auto;
-    padding-top: 20px;
+    overflow: hidden;
+    // padding-top: 20px;
     #work-space-dom{
       top: 20px;
     }

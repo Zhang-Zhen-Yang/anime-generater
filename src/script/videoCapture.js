@@ -10,9 +10,11 @@ class VideoCapture {
         this.cancel = false
         this.video.style="position:absolute;left:70px;top:100px;background-color: white;width: 200px;opacity: 0.5";
         document.body.appendChild(this.video);
+        this.canvasList= [];
+        this.promise = null;
     }
     start() {
-        return new Promise((resolve, reject)=>{
+        let promise = new Promise((resolve, reject)=>{
             let canvasList = [];
             // this.video.pause();
             this.video.onloadedmetadata = ()=>{
@@ -39,12 +41,12 @@ class VideoCapture {
                     canvas.height = distWidth; // videoHeight;
                     let ctx = canvas.getContext('2d');
                     ctx.drawImage(this.video, 0, 0, distWidth, distHeight);
-                    canvasList.push(canvas);
+                    this.canvasList.push(canvas);
                     if(this.cancel) {
                         resolve({
                             success: false,
                             cancel: true,
-                            list: canvasList,
+                            list: this.canvasList,
                             width: distWidth, //videoWidth,
                             height: distHeight, // videoHeight,
                         })
@@ -55,7 +57,7 @@ class VideoCapture {
                         resolve({
                             success: true,
                             cancel: false,
-                            list: canvasList,
+                            list: this.canvasList,
                             width: distWidth, //this.video.videoWidth,
                             height: distHeight, // this.video.videoHeight,
                         })
@@ -66,7 +68,7 @@ class VideoCapture {
                                 resolve({
                                     success: true,
                                     cancel: false,
-                                    list: canvasList,
+                                    list: this.canvasList,
                                     width: distWidth, //this.video.videoWidth,
                                     height: distHeight, // this.video.videoHeight,
                                 })
@@ -89,9 +91,12 @@ class VideoCapture {
                 })
             }
         })
+        this.promise = promise;
+        return promise;
     }
     cancel() {
         this.cancel = true;
+        this.video.onloadedmetadata = ()=>{}
     }
 }
 export default VideoCapture; 

@@ -67,7 +67,7 @@ let Object = {
             return;
         } else {
             for(var i in obj){
-                if (i == 'obj' || i == 'tweenObj' || i == 'videoTweenObj' || i == 'sprite' || i == 'list') {
+                if (i == 'obj' || i == 'tweenObj' || i == 'videoTweenObj' || i == 'sprite' || i == 'list' || i == 'videoObj') {
                     newobj[i] = '';
                     continue;
                 }  
@@ -99,6 +99,39 @@ let Object = {
                 })
             }
         })
+    },
+    fillVideoList({fillItem, project}) {
+        console.log(fillItem);
+        console.log(project);
+        fillItem.project.layers.forEach((fItem, index)=>{
+            let fType = fItem.type;
+            let fUUID = fItem.UUID;
+            if(fType == 'video') {
+                let layer = this.getLayerByUUID({layers: project.layers, UUID: fUUID});
+                if(layer) {
+                    console.log(layer);
+                }
+            } else  if(fType == 'container'){
+
+            }
+        })
+    },
+    getLayerByUUID({layers, UUID}) {
+        let findItem = '';
+        layers.forEach((item)=>{
+            let topUUID = item.UUID;
+            if(topUUID == UUID) {
+                findItem = item;
+            }
+            if(item.type == 'container') {
+                item.children.forEach((cItem)=>{
+                    if(cItem.UUID == UUID) {
+                        findItem = cItem
+                    }
+                })
+            }
+        })
+        return findItem;
     },
     // 通过时间点来判断缓动应该添加到什么位置
     getIndexByPosition({currentLayer, position}) {

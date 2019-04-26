@@ -1,7 +1,7 @@
 <template>
   <div class="voice-play-block">
     <audio :src="src" ref="audio" @ended="ended" @loadedmetadata="loadedmetadata"></audio>
-    {{ position }}
+    {{ /*position*/ }}
   </div>
 </template>
 
@@ -73,6 +73,9 @@ export default {
       }
     },
     position(nval, oval) {
+      if(!this.src) {
+        return 
+      }
       // 如果正在播放
       if(this.playing) {
         if( (nval >=  this.item.time)  && (nval <= (this.item.time + this.duration*1000)) ) {

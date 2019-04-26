@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-25 11:14:15
+ * @Last Modified time: 2019-04-26 17:13:32
  */
 
  // 时间轴组件
@@ -759,6 +759,8 @@ const store = {
           let fillItem = state.undoList.splice(state.undoList.length - 1, 1)[0];
           //
           utilTimeline.fillLocalImageByKey(fillItem);
+          utilTimeline.fillVideoList({fillItem, project: rootState.project});
+          
           rootState.project = fillItem.project;
           rootState.playing = fillItem.playing;
           

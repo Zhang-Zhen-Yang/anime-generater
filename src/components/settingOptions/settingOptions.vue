@@ -1170,19 +1170,7 @@ export default {
     border-radius:50%;
   }
 
-  .divider{
-    border-bottom: 1px solid #181818;
-    position: relative;
-  }
-  .divider:after{
-    content: "";
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #484a4b;
-  }
+
 
   .align-icon{
     width: 16px;

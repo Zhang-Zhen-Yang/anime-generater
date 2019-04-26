@@ -346,7 +346,7 @@ let obj = {
     let shape = new c.Shape();
     videoContainer.addChild(shape);
 
-    if(item.lastAction == 'success' || item.lastAction == 'initing') {
+    if(item.videoObj/*item.lastAction == 'success' || item.lastAction == 'initing'*/) {
       
     } else {
       item.lastAction = 'initing';
@@ -356,6 +356,7 @@ let obj = {
         end_time: item.end_time / 1000,
         interval: item.interval / 1000,
       })
+      item.videoObj = videoCapture;
       let promise = videoCapture.start();
       promise.then((res)=>{
         if(res.success) {

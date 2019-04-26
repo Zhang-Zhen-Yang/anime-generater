@@ -221,6 +221,7 @@ export default {
       this.$store.state.tl.subIndex = typeof indexs[1] == 'number' ? indexs[1] : -1;
       this.$store.state.tl.tweenIndex = -1;
       this.$store.state.tl.currentTween = null;
+      this.$store.state.tl.voiceIndex = -1;
     },
     // 开始拖动
     dragStart(e, item, index) {

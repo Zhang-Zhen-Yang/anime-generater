@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-25 14:27:15
+ * @Last Modified time: 2019-04-26 16:25:23
  */
 
 import http from '../script/http';
@@ -68,6 +68,7 @@ const store = {
 		project: demoEmpty,
 		// 背景音乐
 		bgMusic: '',
+		bgMusicName: '',
 		activeLayerIndex: [0],
 		stage: null,
 		timeline: null,
@@ -420,8 +421,8 @@ const store = {
 				console.log(item);
 			})
 			
-			let allVoicesPromises = voices.filter((item)=>{return !!item.data})
-			
+			let allVoicesPromises = voices.filter((item)=>{return !!item.data});
+
 			if(allVoicesPromises.length == 0) {
 				callback({
 					success: true,
@@ -439,24 +440,30 @@ const store = {
 					})
 				},()=>{})
 			})
-
+			
 			Promise.all(allVoicesPromises).then((res)=>{
+
 				let padVoices = res.map((item)=>{
 					let appender = new WaveEditor();
 					return appender.delay([item.data], parseInt(item.time / 10) / 100, 'blob', 'AppendedWav');
 				})
+
 
 				
 				let allPadVoicesArrayBuffer = padVoices.map((item)=>{
 					return util.blobToArrayBuffer(item);
 				})
 
+				if(state.bgMusic) {
+					allPadVoicesArrayBuffer.push(util.blobToArrayBuffer(state.bgMusic));
+				}
+
 				Promise.all(allPadVoicesArrayBuffer).then((res)=>{
 					console.log(res);
 					let appender = new WaveEditor();
 					//return appender.mix(res, 'play', 'AppendedWav');
 					let distAudioList = res.map((item)=>{return new Uint8Array(item)});
-					distAudioList.push(window.music);
+					// distAudioList.push(window.music);
 					combineAudio(
 						distAudioList,
 						//[window.music, new Uint8Array(res[0])],
@@ -466,7 +473,7 @@ const store = {
 								let blob = new Blob([res.data[0].data], {
 									type: 'audio/wav'
 								});
-								util.funDownload('', blob, 'test.wav');
+								// util.funDownload('', blob, 'test.wav');
 								util.blobToArrayBuffer(blob).then((data)=>{
 									console.log('=======================================',data);
 									callback({
@@ -476,7 +483,9 @@ const store = {
 								})
 
 							}
-						}
+						},
+						window.timeline.duration / 1000
+
 					);
 					
 

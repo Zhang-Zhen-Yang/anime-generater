@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-25 13:47:49
+ * @Last Modified time: 2019-04-26 15:23:32
  */
 // 文本转语音 百度tts
 
@@ -37,7 +37,7 @@ const store = {
 				ctp: 1,
 				spd: spd,
 				pit: pit,
-				vol: 10,
+				vol: 15,
 				per: per,
 				aue: 6,
 			}, {

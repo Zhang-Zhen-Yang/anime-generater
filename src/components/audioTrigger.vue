@@ -12,11 +12,14 @@ export default {
     }
   },
   computed: {
-    
+    dialogAudio() {
+      return this.$store.state.dialogAudio;
+    }
   },
   methods: {
     toggleShowDialogAudio() {
-      alert('ddd');
+      // alert('ddd');
+      this.dialogAudio.show = !this.dialogAudio.show;
     }
   },
   created() {

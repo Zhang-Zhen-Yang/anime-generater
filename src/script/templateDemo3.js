@@ -313,6 +313,7 @@ let demo = {
       start_time: 8000,
       end_time: 10000,
       sprite: null,
+      videoObj: null,
       list: [],
       lastAction: 'init',
       tween: [

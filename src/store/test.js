@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:40:11 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-25 14:32:47
+ * @Last Modified time: 2019-04-26 10:15:19
  */
 
 // 测试
@@ -51,28 +51,7 @@ const store = {
 
 			
 		},
-		request({state, rootState,commit,dispatch}, {link, callback}) {
-
-			var oReq = new XMLHttpRequest();
-			oReq.open("GET", link, true);
-			oReq.responseType = 'blob';//"arraybuffer";
-
-			oReq.onload = function (oEvent) {
-				/*var arrayBuffer = oReq.response;
-				if (arrayBuffer) {
-					// alert('dddd');
-					console.log('1111111111111111111111111111111111111',arrayBuffer);
-					let data = new Uint8Array(arrayBuffer);
-					callback(data);
-				}*/
-				let blob = oReq.response;
-				if(blob) {
-					callback(blob);
-				}
-			};
-
-			oReq.send(null);
-		}
+		
 		
 	}// end actions 
 }

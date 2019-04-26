@@ -13,13 +13,6 @@
             </div>
             <!--工作区-->
             <workSpace slot="e"></workSpace>
-
-          
-
-
-
-
-
           </block-slice>
           <!--时间轴-->
           <div slot="s" style="width: 100%;height: 100%;" id="timeline-wrap" ref="timelineWrap">
