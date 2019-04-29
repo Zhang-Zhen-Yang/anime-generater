@@ -1,6 +1,6 @@
 <block-slice slot="e" dir="horizontal" :staticIndex="1" :staticValue="settingPanelWidth + 'px'">
 
-
+showSnackbar(state,{text,timeout=2000}) {
 
 
 

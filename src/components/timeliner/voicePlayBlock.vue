@@ -18,6 +18,10 @@ export default {
           time: 0,
         }
       }
+    },
+    volume: {
+      type: Number,
+      default: 1,
     }
   },
   data () {
@@ -49,6 +53,8 @@ export default {
   methods: {
     loadedmetadata() {
       this.duration = this.audio.duration
+      this.audio.volume = this.volume;
+      console.log('this.audio.volume', this.audio.volume);
       // console.log(this.audio.duration);
     },
     setAudio() {

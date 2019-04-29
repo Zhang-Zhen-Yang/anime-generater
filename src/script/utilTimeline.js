@@ -1,5 +1,6 @@
 import { create } from "domain";
 import util from './util.js';
+import VideoCapture from './videoCapture.js';
 let Object = {
     // 通过UUID获取 对象
     getObjByUUID({parent,UUID}) {
@@ -101,32 +102,85 @@ let Object = {
         })
     },
     fillVideoList({fillItem, project}) {
-        console.log(fillItem);
-        console.log(project);
+       
+        // console.log(fillItem);
+        // console.log(project);
         fillItem.project.layers.forEach((fItem, index)=>{
             let fType = fItem.type;
             let fUUID = fItem.UUID;
             if(fType == 'video') {
-                let layer = this.getLayerByUUID({layers: project.layers, UUID: fUUID});
-                if(layer) {
-                    console.log(layer);
-                }
-            } else  if(fType == 'container'){
-
+                this.fillVideoListCheck({project, fUUID, fItem});
+            } else if(fType == 'container'){
+                fItem.children.forEach((fChildItem, index)=>{
+                    if(fChildItem.type == "video") {
+                        this.fillVideoListCheck({project, fUUID, fItem: fChildItem});
+                    }
+                })
             }
         })
     },
-    getLayerByUUID({layers, UUID}) {
+    fillVideoListCheck({project, fUUID, fItem}) {
+        fItem.list = [];
+        let fItemTag =`${fItem.start_time}-${fItem.end_time}-${fItem.src}`;
+
+
+
+        let prevItem = this.getLayerByVideoTag({layers: project.layers, tag: fItemTag});
+
+        if(prevItem) {
+            fItem.videoObj = new VideoCapture({
+                src: fItem.start_time,
+                start_time: fItem.end_time,
+                end_time: fItem.end_time,
+                interval: fItem.interval
+            });
+            fItem.list = fItem.videoObj.canvasList = prevItem.videoObj.canvasList;
+            fItem.videoObj.lastAction = 'success';
+            
+            // console.log('layer',prevItem);
+            /*if(prevItem.videoObj) {
+                if(prevItem.videoObj.lastAction == 'success') {
+                    let prevItemTag = `${prevItem.start_time}-${prevItem.end_time}-${prevItem.src}`;
+                    console.log([fItemTag, prevItemTag]);
+                    if(fItemTag == prevItemTag) {
+                        console.log('fItemTag == prevItemTag');
+                        fItem.videoObj = new VideoCapture({
+                            src: fItem.start_time,
+                            start_time: fItem.end_time,
+                            end_time: fItem.end_time,
+                            interval: fItem.interval
+                        });
+                        fItem.list = fItem.videoObj.canvasList = prevItem.videoObj.canvasList;
+                        fItem.videoObj.lastAction = 'success';
+                    } else {
+
+                    }
+                } else {
+                    prevItem.videoObj.cancel(); 
+                }
+            } else {
+
+            }*/
+        } else {
+            console.log('no find');
+        }
+    },
+    getLayerByVideoTag({layers, tag}) {
         let findItem = '';
         layers.forEach((item)=>{
-            let topUUID = item.UUID;
-            if(topUUID == UUID) {
-                findItem = item;
+            if(item.type == 'video') {
+                let thisTag = `${item.start_time}-${item.end_time}-${item.src}`;
+                if(thisTag == tag) {
+                    findItem = item;
+                }
             }
             if(item.type == 'container') {
                 item.children.forEach((cItem)=>{
-                    if(cItem.UUID == UUID) {
-                        findItem = cItem
+                    if(cItem.type == 'video') {
+                        let thisTag = `${cItem.start_time}-${cItem.end_time}-${cItem.src}`;
+                        if(thisTag == tag) {
+                            findItem = item;
+                        }
                     }
                 })
             }
@@ -134,10 +188,10 @@ let Object = {
         return findItem;
     },
     // 通过时间点来判断缓动应该添加到什么位置
-    getIndexByPosition({currentLayer, position}) {
+    getIndexByPosition({list, position}) {
         let index = 0;
-        (currentLayer.tween || []).forEach((tween, tindex)=>{
-            if(position > tween.time) {
+        (list || []).forEach((item, tindex)=>{
+            if(position > item.time) {
                 index = tindex;
             }
         })

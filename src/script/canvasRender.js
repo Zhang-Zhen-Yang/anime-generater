@@ -21,6 +21,10 @@ let obj = {
       let bgShape = new c.Shape();
       bgShape.graphics.f('#ffffff').drawRect(0, 0, width, height).f(bgColor).drawRect(0, 0, width, height);
       stage.addChild(bgShape);
+      
+
+
+
       // 时间轴
       let timeline = new c.Timeline([], 'g', {loop: true});
       state.timeline = timeline;
@@ -28,9 +32,56 @@ let obj = {
 
       this.renderLayers({parentType: 'stage', layers, parent: stage, timeline, project});
 
+      // 渲染字幕
+      this.renderSubtitle({project, parent: stage, timeline});
+
       c.Ticker.setFPS(48);
       c.Ticker.addEventListener('tick', stage);
     }
+  },
+  // 生成字幕
+  renderSubtitle({project, parent, timeline}){
+    return;
+    let prevContainer = parent.getChildByName('subtitle');
+    if(prevContainer) {
+      // alert('yes');
+      parent.removeChild(prevContainer);
+    }
+    // 字幕 subtitle
+    let subtitleContainer = new c.Container();
+    subtitleContainer.name = 'subtitle';
+    stage.addChild(subtitleContainer);
+    project.voices.forEach((item)=>{
+      if(item.tweenObj) {
+        // alert('tweenObj');
+        timeline.removeTween(item.tweenObj);
+      }
+
+      let text = item.tex;
+      let fontSize = item.fontSize || 50;
+      let fontFamily = item.fontFamily || '黑体';
+      let textObj = new c.Text(text, `normal ${fontSize}px ${fontFamily}`);
+      textObj.set({
+        alpha: 0,
+        x: Math.random() * 100,
+        y: Math.random() * 100
+      })
+      subtitleContainer.addChild(textObj);
+      // alert([item.time, item.duration]);
+
+      let tween = c.Tween.get(textObj)
+      .wait(item.time)
+      .to({alpha: 1}, 0)
+      .wait(item.duration*1000)
+      .to({alpha: 0}, 0)
+
+      item.tweenObj = tween;
+
+      timeline.addTween(tween);
+
+      // console.log(item);
+    })
+
   },
   // 对图层进行行渲染
   renderLayers ({parentType, layers, parent, timeline, project}) {
@@ -340,14 +391,21 @@ let obj = {
     if (addChild) {
       container.addChild(videoContainer);
     }
-    callback({
-      obj: videoContainer
-    });
     let shape = new c.Shape();
     videoContainer.addChild(shape);
+    
 
     if(item.videoObj/*item.lastAction == 'success' || item.lastAction == 'initing'*/) {
-      
+      // alert('videoObj');
+      let firstImage = item.videoObj.canvasList[0];
+      if(firstImage) {
+        // alert([firstImage.width, firstImage.height]);
+        videoContainer.setBounds(0, 0, firstImage.width, firstImage.height);
+        videoContainer.set({
+          regX: firstImage.width / 2,
+          regY: firstImage.height / 2,
+        })
+      }
     } else {
       item.lastAction = 'initing';
       let videoCapture = new VideoCaptureClass({
@@ -403,8 +461,12 @@ let obj = {
       }, () => {
         item.lastAction = 'error';
       });
-
     }
+
+    callback({
+      obj: videoContainer
+    });
+
   },
   // 设置动画补间 =====================================================================
   getTween ({obj, item, timeline, scale = 1,f}) {
@@ -507,6 +569,7 @@ let obj = {
     if(item.type == 'video') {
       console.log('obj',obj);
       let shapeObj = obj.children[0];
+      console.log('shapeObj', shapeObj);
       videoTween = c.Tween.get(shapeObj);
       // alert(item.list.length);
       let firstTime = projectTween[0] ? projectTween[0].time : 0;
@@ -516,16 +579,64 @@ let obj = {
       item.list.forEach((clipListItem, index)=>{
         if(index == 0) {
           // alert(shapeObj);
-          videoWidth = clipListItem.width
+          /*videoWidth = clipListItem.width
           videoHeight = clipListItem.height
+
+          item.videoObj.video.currentTime = 0;
+          console.log('video', item.videoObj.video);
+          console.log('canvas', item.videoObj.canvas);
+          
           shapeObj.graphics.clear();
-          shapeObj.graphics.bf(clipListItem).r(0,0, videoWidth, videoHeight);
+          // shapeObj.graphics.bf(clipListItem).r(0,0, videoWidth, videoHeight);
+
+          item.videoObj.ctx.fillRect(0,0, 10, 10);
+          item.videoObj.ctx.fillRect(0,videoHeight -10, 10, 10);
+          item.videoObj.ctx.fillRect(videoWidth - 10, 0, 10, 10);
+          item.videoObj.ctx.fillRect(videoWidth -10, videoHeight - 10 , 10, 10);
+          item.videoObj.ctx.fillRect(0,100, 100, 100);
+          item.videoObj.ctx.fillText('apple', 0, 200);
+          let img = new Image();
+          img.src="https://imgs.aixifan.com/Fm5trVWxz3lkOg-ZccSw9vw-5dBi?imageView2/1/w/200/h/110";
+          item.videoObj.ctx.drawImage(clipListItem, 0, 0);
+          
+          document.body.appendChild(item.videoObj.canvas);
+          shapeObj.graphics.bf(item.videoObj.canvas).r(0,0, videoWidth, videoHeight);
           videoTween.wait(firstTime);
+          */
+
+          // document.body.appendChild(clipListItem);
+          /* shapeObj.graphics.clear();
+          shapeObj.graphics.bf(clipListItem).r(0,0, videoWidth, videoHeight);*/
+          obj.removeAllChildren();
+          let bitmap = new c.Bitmap(clipListItem);
+          obj.addChild(bitmap)
+          
+          videoTween.wait(firstTime);
+
         } 
-        console.log(firstTime + index*item.interval);
+        // console.log(firstTime + index*item.interval);
         videoTween.wait(item.interval).call(()=>{
+          /*let distTime = (firstTime + item.interval*index) /1000;;
+          // if() {}
+          let c = document.createElement('canvas');
+          c.width = videoWidth;
+          c.height = videoHeight;
+          let ctx = c.getContext('2d');
+          ctx.drawImage(item.videoObj.video, 0, 0, videoWidth, videoHeight);
+
+          item.videoObj.video.currentTime = distTime;
+
           shapeObj.graphics.clear();
-          shapeObj.graphics.bf(clipListItem).r(0, 0, videoWidth, videoHeight);
+          // shapeObj.graphics.bf(clipListItem).r(0, 0, videoWidth, videoHeight);
+          item.videoObj.ctx.drawImage(c, 0, 0, videoWidth, videoHeight);
+          shapeObj.graphics.bf(item.videoObj.canvas).r(0,0, videoWidth, videoHeight);
+          */
+         // document.body.appendChild(clipListItem);
+          /*shapeObj.graphics.clear();
+          shapeObj.graphics.bf(clipListItem).r(0,0, videoWidth, videoHeight);*/
+          obj.removeAllChildren();
+          let bitmap = new c.Bitmap(clipListItem);
+          obj.addChild(bitmap)
         });
       })
     }

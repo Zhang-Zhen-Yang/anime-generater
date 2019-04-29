@@ -3,7 +3,7 @@
     <div class="audio-list" v-show="show">
       <block-slice slot="e" dir="vertical" :staticIndex="0" :staticValue="65 + 'px'">
         <div slot="s" class="audio-list-title divider">
-          <voicePlayBlock :item="bgMusicItem"></voicePlayBlock>
+          <voicePlayBlock :item="bgMusicItem" :volume="0.7"></voicePlayBlock>
           <block-slice slot="e" dir="horizonal" :staticIndex="1" :staticValue="60 + 'px'">
             <div slot="e" style="padding:2px 5px;">
               <div style="height: 40px;overflow: hidden;">

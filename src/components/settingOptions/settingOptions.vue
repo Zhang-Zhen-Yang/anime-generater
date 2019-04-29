@@ -219,9 +219,7 @@
           <div class="c-layer-title">
             <span class="prop-name">视频</span>
           </div>
-          
             <videoRangeSelect :layer="cLayer"></videoRangeSelect>
-          
         </template>
         <!--形状类型========================================================================================-->
         <template v-if="cLayer && cLayer.type=='shape'">
@@ -427,10 +425,10 @@
             <!--节点的属性值-->
             <table cellspacing="0" cellpadding="0" style="width:100%;">
               <tr>
-                <td style="width: 8em;">
+                <td style="width: 4em;">
                   <span class="prop-name-x">对齐</span>
                 </td>
-                <td>
+                <td colspan="3">
                   <table　cellpadding="0" cellspacing="0" style="width: 100%;">
                     <tr>
                       <td>
@@ -466,7 +464,7 @@
                 <td style="width: 8em;">
                   <span class="prop-name-x">缓动</span>
                 </td>
-                <td>
+                <td colspan="3">
                   <select name="" id="" v-model="ease" style="background-color:#57595a;color:white;border-radius:2px;">
                     <option value="" v-for="item,index in eases" :value="item.value">{{ item.name }}</option>
                   </select>
@@ -477,7 +475,7 @@
                 <td>
                   <span class="prop-name-x">x</span>
                 </td>
-                <td>
+                <td colspan="3">
                   <num-resize
                     v-model="x"
                     @start="propStartSetValue"
@@ -494,7 +492,7 @@
                 <td>
                   <span class="prop-name-x">y</span>
                 </td>
-                <td>
+                <td colspan="3">
                   <num-resize
                     v-model="y"
                     @start="propStartSetValue"
@@ -510,7 +508,7 @@
                 <td>
                   <span class="prop-name-x">scaleX</span>
                 </td>
-                <td>
+                <td colspan="1">
                   <num-resize
                     v-model="scaleX"
                     :stepScale="0.01"
@@ -521,20 +519,50 @@
                     </span>
                   </num-resize>
                 </td>
+                <td>
+                  <!--宽-->
+                  <span class="prop-name-x">w</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="widthByScaleX"
+                    :stepScale="1"
+                    @start="propStartSetValue"
+                    @change="change({type:'scaleX',value: scaleX})">
+                    <span>
+                      {{ widthByScaleX.toFixed(4) }}
+                    </span>
+                  </num-resize>
+                </td>
               </tr>
               <!--scaleY-->
               <tr>
                 <td>
                   <span class="prop-name-x">scaleY</span>
                 </td>
-                <td>
+                <td colspan="1">
                   <num-resize
                     v-model="scaleY"
                     :stepScale="0.01"
                     @start="propStartSetValue"
-                    @change="change({type:'scaleY',value: scaleY})">
+                    @change="change({})">
                     <span>
                       {{ scaleY.toFixed(4) }}
+                    </span>
+                  </num-resize>
+                </td>
+                <td>
+                  <!--高-->
+                  <span class="prop-name-x">h</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="heightByScaleY"
+                    :stepScale="1"
+                    @start="propStartSetValue"
+                    @change="change({})">
+                    <span>
+                      {{ heightByScaleY.toFixed(4) }}
                     </span>
                   </num-resize>
                 </td>
@@ -546,7 +574,7 @@
                     rotation
                   </span>
                 </td>
-                <td>
+                <td colspan="3">
                   <num-resize
                     v-model="rotation"
                     :stepScale="1"
@@ -565,7 +593,7 @@
                     alpha
                   </span>
                 </td>
-                <td>
+                <td colspan="3">
                   <num-resize
                     v-model="alpha"
                     :stepScale="0.01"
@@ -914,6 +942,21 @@ export default {
         this.target.scaleX = targetValue;
       }
     },
+
+    widthByScaleX: {
+      get() {
+        // console.log('this.targetthis.targetthis.targetthis.targetthis.targetthis.target',this.target);
+        return this.target.getBounds().width * this.target.scaleX;
+      },
+      set(val){
+        if(this.cLayer.type == 'image') {
+          let initScale =  util.getImageScale({img: this.target.image, cw: this.project.width, ch: this.project.height,type: 'cover'})
+          this.scaleX = val / this.target.image.width / initScale;
+        } else {
+          this.scaleX = val / this.target.getBounds().width;
+        }
+      }
+    },
     // scaleY
     scaleY:{
       get() {
@@ -928,6 +971,22 @@ export default {
         this.target.scaleY = targetValue;
       }
     },
+    heightByScaleY: {
+      get() {
+        // console.log('this.targetthis.targetthis.targetthis.targetthis.targetthis.target',this.target);
+        return this.target.getBounds().height * this.target.scaleY;
+      },
+      set(val){
+        console.log(val);
+        if(this.cLayer.type == 'image') {
+          let initScale = util.getImageScale({img: this.target.image, cw: this.project.width, ch: this.project.height,type: 'cover'})
+          this.scaleY =  val / this.target.image.height / initScale;
+        } else {
+          this.scaleY = val / this.target.getBounds().height;
+        }
+      }
+    },
+    
     // rotation
     rotation:{
       get() {

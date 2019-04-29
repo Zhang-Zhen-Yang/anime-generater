@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:32:17 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-24 11:16:10
+ * @Last Modified time: 2019-04-29 16:22:22
  */
 
 <template>
@@ -25,10 +25,11 @@
                 <video
                   ref="video"
                   :src="src"
+                  crossorigin="anonymous"
                   @loadedmetadata="loadedmetadata"
                   @error="loaderror"
                   style="max-width:750px;max-height:400px;vertical-align:middle;"></video>
-                <div class="relative" style="width:100%;height:15px;background-color: #181818;">
+                <div v-show="usable" class="relative" style="width:100%;height:15px;background-color: #181818;">
                   <!--滑块-->
                   <div class="absolute video-select-block" style="width:10px;height: 100%;left:0;top:0;background-color:#37393A;" ref="video-select-block">
                     <div class="video-select-block-point" ref="video-select-block-point" style="width:0;">
@@ -36,23 +37,44 @@
                     </div>
                   </div>
                 </div>
-                <div style="font-size: 14px;">
-                  show: {{ show }} |总长:{{ duration }}s | 开始： {{ start_time / 1000 }}s | 结束： {{ end_time / 1000 }}s |
-                  <br> 
-                  
-                  总长：{{ (end_time - start_time) /1000 }}s
+                <div v-show="usable" style="font-size: 14px;user-select:none;line-height: 20px;">
+                  <table>
+                    <tr>
+                      <td>开始：</td>
+                      <td>
+                        <num-resize v-model="start_time" :min="0" :max="end_time" :stepScale="10" @resize="setBlock">
+                          {{ (start_time / 1000).toFixed(2) }}s
+                        </num-resize>
+                      </td>
+                      <td>结束</td>
+                      <td>
+                        <num-resize v-model="end_time" :min="start_time" :max="duration * 1000" :stepScale="10" @resize="setBlock">
+                           {{ (end_time / 1000).toFixed(2) }}s
+                        </num-resize>
+                      </td>
+                      <td>截取长度</td>
+                      <td>{{ ((end_time - start_time) /1000).toFixed(2) }}s</td>
+                      <td>视频长度</td>
+                      <td>{{ duration.toFixed(2) }}s</td>
+                    </tr>
+                  </table>
+                  <!--总长:{{ duration }}s|总长：{{ (end_time - start_time) /1000 }}s | usable:{{usable}}-->
                 </div>
               </div>
 
             </td>
           </tr>
         </table>
-        <a class="my-video-link" target="_blank" href="http://ugc.taobao.com/video/uploadVideo.htm">我的视频</a>
+        <div>
+          
+        </div>
     </div>
     <!--footer-->
     <table slot="footer">
       <tr>
         <td class="left">
+          <a class="my-video-link" target="_blank" href="http://ugc.taobao.com/video/uploadVideo.htm">我的视频</a>
+          <span class="font14 color-red">请到素材中心选择视频，点击复制链接，复制其中的MP4代码，填到上面的输入框中。</span>
         </td>
         <td>
         </td>
@@ -78,6 +100,7 @@ export default {
       start_time: 0,
       end_time: 0,
       src: '',
+      usable: false,
     }
   },
   computed: {
@@ -102,25 +125,31 @@ export default {
       console.log('loadedmetadata');
       this.duration = this.$refs.video.duration;
       this.setBlock();
+      this.usable = true;
       // alert('ddd');
     },
     loaderror(e){
       console.log('出错');
+      this.usable = false;
     },
     dismiss(){
       this.modal.show = false;
     },
     // 确定
     confirm() {
-      this.$store.dispatch('videoChange', {
-        start_time: this.start_time,
-        end_time: this.end_time,
-        item: this.modal.item,
-        src: this.src,
-        callback: () => {
-
-        }
-      });
+      if(this.usable) {
+        this.$store.dispatch('videoChange', {
+          start_time: this.start_time,
+          end_time: this.end_time,
+          item: this.modal.item,
+          src: this.src,
+          callback: () => {
+          }
+        });
+        this.dismiss();
+      } else {
+          this.$store.commit('showSnackbar', {text: '请输入有效的视频链接'});
+      }
       // this.modal.item.start_time = this.start_time;
       // this.modal.item.end_time = this.end_time;
 
@@ -150,9 +179,6 @@ export default {
         let videoClientWidth = this.$refs.video.clientWidth
         let left = this.start_time / this.duration / 1000 * videoClientWidth;
         let width = (this.end_time - this.start_time) / 1000 / this.duration * videoClientWidth;
-        
-        
-
         console.log([left, width]);
         this.$b.css({
           left: `${left}px`,
@@ -191,9 +217,11 @@ export default {
       },
       stop: (e, ui)=>{
         this.setStartEndTime();
+
       },
       drag: (e, ui)=>{
         this.setPosition();
+        this.setStartEndTime();
       }
     })
     .resizable({
@@ -213,6 +241,7 @@ export default {
           })
         }
         this.setPosition();
+        this.setStartEndTime();
       }
     })
     this.$bp.draggable({
@@ -293,13 +322,7 @@ export default {
     .current-video-cover:hover .sub-cover-imgs{
       display: block;
     }
-    .my-video-link{
-      position: absolute;
-      left: 25px;
-      bottom: 20px;
-      font-size: 14px;
-      text-decoration: underline;
-    }
+    
     .ui-resizable-handle{
       opacity: 0;
       width: 3px;
@@ -327,5 +350,9 @@ export default {
       top: 0;
       background-color: #1284e7;
     }
+  }
+  .my-video-link{
+    font-size: 14px;
+    text-decoration: underline;
   }
 </style>

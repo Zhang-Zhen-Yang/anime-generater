@@ -65,8 +65,10 @@ export default {
     canvasStyle() {
       let zoom  = this.project.zoom;
       return {
-        transform: `scale(${zoom},${zoom})`,
-        transformOrigin: 'center 0'
+        // transform: `scale(${zoom},${zoom})`,
+        transformOrigin: 'center 0',
+        width: this.width * zoom +'px',
+        height: this.height * zoom +'px',
       };
     }
   },

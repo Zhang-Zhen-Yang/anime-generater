@@ -24,10 +24,13 @@ export default {
     menuItems() {
       return this.contextMenu.menuItems;
     },
+    yOffset() {
+      return this.contextMenu.yOffset;
+    },
     style() {
       return {
         left: this.contextMenu.x + 'px',
-        top: this.contextMenu.y - 88 + 'px',
+        top: this.contextMenu.y + this.yOffset + 'px',
       }
     },
     

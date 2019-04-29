@@ -42,7 +42,11 @@ export default {
         {
           label: '新建形状图层',
           value: 'shape',
-        }
+        },
+        {
+          label: '新建视频图层',
+          value: 'video',
+        },
       ]
     }
   },
@@ -64,6 +68,8 @@ export default {
       this.contextMenu.menuItems = this.menuItems;
       this.contextMenu.x = e.pageX;
       this.contextMenu.y = e.pageY;
+      this.contextMenu.yOffset = -140;
+      this.contextMenu.xOffset = 0;
       this.contextMenu.show = true;
       this.contextMenu.callback = this.menuClick;
     },

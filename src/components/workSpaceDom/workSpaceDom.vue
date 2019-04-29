@@ -7,7 +7,7 @@
         :index="index - 1"
         v-if="item.children && item.children[0] && item.children[0].image" :obj="item.children[0]"></domImage>
     </div>-->
-    <div v-for="item, index in layers">
+    <div v-for="item, index in layers" v-show="item.editable">
       <!--图片类型-->
       <domImage
         :index="index"
@@ -24,7 +24,6 @@
       <domText
         :index="index"
         v-if="item.type=='video'&&item.obj" :obj="item.obj" :item="item" :isShape="true"></domText>
-      
     </div>
 
   </div>

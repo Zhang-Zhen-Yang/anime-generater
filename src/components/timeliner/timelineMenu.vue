@@ -134,7 +134,7 @@ export default {
     },
     // 切换可编辑所有
     toggleEditableAll() {
-
+      this.$store.dispatch('toggleEditableAll');
     },
     setDragThumbnailWidth() {
       $('#timeline-drag-thumbnail').css({

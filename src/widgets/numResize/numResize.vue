@@ -74,7 +74,7 @@ export default {
             this.$emit('start');
         },
         onresize(e) {
-             if(this.inputShow) {
+            if(this.inputShow) {
                 return;
             }
             if(!this.resizing){
@@ -89,6 +89,7 @@ export default {
             } else {
                 this.$emit('input', totalValue);
             }
+            this.$emit('resize');
             // console.log(this.distance);
         },
         end(e) {

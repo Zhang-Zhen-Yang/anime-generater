@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-26 17:13:32
+ * @Last Modified time: 2019-04-27 17:18:22
  */
 
  // 时间轴组件
@@ -36,6 +36,8 @@ const store = {
       show: true,
       x: 0,
       y: 0,
+      xOffset: 0,
+      yOffset: -88,
       menuItems: [
         {
           label: '新建图片图层',
@@ -309,7 +311,10 @@ const store = {
       } else if(topIndex > -1){
         let currentLayer = rootState.project.layers[topIndex] || {};
         let removeItem = rootState.project.layers.splice(topIndex, 1);
-        // console.log(removeItem);
+        console.log(removeItem);
+        if(!removeItem[0]) {
+          return;
+        }
         let removeItemObj = removeItem[0].obj;
         removeItemObj.parent.parent.removeChild(removeItemObj.parent);
         
@@ -331,11 +336,16 @@ const store = {
         }*/
         let currentTweenObj = currentLayer.tweenObj;
         window.timeline.removeTween(currentTweenObj);
+        let currentVideoTweenObj = currentLayer.videoTweenObj;
+        window.timeline.removeTween(currentVideoTweenObj);
+
         if(currentLayer.type == 'container') {
           // alert('dd');
           currentLayer.children.forEach((item, index)=>{
             let childTweenObj = item.tweenObj;
+            let childVideoTweenObj = item.videoTweenObj;
             window.timeline.removeTween(childTweenObj);
+            window.timeline.removeTween(childVideoTweenObj);
           })
         }
       }
@@ -524,7 +534,7 @@ const store = {
       } else {
         rootState.timeline.gotoAndStop(position);
         let newProps = utilTimeline.getCurrentProps({project: rootState.project, obj: currentObj});
-        let positionIndex = utilTimeline.getIndexByPosition({currentLayer, position});
+        let positionIndex = utilTimeline.getIndexByPosition({list: currentLayer.tween, position});
         // alert(positionIndex);
         currentLayer.tween.splice(positionIndex + 1, 0, {
           action: 'to',
@@ -533,19 +543,21 @@ const store = {
           ease: 'linear'
         })
         dispatch('updateTween', {topIndex, subIndex});
-        state.tweenIndex = positionIndex + 1;
+        state.tweenIndex = positionIndex +1;
         // console.log(newProps);
       }
       
     },
     // 删除当前缓动
     removeTween({state,rootState,dispatch}) {
-      dispatch('addStep');
+      
       // alert('removeTween');
       let voiceIndex = state.voiceIndex;
+      // 删除配音
       if(voiceIndex > -1) {
         let voices = rootState.project.voices;
         if(voices[voiceIndex]) {
+          dispatch('addStep');
           voices.splice(voiceIndex,1);
           if(!voices[voiceIndex]) {
             state.voiceIndex = voiceIndex - 1;
@@ -557,8 +569,11 @@ const store = {
         let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
         let tweenIndex = state.tweenIndex;
         if(currentLayer && currentLayer.tween && currentLayer.tween[tweenIndex]) {
-          currentLayer.tween.splice(tweenIndex,1);
-          dispatch('updateTween', {topIndex, subIndex});
+          if(currentLayer.tween.length > 1) {
+            dispatch('addStep');
+            currentLayer.tween.splice(tweenIndex,1);
+            dispatch('updateTween', {topIndex, subIndex});
+          }
         }
       }
     },
@@ -701,6 +716,36 @@ const store = {
       })
       // alert([allVisibleCount, allInVisibleCount]);
     },
+    // 设置所有图层是否可以编辑
+    toggleEditableAll({state,rootState,dispatch}) {
+      // 所有可见层的数量
+      let allVisibleCount = 0;
+      let allInVisibleCount = 0;
+      rootState.project.layers.forEach((layer)=>{
+        if(layer.editable) {
+          allVisibleCount += 1;
+        } else {
+          allInVisibleCount += 1;
+        }
+        if(layer.type == 'container') {
+          layer.children.forEach((clayer)=>{
+            if(clayer.editable) {
+              allVisibleCount += 1;
+            } else {
+              allInVisibleCount += 1;
+            }
+          })
+        }
+      })
+      let toSetValue = true;
+      // 只要有一个可见层就全部设为不可见
+      if(allVisibleCount > 0) {
+        toSetValue = false;
+      }
+      rootState.project.layers.forEach((layer)=>{
+        layer.editable = toSetValue;
+      })
+    },
     // 添加历史记录
     addStep({rootState, state}, {type = 'undo', clearRedo = true}={type: 'undo', clearRedo: true}) {
       // alert('ddd');
@@ -709,10 +754,18 @@ const store = {
       obj.layers.forEach((layer)=>{
         if(layer.type == 'image') {
           layer.pic_url = utilTimeline.getPicKeyByItem(layer);
+        } else if(layer.type == 'video') {
+          if(layer.videoObj) {
+            layer.videoObj.cancel();
+          }
         } else if(layer.type == 'container') {
           layer.children.forEach((clayer)=>{
             if(clayer.type == 'image') {
               clayer.pic_url = utilTimeline.getPicKeyByItem(clayer);
+            } else if(layer.type == 'video') {
+              if(clayer.videoObj) {
+                clayer.videoObj.cancel();
+              }
             }
           })
         }
@@ -760,6 +813,7 @@ const store = {
           //
           utilTimeline.fillLocalImageByKey(fillItem);
           utilTimeline.fillVideoList({fillItem, project: rootState.project});
+          dispatch('fillVoices', {project: fillItem.project});
           
           rootState.project = fillItem.project;
           rootState.playing = fillItem.playing;
@@ -785,6 +839,10 @@ const store = {
           let fillItem = state.redoList.splice(0, 1)[0];
           
           utilTimeline.fillLocalImageByKey(fillItem);
+          utilTimeline.fillVideoList({fillItem, project: rootState.project});
+          dispatch('fillVoices', {project: fillItem.project});
+          
+          
           rootState.project = fillItem.project;
           rootState.playing = fillItem.playing;
           canvasRender.render({
@@ -859,6 +917,23 @@ const store = {
         }
         if(layer.type == 'container') {
           dispatch('checkAsMask', {layers: layer.children});
+        }
+      })
+    },
+    updateVideoCaptureTimestap({state,rootState,dispatch}, {src}) {
+      rootState.project.layers.forEach((item, index)=>{
+        if(item.type == 'video') {
+          if(item.videoObj && src == item.videoObj.src && item.videoObj.lastAction != 'success') {
+            item.timestamp = Date.now();
+          }
+        } else if(item.type == 'container') {
+          item.children.forEach((cItem)=>{
+            if(cItem.type == 'video'){
+              if(cItem.videoObj && src == cItem.videoObj.src && cItem.videoObj.lastAction != 'success') {
+                cItem.timestamp = Date.now();
+              }
+            }
+          })
         }
       })
     },

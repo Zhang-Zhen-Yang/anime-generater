@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:40:11 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-26 10:15:19
+ * @Last Modified time: 2019-04-27 16:36:19
  */
 
 // 测试
@@ -42,10 +42,10 @@ const store = {
 			setTimeout(()=>{
 				// combineAudio(results);
 			}, 2000)*/
-			dispatch('request', {link: 'http://localhost:8080/assets/music.wav', callback: (res)=>{
+			dispatch('request', {link: 'http://localhost:8080/audio/早晨轻松愉快的音乐.wav', callback: (res)=>{
 				// window.music = res;
 				rootState.bgMusic = res;
-				console.log('222222222222222222222222222222222222222',res);
+				console.log('2222222222222222',res);
 				// results.push(res);
 			}});
 

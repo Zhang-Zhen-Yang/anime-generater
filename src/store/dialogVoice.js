@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-26 15:23:32
+ * @Last Modified time: 2019-04-29 15:11:25
  */
 // 文本转语音 百度tts
 
@@ -13,11 +13,16 @@ import util from '../script/util';
 import Vue from 'vue';
 import { join } from 'path';
 import { convertStreams } from '../script/convert.1';
+import canvasRender from '../script/canvasRender';
+
 import btts from '../script/baidu_tts_cors';
 const store = {
 	state: {
 		show: false,
 		tok: '24.e829d1ce750c342c063fbca11bca0879.2592000.1558517552.282335-16069189',
+		voiceMap: {
+
+		}
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -29,69 +34,120 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
-		fetchTTSAudio({state, commit, dispatch, getters}, {tex, oldTex, spd=5, pit=5, per=0, callback}){
-			btts({
-				tex: tex,
-				tok: state.tok,
-				cuid: '1234567JAVA',
-				ctp: 1,
-				spd: spd,
-				pit: pit,
-				vol: 15,
-				per: per,
-				aue: 6,
-			}, {
-				volume: 0.3,
-				autoDestory: true,
-				timeout: 10000,
-				hidden: false,
-				onInit: function (htmlAudioElement) {
-				},
-				onMySuccess: function(res) {
-					// alert('成功');
-					console.log(res);
-					//  Stream #0:1: Audio: aac, 16000 Hz, mono, fltp, 128 kb/s
-					// util.funDownload('', res, 'wordddddddddddf.wav')
-					util.blobToArrayBuffer(res).then((r)=>{
-						console.log(r);
-						var appender = new WaveEditor();
-						
-						// appender.delay([r], 0.5, 'download', 'AppendedWav');
+		fetchTTSAudio({rootState, state, commit, dispatch, getters}, {tex, oldTex, spd=5, pit=5, per=0, callback}){
+			let tag = `tag:${tex}-${spd}-${pit}-${per}`;
+			if(!tex) {
+				return;
+			}
+			if(state.voiceMap[tag]) {
+				let res = state.voiceMap[tag];
+				util.blobToArrayBuffer(res).then((r)=>{
+					var appender = new WaveEditor();
+					callback({
+						success: true,
+						oldTex,
+						tex,
+						duration: appender.getDuration(r),
+						blob: res,
+						spd: spd,
+						per: per,
+						pit,
+					})
+					canvasRender.renderSubtitle({project: rootState.project, parent: window.stage, timeline: window.timeline});
+				})
+			} else {
+				// 真正获取
+				btts({
+					tex: tex,
+					tok: state.tok,
+					cuid: '1234567JAVA',
+					ctp: 1,
+					spd: spd,
+					pit: pit,
+					vol: 15,
+					per: per,
+					aue: 6,
+				}, {
+					volume: 0.3,
+					autoDestory: true,
+					timeout: 10000,
+					hidden: false,
+					onInit: function (htmlAudioElement) {
+					},
+					onMySuccess: function(res) {
+						state.voiceMap[tag] = res;
+						// alert('成功');
+						// console.log(res);
+						//  Stream #0:1: Audio: aac, 16000 Hz, mono, fltp, 128 kb/s
+						// util.funDownload('', res, 'wordddddddddddf.wav')
+						util.blobToArrayBuffer(res).then((r)=>{
+							console.log(r);
+							var appender = new WaveEditor();
+							
+							// appender.delay([r], 0.5, 'download', 'AppendedWav');
+							callback({
+								success: true,
+								oldTex,
+								tex,
+								duration: appender.getDuration(r),
+								blob: res,
+								spd: spd,
+								per: per,
+								pit,
+							})
+							canvasRender.renderSubtitle({project: rootState.project, parent: window.stage, timeline: window.timeline});
+
+						});
+	
+					},
+					onMp3MySuccess: function(res) {
+						util.funDownload('', res, 'wordddddddddddf.mp3')
+					},
+					onError: function(text) {
+						alert(text);
 						callback({
-							success: true,
+							success: false,
 							oldTex,
-							tex,
-							duration: appender.getDuration(r),
-							blob: res,
-							spd: spd,
-							per: per,
-							pit,
+							tet
 						})
-					});
+						
+					},
+					onTimeout: function () {
+						alert('timeout');
+						callback({
+							success: false,
+							oldTex,
+							tet
+						})
+					}
+				});
+			}
 
-				},
-				onMp3MySuccess: function(res) {
-					util.funDownload('', res, 'wordddddddddddf.mp3')
-				},
-				onError: function(text) {
-					alert(text);
-					callback({
-						success: false,
-						oldTex,
-						tet
-					})
-					
-				},
-				onTimeout: function () {
-					alert('timeout');
-					callback({
-						success: false,
-						oldTex,
-						tet
-					})
-				}
-			});
+		},
+		fillVoices({state, commit, dispatch, getters},{project}) {
+			
+			let voices = project.voices;
+			project.voices.forEach((item, index)=>{
+				// alert(index);
+				item.data = '';
+				dispatch('fetchTTSAudio', {
+					tex: item.tex,
+					oldTex: item.tex,
+					spd: item.spd,
+					pit: item.pit,
+					per: item.per,
+					callback: (res)=>{
+						if(res.success) {
+							// alert(res.duration);
+							item.duration= res.duration;
+							item.data = res.blob;
+						} else {
 
+						}
+					}
+				})
+				console.log(item);
+			})
 		},
 		getTTSAudio({state, commit, dispatch, getters}, {text} = {text: ''}) {
 			// let tempText = '偶像，是女孩子们一直以来的憧憬。但能站在顶点的，只有仅仅数人。13位少女，就此经她们所属的事务所"765 Production"，跨进了那个充满竞争的世界。出道约半年，事务所来了一位全新的制作人。他跟少女们都下定决心，向顶级偶像之路进发。';

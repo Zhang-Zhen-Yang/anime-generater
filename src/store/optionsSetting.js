@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-26 08:48:39
+ * @Last Modified time: 2019-04-27 16:01:50
  */
  // 时间轴组件
 import http from '../script/http';
@@ -200,7 +200,11 @@ const store = {
         interval: item.interval / 1000,
       })
       let videoContainer = item.obj;
-
+      if(item.videoObj) {
+        console.log(item.videoObj);
+        item.videoObj.cancel();
+      }
+      item.videoObj = videoCapture;
       let promise = videoCapture.start();
       promise.then((res)=>{
         if(res.success) {
@@ -273,11 +277,14 @@ const store = {
           scale: 1,
           f: 'propsChange'
         });
-        window.timeline.addTween(tween);
+        tween.forEach((item,index)=>{
+          window.timeline.addTween(item);
+        })
       })
     },
     // 设置对齐
     setAlign({state, rootState,commit,dispatch}, {type}) {
+      dispatch('addStep');
       dispatch('checkAddTweenIf');
       let currentLayer = utilTimeline.getCurrentLayer({rootState});
       let layerType = currentLayer.type;

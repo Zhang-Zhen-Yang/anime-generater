@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 09:17:56 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-20 09:40:48
+ * @Last Modified time: 2019-04-29 15:31:57
  */
 
 <template>
@@ -12,9 +12,10 @@
       <table>
         <tr>
           <td>
-          <button :class="['btn', 'primary', btnSize]" @click="selectVideo">{{ text }}</button>
+          <!--<button :class="['btn', 'primary', btnSize]" @click="selectVideo">{{ text }}</button>-->
+
           <div :class="['btn', 'primary', 'video-clip-btn', btnSize]" @click="clipVideo">
-            <span style="color:transparent;">图片</span><span>截取</span>
+            <span style="color:transparent;">图片</span><span>选择/截取</span>
           </div>
           </td>
         </tr>

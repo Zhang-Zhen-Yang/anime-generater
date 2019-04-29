@@ -17,6 +17,7 @@
 
 <script>
 import voicePlayBlock from './voicePlayBlock.vue';
+import utilTimeline from '../../script/utilTimeline';
 export default {
   name: 'voice-item-wrap',
   components: {voicePlayBlock},
@@ -99,6 +100,16 @@ export default {
       let totalWidth = (this.voiceItemWrap.clientWidth);
       let position = offsetX / totalWidth * this.tlDuration;
       console.log(position);
+      console.log([this.voices, position]);
+      let p = utilTimeline.getIndexByPosition({list: this.voices, position});
+      // alert(p);
+      /* this.voices.splice(p,0,{
+        time: position,
+        tex: '',
+        per: 0, // 人声
+        data: '',
+        duration: 0,
+      })*/
       this.voices.push({
         time: position,
         tex: '',
@@ -106,8 +117,10 @@ export default {
         data: '',
         duration: 0,
       })
-
-      this.tl.voiceIndex = this.voices.length - 1;
+      this.voices.sort((first, second)=>{
+        return first.time - second.time;
+      });
+      this.tl.voiceIndex = p + 1; // this.voices.length - 1;
       // this.$store.dispatch('addTween', {topIndex: this.topIndex, subIndex: this.subIndex, position});
 
       // console.log(position);
