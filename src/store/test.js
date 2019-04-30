@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:40:11 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-27 16:36:19
+ * @Last Modified time: 2019-04-30 09:27:46
  */
 
 // 测试
@@ -42,7 +42,7 @@ const store = {
 			setTimeout(()=>{
 				// combineAudio(results);
 			}, 2000)*/
-			dispatch('request', {link: 'http://localhost:8080/audio/早晨轻松愉快的音乐.wav', callback: (res)=>{
+			dispatch('request', {link: 'https://oss.wonbao.net/wonbao-graphicvideo/audio/music.wav', callback: (res)=>{
 				// window.music = res;
 				rootState.bgMusic = res;
 				console.log('2222222222222222',res);

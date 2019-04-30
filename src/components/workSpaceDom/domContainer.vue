@@ -152,7 +152,7 @@ export default {
       return style;
     },
     isActivity() {
-      return this.topIndex == this.index && this.subIndex == -1 && !this.playing && this.currentTween;
+      return this.topIndex == this.index && this.subIndex == -1 && !this.playing;// && this.currentTween;
     },
     isVisible() {
       // alert(this.ojb instanceof createjs.Shape);
@@ -166,12 +166,12 @@ export default {
     as() {
       this.$store.dispatch('addStep');
     },
-    bindDraggableResizable() {
+    bindResizable({aspectRatio = true} = {aspectRatio : true}) {
       // 调整大小
       $(this.domContainerR)
       .resizable({
         handles: 's,n,e,w,se,sw,ne,nw',
-        aspectRatio: true,
+        aspectRatio,
         start: (e, ui) => {
           // console.log(ui);
           this.as();
@@ -224,8 +224,12 @@ export default {
           this.u();
           // console.log(ui);
         }
-      })// 可旋转
-      .rotatable({
+      })
+    },
+    bindDraggableResizable() {
+      this.bindResizable({aspectRatio:true});
+      // 可旋转
+      $(this.domContainerR).rotatable({
         start: ()=>{
           this.as();
           this.c();
@@ -307,6 +311,19 @@ export default {
           // console.log([left, top]);
         },
       })
+
+      let _this = this;
+      $(this.domContainerR).on('mouseover', '.ui-resizable-handle', function(){
+        let currentNode = $(this);
+        let shouldAspect = (currentNode.is('.ui-resizable-se,.ui-resizable-sw,.ui-resizable-nw,.ui-resizable-ne'));
+        let currentAspect =  $(_this.domContainerR).resizable('option').aspectRatio;
+        // console.log(currentAspect);
+        if(shouldAspect != currentAspect) {
+          $(_this.domContainerR).resizable( "destroy" );
+          _this.bindResizable({aspectRatio: shouldAspect});
+        }
+      });
+
     },
     // 点击击活图层
     setActiveIndex(e) {

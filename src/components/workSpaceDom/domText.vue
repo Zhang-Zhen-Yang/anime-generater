@@ -140,9 +140,9 @@ export default {
     },
     isActivity() {
       if(this.isSub) {
-        return this.topIndex == this.index && this.subIndex == this.sIndex && !this.playing && !!this.currentTween;
+        return this.topIndex == this.index && this.subIndex == this.sIndex && !this.playing;// && !!this.currentTween;
       }
-      return this.topIndex == this.index && !this.playing && !!this.currentTween; //  || (this.ojb instanceof createjs.Shape && this.item.asMask);
+      return this.topIndex == this.index && !this.playing;// && !!this.currentTween; //  || (this.ojb instanceof createjs.Shape && this.item.asMask);
     },
     isVisible() {
       return this.obj.visible; //  || (this.isShape && this.item.asMask);
@@ -155,12 +155,13 @@ export default {
     as() {
       this.$store.dispatch('addStep');
     },
-    bindDraggableResizable() {
+    bindResizable({aspectRatio = true} = {aspectRatio : true}) {
+      console.log('change resizable', aspectRatio);
       // 调整大小
       $(this.domTextR)
       .resizable({
         handles: 's,n,e,w,se,sw,ne,nw',
-        aspectRatio: true,
+        aspectRatio,
         start: (e, ui) => {
           console.log(ui);
           this.as();
@@ -223,8 +224,12 @@ export default {
           this.u();
           // console.log(ui);
         }
-      })// 可旋转
-      .rotatable({
+      })
+    },
+    bindDraggableResizable() {
+      this.bindResizable({aspectRatio: true});
+      // 可旋转
+      $(this.domTextR).rotatable({
         start: ()=>{
           this.as();
           this.c();
@@ -303,6 +308,18 @@ export default {
           // console.log([left, top]);
         },
       })
+
+      let _this = this;
+      $(this.domTextR).on('mouseover', '.ui-resizable-handle', function(){
+        let currentNode = $(this);
+        let shouldAspect = (currentNode.is('.ui-resizable-se,.ui-resizable-sw,.ui-resizable-nw,.ui-resizable-ne'));
+        let currentAspect =  $(_this.domTextR).resizable('option').aspectRatio;
+        // console.log(currentAspect);
+        if(shouldAspect != currentAspect) {
+          $(_this.domTextR).resizable( "destroy" );
+          _this.bindResizable({aspectRatio: shouldAspect});
+        }
+      });
     },
     // 点击击活图层
     setActiveIndex() {
