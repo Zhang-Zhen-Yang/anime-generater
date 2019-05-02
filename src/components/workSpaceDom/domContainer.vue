@@ -5,7 +5,7 @@
       <div :style="resizeStyle" class="dom-container-r" ref="domContainerR">
       </div>
     </div>
-    <div class="dom-container" :style="style" ref="domContainer" @click="setActiveIndex">
+    <div class="dom-container" :style="style" ref="domContainer" @mousedown="setActiveIndex">
       <div class="bg-preset rotate-center-icon" v-if="topIndex == index"></div>
       <template v-for="i,iindex in item.children">
         <!--容器下的image-->
@@ -327,12 +327,17 @@ export default {
     },
     // 点击击活图层
     setActiveIndex(e) {
-      return;
-      console.log(e.target);
-      this.$store.state.activeLayerIndex = [this.index];
-      this.$store.state.tl.topIndex = this.index;
-      this.$store.state.tl.subIndex = -1;
-      // alert('ddd');
+      // return;
+      // console.log(e.target.className);
+      let targetClassName = e.target.className;
+      if(targetClassName == 'dom-container') {
+        this.$store.state.activeLayerIndex = [this.index];
+        this.$store.state.tl.topIndex = this.index;
+        this.$store.state.tl.subIndex = -1;
+        // alert('ddd');
+        this.$store.dispatch('checkShouldSelectTweenNode');
+      }
+      
     },
     c() {
       this.$store.dispatch('checkAddTweenIf');

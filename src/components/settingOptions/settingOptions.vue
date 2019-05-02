@@ -189,7 +189,7 @@
             <span class="prop-name">文本</span>
           </div>
           <div style="padding-left: 15px;">
-            <textarea v-model="text" @change="textChange" name="" id="text-textarea" class="scrollbar-overwrite" cols="30" rows="10" style="width: 100%;">
+            <textarea v-model="text" @change="textChange" name="" id="text-textarea" class="scrollbar-overwrite" cols="30" rows="7" style="width: 100%;">
             </textarea>
           </div>
           <!--文本颜色-->
@@ -423,9 +423,9 @@
           <div style="padding-left: 15px;">
 
             <!--节点的属性值-->
-            <table cellspacing="0" cellpadding="0" style="width:100%;">
+            <table cellspacing="0" cellpadding="0" style="width:100%;table-layout:fixed;">
               <tr>
-                <td style="width: 4em;">
+                <td style="width: 8em;">
                   <span class="prop-name-x">对齐</span>
                 </td>
                 <td colspan="3">
@@ -461,7 +461,7 @@
                 </td>
               </tr>
               <tr>
-                <td style="width: 8em;">
+                <td>
                   <span class="prop-name-x">缓动</span>
                 </td>
                 <td colspan="3">
@@ -481,7 +481,7 @@
                     @start="propStartSetValue"
                     @change="change({type:'x',value: x})">
                     <span >
-                      {{ x.toFixed(2) }}
+                      {{ parseFloat(x.toFixed(2)) }}
                     </span>
                   </num-resize>
                   <input type="number" v-if="false" v-model="x" @change="change({type:'x',value: x})">
@@ -498,7 +498,7 @@
                     @start="propStartSetValue"
                     @change="change({type:'y',value: y})">
                     <span>
-                      {{ y.toFixed(2) }}
+                      {{ parseFloat(y.toFixed(2)) }}
                     </span>
                   </num-resize>
                 </td>
@@ -508,29 +508,34 @@
                 <td>
                   <span class="prop-name-x">scaleX</span>
                 </td>
-                <td colspan="1">
+                <td colspan="1" style="width: 45%">
                   <num-resize
                     v-model="scaleX"
                     :stepScale="0.01"
+                    :toFixed="3"
                     @start="propStartSetValue"
                     @change="change({type:'scaleX',value: scaleX})">
                     <span>
-                      {{ scaleX.toFixed(4) }}
+                      {{ parseFloat(scaleX.toFixed(3)) }}
                     </span>
                   </num-resize>
+                  <!--
+                  <input v-model="scaleX" max="1000000" min="-10000000000" type="number" step="0.1" style="max-width: 100%;">
+                  -->
                 </td>
                 <td>
                   <!--宽-->
-                  <span class="prop-name-x">w</span>
+                  <span class="prop-name-x">width</span>
                 </td>
-                <td>
+                <td style="width: 25%">
                   <num-resize
                     v-model="widthByScaleX"
                     :stepScale="1"
+                    :toFixed="3"
                     @start="propStartSetValue"
                     @change="change({type:'scaleX',value: scaleX})">
                     <span>
-                      {{ widthByScaleX.toFixed(4) }}
+                      {{ widthByScaleX.toFixed(3) }}
                     </span>
                   </num-resize>
                 </td>
@@ -544,25 +549,27 @@
                   <num-resize
                     v-model="scaleY"
                     :stepScale="0.01"
+                    :toFixed="3"
                     @start="propStartSetValue"
                     @change="change({})">
                     <span>
-                      {{ scaleY.toFixed(4) }}
+                      {{ parseFloat(scaleY.toFixed(3)) }}
                     </span>
                   </num-resize>
                 </td>
                 <td>
                   <!--高-->
-                  <span class="prop-name-x">h</span>
+                  <span class="prop-name-x">height</span>
                 </td>
                 <td>
                   <num-resize
                     v-model="heightByScaleY"
                     :stepScale="1"
+                    :toFixed="3"
                     @start="propStartSetValue"
                     @change="change({})">
                     <span>
-                      {{ heightByScaleY.toFixed(4) }}
+                      {{ heightByScaleY.toFixed(3) }}
                     </span>
                   </num-resize>
                 </td>

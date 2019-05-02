@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-27 17:18:22
+ * @Last Modified time: 2019-05-02 10:57:24
  */
 
  // 时间轴组件
@@ -15,6 +15,7 @@ import utilTimeline from '../script/utilTimeline';
 import canvasRender from '../script/canvasRender';
 import templateFragment from '../script/templateFragment';
 import Vue from 'vue';
+import { join } from 'path';
 const store = {
 	state: {
     name: 'timeline',
@@ -112,13 +113,9 @@ const store = {
       console.log('originToItem', originToItem);
 
       rootState.activeLayerIndex=[0];
-      
-
       state.topIndex = -1;
       state.subIndex = -1;
       console.log([fromIndex, fromSubIndex,toIndex, toSubIndex, position]);
-
-
 
       let toDistIndex= toIndex;
       let toDistSubIndex = toSubIndex;
@@ -228,18 +225,12 @@ const store = {
         }*/
         rootState.project.layers[toDistIndex].children.splice(toDistSubIndex,0,pickItem[0]);
         if(dropInNoneContainer) {
-          rootState.project.layers[toIndex].obj.addChildAt(fromObjWithContainer, toDistSubIndex)
+          // alert([toIndex, toDistIndex]);
+          rootState.project.layers[toDistIndex].obj.addChildAt(fromObjWithContainer, toDistSubIndex)
         } else {
           toObjWithContainer.parent.addChildAt(fromObjWithContainer, toDistSubIndex);
         }
       }
-
-
-
-
-
-
-
 			/* let pickItem = rootState.project.layers.splice(fromIndex,1);
 			console.log([fromIndex, toIndex]);
       rootState.project.layers.splice(toIndex, 0, pickItem[0]);
@@ -274,7 +265,6 @@ const store = {
     },
     // 添加图层
     addLayer({state, rootState,commit,dispatch}, {layerType}) {
-
       let newLayer = JSON.parse(JSON.stringify(templateFragment[layerType]));
       rootState.project.layers.push(newLayer);
       let layerLength = rootState.project.layers.length;
@@ -422,7 +412,6 @@ const store = {
       let topIndex = state.topIndex;
       let subIndex = state.subIndex;
       let tweenIndex = state.tweenIndex;
-  
       // dispatch('setActiveTween', {t, topIndex, subIndex, tweenIndex});
     },
     // 更新缓动
@@ -546,11 +535,9 @@ const store = {
         state.tweenIndex = positionIndex +1;
         // console.log(newProps);
       }
-      
     },
     // 删除当前缓动
     removeTween({state,rootState,dispatch}) {
-      
       // alert('removeTween');
       let voiceIndex = state.voiceIndex;
       // 删除配音
@@ -859,6 +846,7 @@ const store = {
         }
       }
     },
+    // 将项目文件拖动到工具区，加载项目
     loadLocalTemp({rootState, state, dispatch, commit}, {result}) {
       /* for(let i in window.localImages) {
         if(window.localImages[i] == img) {
@@ -920,6 +908,7 @@ const store = {
         }
       })
     },
+
     updateVideoCaptureTimestap({state,rootState,dispatch}, {src}) {
       rootState.project.layers.forEach((item, index)=>{
         if(item.type == 'video') {
@@ -936,6 +925,20 @@ const store = {
           })
         }
       })
+    },
+    // 当点击工作区图层激活时，检测是否应该选中tween 节点
+    checkShouldSelectTweenNode({state,rootState,dispatch}) {
+      let currentLayer = utilTimeline.getCurrentLayer({rootState})
+      if(currentLayer) {
+        let position = window.timeline.position;
+        // console.log(position);
+        currentLayer.tween.forEach((item, index)=>{
+          console.log(item.time);
+          if(Math.abs(item.time - position) < 10) {
+            state.tweenIndex = index;
+          }
+        })
+      }
     },
     // 测试
     test({state,rootState,dispatch}) {

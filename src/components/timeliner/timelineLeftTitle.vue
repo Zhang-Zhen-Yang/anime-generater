@@ -222,6 +222,7 @@ export default {
       this.$store.state.tl.tweenIndex = -1;
       this.$store.state.tl.currentTween = null;
       this.$store.state.tl.voiceIndex = -1;
+      this.$store.dispatch('checkShouldSelectTweenNode');
     },
     // 开始拖动
     dragStart(e, item, index) {

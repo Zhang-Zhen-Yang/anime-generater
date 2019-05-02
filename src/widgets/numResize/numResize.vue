@@ -5,12 +5,12 @@
             ref="number-resize-input"
             class="property-input"
             v-if="inputShow"
-            :value="value"
+            :value="localValue"
             @input="input"
             :max="max"
             :min="min"
             :step="stepScale"
-            @blur="inputShow=false"
+            @blur="blur"
             @change="change"
             @focus="focus"
         >
@@ -34,11 +34,11 @@ export default {
         },
         max: {
             type: Number,
-            default: 1000000000000000000
+            default: 100000000
         },
         min: {
             type:Number,
-            default: -100000000000000000
+            default: -100000000
         },
         toFixed: {
             type: Number,
@@ -56,7 +56,9 @@ export default {
         };
     }, // end data
     computed: {
-
+        localValue() {
+            return parseFloat(this.value.toFixed(this.toFixed));
+        }
     }, // end computed
     methods: {
         focus() {
@@ -64,6 +66,7 @@ export default {
             this.$emit('start');
         },
         start(e) {
+            // return;
             if(this.inputShow) {
                 return;
             }
@@ -74,6 +77,7 @@ export default {
             this.$emit('start');
         },
         onresize(e) {
+            // return;
             if(this.inputShow) {
                 return;
             }
@@ -133,6 +137,10 @@ export default {
             this.$emit('change', value);
             console.log(['change', e.target.value]);
         },
+        blur() {
+            // alert('ddd');
+            this.inputShow=false
+        }
     }, // end methods
     created() {
 
@@ -159,6 +167,7 @@ export default {
         color: #fff;
         padding: 2px 5px;
         padding-right: 0;
+        max-width: 100%;
     }
     .property-input:focus{
         outline: none;

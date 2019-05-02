@@ -81,6 +81,10 @@ export default {
     objHeight() {
       return this.obj.image.height * Math.abs(this.obj.scaleY);
     },
+    pSize() {
+      let {width, height} = this.parentObj.getBounds();
+      return {width, height}
+    },
     style() {
 
       let pScaleX = 1;
@@ -92,6 +96,14 @@ export default {
 
       let left = this.obj.x;
       let top = this.obj.y;
+      // 5.2
+      if(this.isSub) {
+        // this.parentObj
+        // let {width:pWidth, height:pHeight} = this.parentObj.getBounds();
+        // alert([pWidth, pHeight]);
+        left += this.pSize.width /2;
+        top += this.pSize.height / 2;
+      }
       let width = this.obj.image.width * Math.abs(this.obj.scaleX);
       let height = this.obj.image.height * Math.abs(this.obj.scaleY);
       return {
@@ -181,8 +193,14 @@ export default {
           // alert(initScale);
           if(currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
-            currentLayer.tween[this.tweenIndex].props.x = x / pScaleX;
-            currentLayer.tween[this.tweenIndex].props.y = y / pScaleY;
+            if(this.isSub) {
+              currentLayer.tween[this.tweenIndex].props.x = x / pScaleX - this.pSize.width/2;
+              currentLayer.tween[this.tweenIndex].props.y = y / pScaleY - this.pSize.height/2;
+            } else {
+              currentLayer.tween[this.tweenIndex].props.x = x / pScaleX;
+              currentLayer.tween[this.tweenIndex].props.y = y / pScaleY;
+            }
+
             currentLayer.tween[this.tweenIndex].props.scaleX = scaleX / initScale / pScaleX;
             currentLayer.tween[this.tweenIndex].props.scaleY = scaleY /initScale / pScaleY;
             this.$store.dispatch('propsChange', {target: this.obj});
@@ -210,8 +228,14 @@ export default {
           // console.log([this.domImageD.style.left,y]);
           this.obj.scaleX = scaleX / pScaleX;
           this.obj.scaleY = scaleY / pScaleY;
-          this.obj.x = x / pScaleX;
-          this.obj.y = y / pScaleY;
+
+          if(this.isSub) {
+            this.obj.x = x / pScaleX  - this.pSize.width/2;
+            this.obj.y = y / pScaleY  - this.pSize.height/2;
+          } else {
+            this.obj.x = x / pScaleX;
+            this.obj.y = y / pScaleY;
+          }
           this.u();
           // console.log(ui);
         }
@@ -283,8 +307,14 @@ export default {
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(currentLayer && currentLayer.tween && currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
-            currentLayer.tween[this.tweenIndex].props.x = left / pScaleX;
-            currentLayer.tween[this.tweenIndex].props.y = top / pScaleY;
+            if(this.isSub) {
+               currentLayer.tween[this.tweenIndex].props.x = left / pScaleX - this.pSize.width/2;
+              currentLayer.tween[this.tweenIndex].props.y = top / pScaleY - this.pSize.height/2;
+
+            } else {
+              currentLayer.tween[this.tweenIndex].props.x = left / pScaleX;
+              currentLayer.tween[this.tweenIndex].props.y = top / pScaleY;
+            }
             this.$store.dispatch('propsChange', {target: this.obj});
           }
         },
@@ -298,8 +328,13 @@ export default {
           let left = ui.position.left / this.zoom - 0 + (this.objWidth / 2 * pScaleX);
           let top = ui.position.top / this.zoom - 0 + (this.objHeight / 2 * pScaleY);
           // console.log([ui.position.left, ui.position.top]);
-          this.obj.x = left / pScaleX;
-          this.obj.y = top / pScaleY;
+          if(this.isSub) {
+            this.obj.x = left / pScaleX - this.pSize.width/2;
+            this.obj.y = top / pScaleY - this.pSize.height / 2;
+          } else {
+            this.obj.x = left / pScaleX;
+            this.obj.y = top / pScaleY;
+          }
           this.u();
           // console.log([left, top]);
         },
@@ -336,7 +371,8 @@ export default {
         if(!this.project.layers[this.index].tween[this.tweenIndex]) {
           this.$store.state.tl.tweenIndex = 0;
         }
-      }      
+      }
+      this.$store.dispatch('checkShouldSelectTweenNode');  
       // alert('ddd');
     },
     c() {

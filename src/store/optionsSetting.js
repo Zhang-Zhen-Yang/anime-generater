@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-27 16:01:50
+ * @Last Modified time: 2019-05-02 15:45:51
  */
  // 时间轴组件
 import http from '../script/http';
@@ -236,6 +236,7 @@ const store = {
     loadFont({state, rootState,commit,dispatch}, {fontFamily, text}) {
       if(state.loadedFonts[fontFamily]) {
         dispatch('upadateWordLayerByText', {text});
+        
         return;
       }
       WebFont.load({
@@ -249,6 +250,10 @@ const store = {
         fontactive: ()=>{
           state.loadedFonts[fontFamily] = true;
           dispatch('upadateWordLayerByText', {text});
+          /* dispatch('updateTween', {
+            topIndex: rootState.tl.topIndex,
+            subIndex: rootState.tl.subIndex
+          })*/
         },
         fontinactive: ()=>{},
       });
@@ -258,18 +263,24 @@ const store = {
       let items = [];
       rootState.project.layers.forEach((layer, lindex)=>{
         if(layer.type == 'text' && layer.text == text) {
-          items.push({l: layer.tweenObj});
+          // let obj = layer.obj;
+          items.push({l: layer.tweenObj,topIndex: lindex, subIndex: -1});
         } else if (layer.type == 'container') {
           layer.children.forEach((clayer, clindex)=>{
             if(clayer.type == 'text' && clayer.text == text) {
-              items.push({l: clayer});
+              items.push({l: clayer, topIndex: lindex, subIndex: clindex});
             } 
           })
         }
       })
-
+      //  alert(items.length);
       items.forEach((item)=>{
-        window.timeline.removeTween(item.l.tweenObj);
+        dispatch('updateTween', {
+          topIndex: item.topIndex,
+          subIndex: item.subIndex
+        })
+
+        /*window.timeline.removeTween(item.l.tweenObj);
         let tween = canvasRender.getTween({
           obj: item.l.obj,
           item: item.l,
@@ -279,7 +290,7 @@ const store = {
         });
         tween.forEach((item,index)=>{
           window.timeline.addTween(item);
-        })
+        })*/
       })
     },
     // 设置对齐
@@ -301,35 +312,45 @@ const store = {
       // alert(type);
       switch(type) {
         case 'left':
-          currentLayer.tween[tweenIndex].props.x = currentLayer.obj.getBounds().width *  currentLayer.obj.scaleX / 2;
+          if(isChildren) {
+            currentLayer.tween[tweenIndex].props.x = -(parentObj.getBounds().width - currentLayer.obj.getBounds().width *  currentLayer.obj.scaleX) / 2;
+          } else {
+            currentLayer.tween[tweenIndex].props.x = currentLayer.obj.getBounds().width *  currentLayer.obj.scaleX / 2;
+          }
           break;
         case 'center':
           if(isChildren) {
-            currentLayer.tween[tweenIndex].props.x = parentObj.getBounds().width / 2;
+            currentLayer.tween[tweenIndex].props.x = 0; // parentObj.getBounds().width / 2;
           } else {
             currentLayer.tween[tweenIndex].props.x = width / 2;
           }
           break;
         case 'right':
           if(isChildren) {
-            currentLayer.tween[tweenIndex].props.x = parentObj.getBounds().width - currentLayer.obj.getBounds().width *  currentLayer.obj.scaleX / 2;
+            currentLayer.tween[tweenIndex].props.x = (parentObj.getBounds().width - currentLayer.obj.getBounds().width *  currentLayer.obj.scaleX) / 2;
+            // parentObj.getBounds().width - currentLayer.obj.getBounds().width *  currentLayer.obj.scaleX / 2;
           } else {
             currentLayer.tween[tweenIndex].props.x = width - currentLayer.obj.getBounds().width *  currentLayer.obj.scaleX / 2;
           }
           break;
         case 'top':
+        if(isChildren) {
+          currentLayer.tween[tweenIndex].props.y = -(parentObj.getBounds().height - currentLayer.obj.getBounds().height *  currentLayer.obj.scaleY) / 2;
+        } else {
           currentLayer.tween[tweenIndex].props.y = currentLayer.obj.getBounds().height *  currentLayer.obj.scaleY / 2;
+
+        }
           break;
         case 'middle':
           if(isChildren) {
-            currentLayer.tween[tweenIndex].props.y = parentObj.getBounds().height / 2;
+            currentLayer.tween[tweenIndex].props.y = 0; // parentObj.getBounds().height / 2;
           } else {
             currentLayer.tween[tweenIndex].props.y = height / 2;
           }
           break;
         case 'bottom':
           if(isChildren) {
-            currentLayer.tween[tweenIndex].props.y = parentObj.getBounds().height - currentLayer.obj.getBounds().height *  currentLayer.obj.scaleY / 2;
+            currentLayer.tween[tweenIndex].props.y = (parentObj.getBounds().height - currentLayer.obj.getBounds().height *  currentLayer.obj.scaleY) / 2;
           } else {
             currentLayer.tween[tweenIndex].props.y = height - currentLayer.obj.getBounds().height *  currentLayer.obj.scaleY / 2;
           }

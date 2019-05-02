@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-29 15:11:25
+ * @Last Modified time: 2019-05-02 14:27:58
  */
 // 文本转语音 百度tts
 
@@ -20,6 +20,8 @@ const store = {
 	state: {
 		show: false,
 		tok: '24.e829d1ce750c342c063fbca11bca0879.2592000.1558517552.282335-16069189',
+		tokNew: false,
+		
 		voiceMap: {
 
 		}
@@ -34,8 +36,18 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
+		checkTok({rootState, state, commit, dispatch, getters}) {
+			return new Promise((resolve, reject)=>{
+				http.post(api.getPictureCategory,{}).then((res)=>{
+
+				}, (res)=>{
+
+				})
+			})
+		},
 		fetchTTSAudio({rootState, state, commit, dispatch, getters}, {tex, oldTex, spd=5, pit=5, per=0, callback}){
 			let tag = `tag:${tex}-${spd}-${pit}-${per}`;
+			// 没有文本
 			if(!tex) {
 				return;
 			}
