@@ -55,6 +55,8 @@ let obj = {
     fontFamily: '站酷酷黑',
     textBaseline: 'top',
     color: '#FF9729',
+    outline: 5,
+    outlineColor: 'rgba(179,105,105,1)',
     visible: true,
     editable: true,
     layerName: '文本',

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:32:17 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-29 16:22:22
+ * @Last Modified time: 2019-05-03 16:57:39
  */
 
 <template>
@@ -21,6 +21,9 @@
           <tr>
             <td style="text-align:center;">
               <div style="display:inline-block;">
+                <div v-if="!usable" class="color-red" style="width: 100%;text-align:center;padding: 100px 0;">
+                  无效的视频链接
+                </div>
                 <!--视频-->
                 <video
                   ref="video"

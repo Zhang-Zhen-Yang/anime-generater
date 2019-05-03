@@ -1,6 +1,14 @@
 import util from './util';
+
 import VideoCaptureClass from './videoCapture';
+
 let c = window.createjs;
+/* c.MyText = class extends c.Text{
+  constructor(text, props){
+    super(text, props);
+  }
+}*/
+
 let obj = {
   render ({canvas = null, project = {}, state}) {
     let {width, height, bgColor, layers} = project;
@@ -282,18 +290,43 @@ let obj = {
     let text = item.text;
     let fontSize = item.fontSize;
     let fontFamily = item.fontFamily;
+    let outline = item.outline;
+    let outlineColor = item.outlineColor;
+
+    let textContainer = new c.Container();
+    let textOutlineObj = new c.Text(text, `normal ${fontSize}px ${fontFamily}`);
     let textObj = new c.Text(text, `normal ${fontSize}px ${fontFamily}`);
-    item.obj = textObj;
+
+    // textObj.shadow = new createjs.Shadow("#000000", 5, 5, 10);  // 创建文字阴影
+    textOutlineObj.set({
+      color: outlineColor,
+      visible: outline > 0,
+      outline:  outline,
+    })
     textObj.set({
       color: item.color,
-      visible: item.visible,
+      // visible: item.visible,
+      // outline:  1,
     })
-    textObj.name = UUID;
+
+    // textObj.name = UUID;
+    
+    textContainer.name = UUID;
+    
+    textContainer.addChild(textOutlineObj);
+    textContainer.addChild(textObj);
+    textContainer.set({
+      visible: item.visible
+    })
+    // item.obj = textObj;
+    item.obj = textContainer;
     if (addChild) {
-      container.addChild(textObj);
+      // container.addChild(textObj);
+      container.addChild(textContainer);
     }
     callback({
-      obj: textObj
+      // obj: textObj
+      obj: textContainer
     });
   },
   // 添加图形
@@ -495,7 +528,8 @@ let obj = {
         // console.log(i);
         if (['regX', 'regY', 'x', 'y', 'width', 'height', 'scaleX', 'scaleY'].indexOf(i) > -1) {
           if (typeof props[i] === 'string') {
-            let bounds = obj.getBounds();
+            let bounds = obj.getBounds() || {width: 0, height: 0};
+            // alert(bounds);
             // console.log(bounds);
             let ow = bounds.width;
             let oh = bounds.height;
@@ -607,10 +641,23 @@ let obj = {
           // document.body.appendChild(clipListItem);
           /* shapeObj.graphics.clear();
           shapeObj.graphics.bf(clipListItem).r(0,0, videoWidth, videoHeight);*/
-          obj.removeAllChildren();
-          let bitmap = new c.Bitmap(clipListItem);
-          obj.addChild(bitmap)
-          
+          if(!item.fillBefore) {
+            obj.removeAllChildren();
+            videoTween.wait(0).call(()=>{
+              obj.removeAllChildren();
+            });
+          } else {
+            obj.removeAllChildren();
+            let bitmap = new c.Bitmap(clipListItem);
+            obj.addChild(bitmap)
+  
+            videoTween.wait(0).call(()=>{
+              document.body.appendChild(clipListItem);
+              obj.removeAllChildren();
+              let bitmap = new c.Bitmap(clipListItem);
+              obj.addChild(bitmap)
+            })
+          }
           videoTween.wait(firstTime);
 
         } 
@@ -634,9 +681,24 @@ let obj = {
          // document.body.appendChild(clipListItem);
           /*shapeObj.graphics.clear();
           shapeObj.graphics.bf(clipListItem).r(0,0, videoWidth, videoHeight);*/
-          obj.removeAllChildren();
-          let bitmap = new c.Bitmap(clipListItem);
-          obj.addChild(bitmap)
+          if(item.list.length == (index + 1)) {
+            console.log('ddddddd');
+            /*if(timeline.position > firstTime) {
+              console.log('>>>>>');
+            } else {
+              obj.removeAllChildren();
+              let bitmap = new c.Bitmap(item.list[0]);
+              obj.addChild(bitmap)
+              console.log('<<<<<<');
+            }*/
+            if(!item.fillAfter) {
+              obj.removeAllChildren();
+            }
+          } else {
+            obj.removeAllChildren();
+            let bitmap = new c.Bitmap(clipListItem);
+            obj.addChild(bitmap)
+          }
         });
       })
     }

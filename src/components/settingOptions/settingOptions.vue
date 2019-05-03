@@ -212,6 +212,42 @@
               <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
             </select>
           </div>
+          <div class="c-layer-title">
+            <span class="prop-name">描边</span>
+          </div>
+          <div style="padding-left: 15px;">
+            <!--形状属性 多边形-->
+            <table cellspacing="0" cellpadding="0" style="width:100%;">
+              <!--边宽-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">边宽</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="outline"
+                    :min="0"
+                    :max="100"
+                    @start="()=>{as();}"
+                  >
+                    <span >
+                      {{ outline }}
+                    </span>
+                  </num-resize>
+                </td>
+              </tr>
+              <!--描边颜色-->
+              <tr>
+                <td style="width: 8em;">
+                  <span class="prop-name-x">描边颜色</span>
+                </td>
+                <td>
+                  <color-picker title="颜色" v-model="outlineColor" :showTitle="false" @start="startSetValue">
+                  </color-picker>
+                </td>
+              </tr>
+            </table>
+          </div>
         </template>
         <!--视频类型========================================================================================-->
         <template v-if="cLayer && cLayer.type=='video'" mute>
@@ -748,7 +784,11 @@ export default {
         this.as();
         this.cLayer.text = val;
         // console.log(this.target);
-        this.target.text = val;
+        this.target.children.forEach((item)=>{
+          /* this.target.text = val;
+          */
+          item.text = val;
+        })
         let fontFamily = this.cLayer.fontFamily;
         this.$store.dispatch('loadFont', {fontFamily, text: val });
       }
@@ -760,7 +800,8 @@ export default {
       },
       set(val) {
         this.cLayer.color = val;
-        this.target.color = val;
+        this.target.children[1].color = val;
+        // this.target.color = val;
       }
     },
     // 字体
@@ -770,9 +811,38 @@ export default {
       },
       set(val) {
         console.log(this.target);
-        this.target.font =`normal 100px ${val}`;
+        this.target.children.forEach((item)=>{
+          item.font =`normal 100px ${val}`;
+        })
         this.cLayer.fontFamily = val;
-        this.$store.dispatch('loadFont', {fontFamily: val, text: this.target.text});
+        this.$store.dispatch('loadFont', {fontFamily: val, text: this.target.children[0].text});
+      }
+    },
+    outline: {
+      get() {
+        return this.cLayer.outline || 0;
+      },
+      set(val) {
+        this.target.children[0].outline = val;
+        if(val <= 0) {
+          this.target.children[0].set({
+            visible: false
+          })
+        } else {
+          this.target.children[0].set({
+            visible: true
+          })
+        }
+        this.cLayer.outline = val;
+      }
+    },
+    outlineColor: {
+      get() {
+        return this.cLayer.outlineColor;
+      },
+      set(val) {
+        this.target.children[0].color = val;
+        this.cLayer.outlineColor = val;
       }
     },
     fontsList() {
@@ -953,7 +1023,7 @@ export default {
     widthByScaleX: {
       get() {
         // console.log('this.targetthis.targetthis.targetthis.targetthis.targetthis.target',this.target);
-        return this.target.getBounds().width * this.target.scaleX;
+        return (this.target.getBounds() || {width: 5}).width * this.target.scaleX;
       },
       set(val){
         if(this.cLayer.type == 'image') {
@@ -981,7 +1051,7 @@ export default {
     heightByScaleY: {
       get() {
         // console.log('this.targetthis.targetthis.targetthis.targetthis.targetthis.target',this.target);
-        return this.target.getBounds().height * this.target.scaleY;
+        return (this.target.getBounds() || {height: 5}).height * this.target.scaleY;
       },
       set(val){
         console.log(val);

@@ -104,7 +104,7 @@ export default {
         pScaleX = this.parentObj.scaleX;
         pScaleY = this.parentObj.scaleY;
       }
-
+      // alert([left, top]);
       let left = this.obj.x;
       let top = this.obj.y;
       if(this.isSub) {
@@ -230,7 +230,7 @@ export default {
           let x = (parseFloat(this.domTextD.style.left) - 0 + left + width / 2) / this.zoom;
           let y = (parseFloat(this.domTextD.style.top) - 0 + top + height / 2) / this.zoom;
           // console.log([parseFloat(this.domTextD.style.left), this.domTextD.style.top]);
-          console.log([this.domTextD.style.left,y]);
+          // console.log([this.domTextD.style.left,y]);
           this.obj.scaleX = scaleX / pScaleX;
           this.obj.scaleY = scaleY / pScaleY;
           if(this.isSub) {
@@ -277,8 +277,9 @@ export default {
         }
       }).find('.ui-rotatable-handle')
       .on('dblclick',() => {
+          // alert('dddd');
           this.as();
-         let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
+          let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(currentLayer.tween[this.tweenIndex]) {
             currentLayer.tween[this.tweenIndex].props.rotation = 0;
             this.$store.dispatch('propsChange', {target: this.obj});
@@ -379,6 +380,8 @@ export default {
     this.domTextR = this.$refs.domTextR;
     this.domTextD = this.$refs.domTextD;
     this.bindDraggableResizable();
+
+    console.log('domText', this.obj);
   }
 }
 </script>

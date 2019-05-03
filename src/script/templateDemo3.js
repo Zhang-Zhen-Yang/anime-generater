@@ -228,6 +228,8 @@ let demo = {
     //       fontFamily: '站酷酷黑',
     //       textBaseline: 'top',
     //       color: '#FF9729',
+    //       outline: 5,
+    //       outlineColor: 'rgba(179,105,105,1)',
     //       visible: true,
     //       editable: true,
     //       layerName: '层2.2',
@@ -370,6 +372,8 @@ let demo = {
       sprite: null,
       list: [],
       lastAction: 'init',
+      fillBefore: true, // 播放前显示
+      fillAfter: true, // 播放后显示
       tween: [
         {
           action: 'to',
@@ -383,7 +387,7 @@ let demo = {
             regX: 'ow / 2',
             regY: 'oh / 2'
           },
-          time: 0,
+          time: 2000,
           ease: 'linear',
         },
         {

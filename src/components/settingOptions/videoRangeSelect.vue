@@ -10,6 +10,21 @@
         </div>
       </mask-replace-video>
     </div>
+    <table cellspacing="0" cellpadding="0" style="width: 100%;">
+      <tr>
+        <td>
+            <checkbox v-model="fillBefore">
+              &nbsp;播放前显示
+            </checkbox>
+            
+        </td>
+        <td>
+          <checkbox v-model="fillAfter">
+            &nbsp;播放后显示
+          </checkbox>
+        </td>
+      </tr>
+    </table>
   </div>
 </template>
 
@@ -43,15 +58,44 @@ export default {
     },
     videoObj(){
       return this.layer.videoObj;
+    },
+    fillBefore: {
+      get() {
+        return this.layer.fillBefore;
+      },
+      set(val) {
+        this.as();
+        this.layer.fillBefore = val;
+        this.update();
+        let currentPosition = window.timeline.position;
+        // window.timeline.position = 0;
+        // window.timeline.position = currentPosition;
+      }
+    },
+    fillAfter: {
+      get() {
+        return this.layer.fillAfter;
+      },
+      set(val) {
+        this.as();
+        this.layer.fillAfter = val;
+        this.update();
+      }
     }
   },
   methods: {
+    as() {
+      this.$store.dispatch('addStep');
+    },
+    update() {
+      let {topIndex, subIndex} = this.$store.state.tl; 
+      this.$store.dispatch('updateTween', {topIndex, subIndex});
+    },
     selectVideo() {
       alert('selectVideo');
     },
     clipVideo() {
       this.dialogVideoClip.item = this.layer;
-
       this.dialogVideoClip.src = this.layer.src;
       this.dialogVideoClip.start_time = this.layer.start_time;
       this.dialogVideoClip.end_time = this.layer.end_time;

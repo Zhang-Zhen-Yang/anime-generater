@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-02 15:45:51
+ * @Last Modified time: 2019-05-03 10:34:22
  */
  // 时间轴组件
 import http from '../script/http';
@@ -262,6 +262,7 @@ const store = {
     upadateWordLayerByText({state, rootState,commit,dispatch}, {text}) {
       let items = [];
       rootState.project.layers.forEach((layer, lindex)=>{
+        // alert([text, layer.text]);
         if(layer.type == 'text' && layer.text == text) {
           // let obj = layer.obj;
           items.push({l: layer.tweenObj,topIndex: lindex, subIndex: -1});
@@ -273,7 +274,7 @@ const store = {
           })
         }
       })
-      //  alert(items.length);
+      // alert(items.length);
       items.forEach((item)=>{
         dispatch('updateTween', {
           topIndex: item.topIndex,

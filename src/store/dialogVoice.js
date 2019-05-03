@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-02 14:27:58
+ * @Last Modified time: 2019-05-03 15:40:52
  */
 // 文本转语音 百度tts
 
@@ -38,14 +38,17 @@ const store = {
 	actions: {
 		checkTok({rootState, state, commit, dispatch, getters}) {
 			return new Promise((resolve, reject)=>{
-				http.post(api.getPictureCategory,{}).then((res)=>{
-
+				http.post('',{}).then((res)=>{
+					resolve({success: true});
 				}, (res)=>{
-
+					resolve({success: false});
 				})
 			})
 		},
 		fetchTTSAudio({rootState, state, commit, dispatch, getters}, {tex, oldTex, spd=5, pit=5, per=0, callback}){
+			/*dispatch('checkTok').then((res)=>{
+				alert('ddddd');
+			})*/
 			let tag = `tag:${tex}-${spd}-${pit}-${per}`;
 			// 没有文本
 			if(!tex) {
@@ -120,7 +123,7 @@ const store = {
 						callback({
 							success: false,
 							oldTex,
-							tet
+							tex
 						})
 						
 					},
@@ -129,7 +132,7 @@ const store = {
 						callback({
 							success: false,
 							oldTex,
-							tet
+							tex
 						})
 					}
 				});

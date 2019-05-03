@@ -26,6 +26,7 @@ import progressBar from './progressBar/progressBar.vue';
 import toggle from './toggle/toggle.vue';
 import blockSlice from './blockSlice/blockSlice.vue';
 import numResize from './numResize/numResize.vue';
+import checkbox from './checkbox/checkbox.vue';
 
 
 const options = {
@@ -50,6 +51,7 @@ const options = {
 	toggle,
 	blockSlice,
 	numResize,
+	checkbox
 };
 options.install = (Vue) => {
     for (let component in options) {

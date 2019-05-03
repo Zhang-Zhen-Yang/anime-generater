@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-02 10:57:24
+ * @Last Modified time: 2019-05-03 16:14:27
  */
 
  // 时间轴组件
@@ -846,6 +846,10 @@ const store = {
         }
       }
     },
+    // 去除历史记录中相同的项
+    removeSameHistory({rootState, state, dispatch, commit}, {}) {
+
+    },
     // 将项目文件拖动到工具区，加载项目
     loadLocalTemp({rootState, state, dispatch, commit}, {result}) {
       /* for(let i in window.localImages) {
@@ -938,6 +942,9 @@ const store = {
             state.tweenIndex = index;
           }
         })
+      }
+      if(state.tweenIndex < 0) {
+        state.tweenIndex = 0;
       }
     },
     // 测试
