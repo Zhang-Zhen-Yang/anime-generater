@@ -86,16 +86,80 @@
     <div class="divider" style="padding: 10px;">
       <div class="c-layer-title">
         <span class="prop-name">字幕</span>
+        <div style="float:right">
+          <checkbox v-model="setToAll">&nbsp;全局设置</checkbox>
+        </div>
       </div>
       <div style="padding-left: 15px;">
         <table cellspacing="0" cellpadding="0" style="width: 100%;">
+          <!--show-->
           <tr>
-            <td style="width: 8em;">样式</td>
-            <td class="relative"></td>
+            <td style="width: 8em;">show</td>
+            <td class="relative">
+              <checkbox v-model="showSubtitle"></checkbox>
+            </td>
           </tr>
+          <!--fontSize-->
           <tr>
-            <td style="width: 8em;">样式</td>
-            <td class="relative">fff</td>
+            <td style="width: 8em;">fontSize</td>
+            <td class="relative">
+              <num-resize
+                v-model="fontSize"
+                :min="0"
+                :max="100"
+                :stepScale="1"
+                :toFixed="0"
+                @start="()=>{}"
+              >
+                <span >
+                  {{ fontSize }}
+                </span>
+              </num-resize>
+            </td>
+          </tr>
+          <!--color-->
+          <tr>
+            <td style="width: 8em;">color</td>
+            <td class="relative">
+              <color-picker title="颜色" v-model="color" :showTitle="false" @start="()=>{}">
+              </color-picker>
+
+            </td>
+          </tr>
+          <!--font-->
+          <tr>
+            <td style="width: 8em;">font</td>
+            <td class="relative">
+              <select name="" id="" v-model="fontFamily" style="background-color:#57595a;color:white;border-radius:2px;">
+                <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
+              </select>
+            </td>
+          </tr>
+          <!--outline-->
+          <tr>
+            <td style="width: 8em;">outline</td>
+            <td class="relative">
+              <num-resize
+                v-model="outline"
+                :min="0"
+                :max="100"
+                :stepScale="1"
+                :toFixed="0"
+                @start="()=>{}"
+              >
+                <span >
+                  {{ outline }}
+                </span>
+              </num-resize>
+            </td>
+          </tr>
+          <!--outlineColor-->
+          <tr>
+            <td style="width: 8em;">outlineColor</td>
+            <td class="relative">
+              <color-picker title="颜色" v-model="outlineColor" :showTitle="false" @start="()=>{}">
+              </color-picker>
+            </td>
           </tr>
         </table>
       </div>
@@ -106,7 +170,7 @@
 <script>
 import util from '../../script/util';
 import utilTimeline from '../../script/utilTimeline';
-
+import fontsList from '../../script/fontsList';
 
 export default {
   name: 'voice-options',
@@ -137,10 +201,20 @@ export default {
           name: '度丫丫',
           value: 4,
         },
-      ]
+      ],
+      // 全局设置
+      // setToAll: false,
     }
   },
   computed: {
+    setToAll:{
+      get() {
+        return this.$store.state.dialogVoice.subtitleSetToAll;
+      },
+      set(val) {
+        this.$store.state.dialogVoice.subtitleSetToAll = val;
+      }
+    },
     project() {
       return this.$store.state.project;
     },
@@ -152,8 +226,94 @@ export default {
     },
     voiceIndex() {
       return this.tl.voiceIndex;
-    }
-   
+    },
+    cVoice() {
+      return this.voices[this.voiceIndex];
+    },
+    showSubtitle: {
+      get() {
+        return this.cVoice.showSubtitle;
+      },
+      set(val) {
+        this.setValue({prop:'showSubtitle', value: val});
+        this.$store.dispatch('renderSubtitle');
+      }
+    },
+    // 字幕字体大小
+    fontSize:{
+      get() {
+        return this.cVoice.fontSize;
+      },
+      set(val){
+        this.setValue({prop:'fontSize', value: val});
+        /*if(this.setToAll) {
+          this.voices.forEach((item, index)=>{
+            item.fontSize = val;
+          })
+        } else {
+          this.cVoice.fontSize = val;
+        }*/
+        this.$store.dispatch('renderSubtitle');
+      }
+    },
+    // 文本颜色
+    color:{
+      get() {
+        return this.cVoice.color;
+      },
+      set(val) {
+        this.setValue({prop:'color', value: val});
+        /* if(this.setToAll) {
+          this.voices.forEach((item, index)=>{
+            item.color = val;
+          })
+        } else {
+          this.cVoice.color = val;
+        }*/
+        this.$store.dispatch('renderSubtitle');
+      }
+    },
+    // 字体列表
+    fontsList() {
+      return fontsList;
+    },
+    // 字体
+    fontFamily: {
+      get() {
+        return this.cVoice.fontFamily;
+      },
+      set(val) {
+        this.setValue({prop:'fontFamily', value: val})
+        
+        this.$store.dispatch('loadFont', {
+          fontFamily: val,
+          callback: ()=>{
+            this.$store.dispatch('renderSubtitle');
+          }
+        })
+      }
+    },
+    // 描边
+    outline:{
+      get() {
+        return this.cVoice.outline;
+      },
+      set(val) {
+        this.setValue({prop: 'outline', value: val});
+        this.$store.dispatch('renderSubtitle');
+      }
+    },
+    // 描边颜色
+    outlineColor:{
+      get() {
+        return this.cVoice.outlineColor;
+      },
+      set(val) {
+        this.setValue({prop: 'outlineColor', value: val});
+        this.$store.dispatch('renderSubtitle');
+      }
+    },
+
   },
   methods: {
    
@@ -195,6 +355,15 @@ export default {
           // console.log(res);
         }
       })
+    },
+    setValue({prop, value}) {
+      if(this.setToAll) {
+          this.voices.forEach((item, index)=>{
+            item[prop] = value;
+          })
+        } else {
+          this.cVoice[prop] = value;
+        }
     }
     
     

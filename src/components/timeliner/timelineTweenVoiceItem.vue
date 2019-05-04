@@ -99,8 +99,8 @@ export default {
       let offsetX = e.offsetX;
       let totalWidth = (this.voiceItemWrap.clientWidth);
       let position = offsetX / totalWidth * this.tlDuration;
-      console.log(position);
-      console.log([this.voices, position]);
+      // console.log(position);
+      // console.log([this.voices, position]);
       let p = utilTimeline.getIndexByPosition({list: this.voices, position});
       // alert(p);
       /* this.voices.splice(p,0,{
@@ -116,6 +116,11 @@ export default {
         per: 0, // 人声
         data: '',
         duration: 0,
+        fonntSize: 20,
+        color: '#ffffff',
+        outline: 0,
+        outlineColor: '#aaaaaa',
+
       })
       this.voices.sort((first, second)=>{
         return first.time - second.time;
@@ -129,7 +134,7 @@ export default {
       this.tl.voiceIndex = index;
       this.tl.topIndex = -1;
       this.tl.subIndex = -1;
-      this.$store.state.activeLayerIndex = [-1, -1]
+      this.$store.state.activeLayerIndex = [-1, -1];
     },
     bindView() {
       this.$voiceItemWrap.find('.voice-item').draggable({
@@ -151,6 +156,7 @@ export default {
             $(e.target).css({
               width: $(e.target).attr('data-width'),
             })
+            this.$store.dispatch('renderSubtitle');
           })
           // console.log();
           /* this.dragging = false;

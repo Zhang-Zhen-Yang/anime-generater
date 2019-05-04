@@ -66,6 +66,7 @@ export default {
     left: 0;
     top: 0;
     font-size: 14px;
+    z-index: 1;
   }
   .context-menu-item{
     // display: inline-block;

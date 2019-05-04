@@ -262,6 +262,14 @@ function convertImageToVideo(imagesArray, audio, {f, t, b}, callback) {
 			worker = null;
 		}
 	};
+	worker.onerror = function(e) {
+		if(callback) {
+			callback({
+				type: 'error',
+				e: e,
+			})
+		}
+	}
 }
 
 function combineAudio(array, callback, duration) {
@@ -344,6 +352,14 @@ function combineAudio(array, callback, duration) {
 			worker = null;
 		}
 	};
+	worker.onerror = function(e) {
+		if(callback) {
+			callback({
+				type: 'error',
+				e: e,
+			})
+		}
+	}
 }
 
 export { convertStreams, accessWorder, convertImageToVideo, combineAudio };

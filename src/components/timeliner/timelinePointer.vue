@@ -208,7 +208,7 @@ export default {
         drag: (e, ui) => {
           let now = Date.now();
           if((now - this.lastTime) > 50) {
-            console.log(now - this.lastTime);
+            // console.log(now - this.lastTime);
             this.lastTime = now;
             // console.log('dd');
            let left = ui.position.left;

@@ -1,6 +1,7 @@
 import util from './util';
 
 import VideoCaptureClass from './videoCapture';
+let uuidMap = {};
 
 let c = window.createjs;
 /* c.MyText = class extends c.Text{
@@ -49,7 +50,9 @@ let obj = {
   },
   // 生成字幕
   renderSubtitle({project, parent, timeline}){
-    return;
+    // return;
+    // alert('renderSubtitle');
+    // return;
     let prevContainer = parent.getChildByName('subtitle');
     if(prevContainer) {
       // alert('yes');
@@ -59,31 +62,61 @@ let obj = {
     let subtitleContainer = new c.Container();
     subtitleContainer.name = 'subtitle';
     stage.addChild(subtitleContainer);
+
     project.voices.forEach((item)=>{
-      if(item.tweenObj) {
+      if(item.tweenObjUUID) {
         // alert('tweenObj');
-        timeline.removeTween(item.tweenObj);
+        timeline.removeTween(uuidMap[item.tweenObjUUID]);
+        uuidMap[item.tweenObjUUID] = null;
       }
 
       let text = item.tex;
-      let fontSize = item.fontSize || 50;
+      let fontSize = item.fontSize;
+      // console.log('fontSize', fontSize);
       let fontFamily = item.fontFamily || '黑体';
+      let textContainer = new c.Container();
       let textObj = new c.Text(text, `normal ${fontSize}px ${fontFamily}`);
+      let textObjOutline = textObj.clone();
+
+      let textWidth = textObj.getMeasuredWidth();
+      let textHeight = textObj.getMeasuredHeight();
       textObj.set({
-        alpha: 0,
-        x: Math.random() * 100,
-        y: Math.random() * 100
+        color: item.color || 'orange',
       })
-      subtitleContainer.addChild(textObj);
+      textObjOutline.set({
+        outline: item.outline,
+        color: item.outlineColor || 'orange',
+      })
+      textContainer.set({
+        alpha: 0,
+        x: (project.width - textWidth) / 2,
+        y: (project.height - textHeight * 2),
+        visible: item.showSubtitle,
+      })
+      textContainer.addChild(textObjOutline);
+      textContainer.addChild(textObj);
+      subtitleContainer.addChild(textContainer);
       // alert([item.time, item.duration]);
 
-      let tween = c.Tween.get(textObj)
-      .wait(item.time)
-      .to({alpha: 1}, 0)
-      .wait(item.duration*1000)
-      .to({alpha: 0}, 0)
+      let tween = c.Tween.get(textContainer);
 
-      item.tweenObj = tween;
+      if(item.duration > 1) {
+        tween.wait(item.time)
+        .to({alpha: 1}, 200)
+        .wait(item.duration * 1000 - 400)
+        .to({alpha: 0}, 200);
+      } else {
+        tween.wait(item.time)
+        .to({alpha: 1}, 0)
+        .wait(item.duration*1000)
+        .to({alpha: 0}, 0);
+      }
+
+      let UUID = new util.getUUID().id;
+      
+      // item.tweenObj = tween;
+      item.tweenObjUUID = UUID;
+      uuidMap[UUID] = tween;
 
       timeline.addTween(tween);
 
@@ -106,7 +139,16 @@ let obj = {
   },
   addLayer({layers, parentType, parent,item, project, timeline, index}) {
     let container = new c.Container();
-      parent.addChild(container);
+      let subtitleChild = parent.getChildByName('subtitle');
+      if(subtitleChild) {
+        // alert('subtitleChild');
+        let subtitleChildIndex = parent.getChildIndex(subtitleChild);
+        parent.addChildAt(container, subtitleChildIndex);
+        // alert(subtitleChildIndex);
+      } else {
+        parent.addChild(container);
+
+      }
       let type = item.type;
       let UUID = new util.getUUID().id;
       item.UUID = UUID;
@@ -682,7 +724,7 @@ let obj = {
           /*shapeObj.graphics.clear();
           shapeObj.graphics.bf(clipListItem).r(0,0, videoWidth, videoHeight);*/
           if(item.list.length == (index + 1)) {
-            console.log('ddddddd');
+            // console.log('ddddddd');
             /*if(timeline.position > firstTime) {
               console.log('>>>>>');
             } else {
@@ -701,6 +743,22 @@ let obj = {
           }
         });
       })
+      let currentTime = timeline.position;
+      if(currentTime < firstTime) {
+      } else if(currentTime > (firstTime + item.list.length * item.interval)){
+          if(item.fillAfter) {
+            obj.removeAllChildren();
+            let bitmap = new c.Bitmap(item.list[item.list.length - 1]);
+            obj.addChild(bitmap)
+          } else {
+            obj.removeAllChildren();
+          }
+      } else {
+        let witch = parseInt((currentTime - firstTime) / item.interval);
+        obj.removeAllChildren();
+        let bitmap = new c.Bitmap(item.list[(witch - 1) < 0 ? 0 : (witch - 1)]);
+        obj.addChild(bitmap)
+      }
     }
     item.videoTweenObj = videoTween;
     item.tweenObj = tween;

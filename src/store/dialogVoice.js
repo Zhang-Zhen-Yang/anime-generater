@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-03 15:40:52
+ * @Last Modified time: 2019-05-04 11:10:53
  */
 // 文本转语音 百度tts
 
@@ -21,10 +21,10 @@ const store = {
 		show: false,
 		tok: '24.e829d1ce750c342c063fbca11bca0879.2592000.1558517552.282335-16069189',
 		tokNew: false,
-		
 		voiceMap: {
 
-		}
+		},
+		subtitleSetToAll: false
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -36,6 +36,9 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
+		renderSubtitle({rootState, state, commit, dispatch, getters}) {
+			canvasRender.renderSubtitle({project: rootState.project, parent: window.stage, timeline: window.timeline});
+		},
 		checkTok({rootState, state, commit, dispatch, getters}) {
 			return new Promise((resolve, reject)=>{
 				http.post('',{}).then((res)=>{
@@ -68,7 +71,8 @@ const store = {
 						per: per,
 						pit,
 					})
-					canvasRender.renderSubtitle({project: rootState.project, parent: window.stage, timeline: window.timeline});
+					dispatch('renderSubtitle');
+					// canvasRender.renderSubtitle({project: rootState.project, parent: window.stage, timeline: window.timeline});
 				})
 			} else {
 				// 真正获取
@@ -110,7 +114,7 @@ const store = {
 								per: per,
 								pit,
 							})
-							canvasRender.renderSubtitle({project: rootState.project, parent: window.stage, timeline: window.timeline});
+							dispatch('renderSubtitle');
 
 						});
 	

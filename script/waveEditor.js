@@ -69,10 +69,10 @@ WaveEditor.prototype.getChunkSize3 = function(buffer) {
 }
 WaveEditor.prototype.getRawData = function(buffer) {
 		var chunkSize3 = new Uint8Array(buffer, 40, 4);
-		console.log(chunkSize3);
+		/* console.log(chunkSize3);
 		console.log('EndianDecToDecimal', EndianDecToDecimal(chunkSize3));
 		console.log('buffer', buffer);
-		console.log(buffer.byteLength);
+		console.log(buffer.byteLength);*/
 
 		var EndianDecToDecimalLength = EndianDecToDecimal(chunkSize3);
 		var total = (EndianDecToDecimalLength + 44) > buffer.byteLength ? (buffer.byteLength - 44) : EndianDecToDecimalLength;

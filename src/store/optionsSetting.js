@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-03 10:34:22
+ * @Last Modified time: 2019-05-04 16:22:43
  */
  // 时间轴组件
 import http from '../script/http';
@@ -233,9 +233,13 @@ const store = {
 
     },
     // 加载字体
-    loadFont({state, rootState,commit,dispatch}, {fontFamily, text}) {
+    loadFont({state, rootState,commit,dispatch}, {fontFamily, text, callback}) {
       if(state.loadedFonts[fontFamily]) {
-        dispatch('upadateWordLayerByText', {text});
+        if(callback) {
+          callback();
+        } else {
+          dispatch('upadateWordLayerByText', {text});
+        }
         
         return;
       }
@@ -247,14 +251,20 @@ const store = {
         active: ()=>{},
         ininactive: ()=>{},
         loading: ()=>{},
+        // 成功
         fontactive: ()=>{
           state.loadedFonts[fontFamily] = true;
-          dispatch('upadateWordLayerByText', {text});
+          if(callback) {
+            callback();
+          } else {
+            dispatch('upadateWordLayerByText', {text});
+          }
           /* dispatch('updateTween', {
             topIndex: rootState.tl.topIndex,
             subIndex: rootState.tl.subIndex
           })*/
         },
+        // 失败
         fontinactive: ()=>{},
       });
     },

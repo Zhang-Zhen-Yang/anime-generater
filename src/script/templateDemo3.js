@@ -15,6 +15,12 @@ let demo = {
       pit: 5,// 音调
       data: '',
       duration: 0,
+      fontSize: 30,
+      color: '#ffffff',
+      fontFamily:'黑体',
+      outline: 5,
+      outlineColor: '#aaaaaa',
+      showSubtitle: true,
     },
     {
       time: 3000,
@@ -23,7 +29,13 @@ let demo = {
       data: '',
       spd: 5, // 音速
       pit: 5,// 音调
-      duration: 0
+      duration: 0,
+      fontSize: 30,
+      color: '#ffffff',
+      fontFamily:'黑体',
+      outline: 5,
+      outlineColor: '#aaaaaa',
+      showSubtitle: true,
     },
   ],
   // 层

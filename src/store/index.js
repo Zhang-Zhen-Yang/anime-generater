@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-26 16:25:23
+ * @Last Modified time: 2019-05-04 16:20:42
  */
 
 import http from '../script/http';
@@ -207,8 +207,36 @@ const store = {
 				// alert('ddddd');
 				state.asmInitedStatus = 'success';
 			}, ()=>{
+				alert('视频合成库加载失败，可能无法生成视频。');
 				state.asmInitedStatus = 'error';
 			})
+			dispatch('initLoadFonts');
+		},
+		// 初始化字体  
+		initLoadFonts({state, commit, dispatch, getters}) {
+			state.project.layers.forEach((item, index)=>{
+				if(item.type == 'text') {
+					dispatch('loadFont', {
+						fontFamily:item.fontFamily,
+						text: item.text,
+						callback: () => {
+							dispatch('updateTween', {topIndex: index, subIndex: -1});
+						}
+					})
+				} else if(item.type == 'container'){
+					item.children.forEach((cItem, cIndex)=>{
+						if(cItem.type == 'text') {
+							dispatch('loadFont', {
+								fontFamily:cItem.fontFamily,
+								text: cItem.text,
+								callback: () => {
+									dispatch('updateTween', {topIndex: index, subIndex: cIndex});
+								}
+							})
+						}
+					});
+				}
+			});
 		},
 		// 初始化 网络请求
 		init({state, commit, dispatch, getters}){
@@ -482,6 +510,9 @@ const store = {
 									})
 								})
 
+							} else if(res.type == 'error') {
+								state.dialogGenerate.show = false;
+								alert('出错:' + res.e.message || '');
 							}
 						},
 						window.timeline.duration / 1000
@@ -586,7 +617,10 @@ const store = {
 		},
 		// 生成（new）
 		generateNew({state, commit, dispatch, getters}) {
-
+			if(state.asmInitedStatus == 'error') {
+				alert('视频合成库加载失败，可能无法生成视频。');
+				// return;
+			}
 			let voice = {
 				done: false,
 				success: false,
@@ -660,6 +694,9 @@ const store = {
 						Vue.nextTick(()=>{
 
 						})
+					} else if(msg.type == "error") {
+						state.dialogGenerate.show = false;
+						alert('出错:' + msg.e.message || '');
 					}
 				}
 			);
