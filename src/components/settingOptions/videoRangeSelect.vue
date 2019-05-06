@@ -13,14 +13,29 @@
     <table cellspacing="0" cellpadding="0" style="width: 100%;">
       <tr>
         <td>
-            <checkbox v-model="fillBefore">
+            <checkbox v-model="videoFillBefore">
               &nbsp;播放前显示
             </checkbox>
             
         </td>
         <td>
-          <checkbox v-model="fillAfter">
+          <checkbox v-model="videoFillAfter">
             &nbsp;播放后显示
+          </checkbox>
+        </td>
+      </tr>
+    </table>
+    <table cellspacing="0" cellpadding="0" style="width: 100%;">
+      <tr>
+        <td>
+            <checkbox v-model="fillBefore">
+              &nbsp;缓动前显示
+            </checkbox>
+            
+        </td>
+        <td>
+          <checkbox v-model="fillAfter">
+            &nbsp;缓动后显示
           </checkbox>
         </td>
       </tr>
@@ -59,6 +74,29 @@ export default {
     videoObj(){
       return this.layer.videoObj;
     },
+    videoFillBefore: {
+      get() {
+        return this.layer.videoFillBefore;
+      },
+      set(val) {
+        this.as();
+        this.layer.videoFillBefore = val;
+        this.update();
+        let currentPosition = window.timeline.position;
+        // window.timeline.position = 0;
+        // window.timeline.position = currentPosition;
+      }
+    },
+    videoFillAfter: {
+      get() {
+        return this.layer.videoFillAfter;
+      },
+      set(val) {
+        this.as();
+        this.layer.videoFillAfter = val;
+        this.update();
+      }
+    },
     fillBefore: {
       get() {
         return this.layer.fillBefore;
@@ -67,7 +105,7 @@ export default {
         this.as();
         this.layer.fillBefore = val;
         this.update();
-        let currentPosition = window.timeline.position;
+        // let currentPosition = window.timeline.position;
         // window.timeline.position = 0;
         // window.timeline.position = currentPosition;
       }
@@ -100,7 +138,6 @@ export default {
       this.dialogVideoClip.start_time = this.layer.start_time;
       this.dialogVideoClip.end_time = this.layer.end_time;
       this.dialogVideoClip.show = true;
-      
       // alert('clipVideo');
     },
     appendVideo() {

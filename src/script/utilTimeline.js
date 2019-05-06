@@ -189,7 +189,7 @@ let Object = {
     },
     // 通过时间点来判断缓动应该添加到什么位置
     getIndexByPosition({list, position}) {
-        let index = 0;
+        let index = -1;
         (list || []).forEach((item, tindex)=>{
             if(position > item.time) {
                 index = tindex;

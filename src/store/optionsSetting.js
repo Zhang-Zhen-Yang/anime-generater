@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-04 16:22:43
+ * @Last Modified time: 2019-05-06 16:20:04
  */
  // 时间轴组件
 import http from '../script/http';
@@ -183,7 +183,9 @@ const store = {
             
             let tween = canvasRender.getTween({obj, item: currentLayer, timeline: window.timeline, scale});
             window.timeline.removeTween(currentTweenObj);
-            window.timeline.addTween(tween);
+            tween.forEach((item)=>{
+              window.timeline.addTween(item);
+            })
           }
         });
       }

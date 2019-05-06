@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-03 16:14:27
+ * @Last Modified time: 2019-05-06 11:49:23
  */
 
  // 时间轴组件
@@ -524,7 +524,14 @@ const store = {
         rootState.timeline.gotoAndStop(position);
         let newProps = utilTimeline.getCurrentProps({project: rootState.project, obj: currentObj});
         let positionIndex = utilTimeline.getIndexByPosition({list: currentLayer.tween, position});
-        // alert(positionIndex);
+        if(positionIndex == -1 && !currentLayer.fillBefore) {
+         // console.log(currentLayer.tween[0].props);
+          newProps.alpha = currentLayer.tween[0].props.alpha;
+        } else {
+
+        }
+        // alert([positionIndex, currentLayer.fillBefore]);
+
         currentLayer.tween.splice(positionIndex + 1, 0, {
           action: 'to',
           props: newProps,

@@ -41,50 +41,52 @@ let demo = {
   // 层
   layers: [
     // 图片图层
-    // {
-    //   type: 'image',
-    //   obj: null,
-    //   UUID: '',
-    //   visible: true,
-    //   editable: true,
-    //   layerName: '层1',
-    //   shadowOffsetX: 0,
-    //   shadowOffsetY: 0,
-    //   shadowBlur: 100,
-    //   shadowColor: '#000000',
-    //   pic_url: 'http://imgs.aixifan.com/content/2019_4_11/1.5549672019131007E9.png',
-    //   tween: [
-    //     {
-    //       action: 'to',
-    //       props: {
-    //         x: 100,
-    //         y: 100,
-    //         scaleX: 0.5,
-    //         scaleY: 0.5,
-    //         alpha: 1,
-    //         rotation: 0,
-    //         regX: 'ow / 2',
-    //         regY: 'oh / 2'
-    //       },
-    //       time: 0,
-    //       ease: 'linear',
-    //     },
-    //     {
-    //       action: 'to',
-    //       props: {
-    //         x: 100,
-    //         y: 300,
-    //         scaleX: 0.5,
-    //         scaleY: 0.5,
-    //         alpha: 1,
-    //         rotation: 0
-    //       },
-    //       time: 6000,
-    //       ease: 'linear',
-    //     },
+    /*{
+      type: 'image',
+      obj: null,
+      UUID: '',
+      visible: true,
+      editable: true,
+      layerName: '层1',
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      shadowBlur: 100,
+      shadowColor: '#000000',
+      pic_url: 'http://imgs.aixifan.com/content/2019_4_11/1.5549672019131007E9.png',
+      fillBefore: false,
+      fillAfter: false,
+      tween: [
+        {
+          action: 'to',
+          props: {
+            x: 100,
+            y: 100,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            alpha: 1,
+            rotation: 0,
+            regX: 'ow / 2',
+            regY: 'oh / 2'
+          },
+          time: 0,
+          ease: 'linear',
+        },
+        {
+          action: 'to',
+          props: {
+            x: 100,
+            y: 300,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            alpha: 1,
+            rotation: 0
+          },
+          time: 6000,
+          ease: 'linear',
+        },
 
-    //   ]
-    // },
+      ]
+    },*/
     // // 形状图层
     // {
     //   type: 'shape',
@@ -94,6 +96,8 @@ let demo = {
     //   editable: true,
     //   layerName: '形状',
     //   asMask: true,
+    //   fillBefore: true,
+    //   fillAfter: true,
     //   graphics: {
     //     // 方形
     //     /* type: 'rect',
@@ -186,6 +190,8 @@ let demo = {
     //   layerName: '层2',
     //   width: 300,
     //   height: 300,
+    //   fillBefore: true,
+    //   fillAfter: true,
     //   // 子对象
     //   children: [
     //     {
@@ -245,6 +251,12 @@ let demo = {
     //       visible: true,
     //       editable: true,
     //       layerName: '层2.2',
+    //       shadowOffsetX: 0,
+    //       shadowOffsetY: 0,
+    //       shadowBlur: 100,
+    //       shadowColor: '#000000',
+    //       fillBefore: true,
+    //       fillAfter: true,
     //       tween: [
     //         {
     //           action: 'to',
@@ -384,8 +396,10 @@ let demo = {
       sprite: null,
       list: [],
       lastAction: 'init',
-      fillBefore: true, // 播放前显示
-      fillAfter: true, // 播放后显示
+      fillBefore: true, // 缓动前显示
+      fillAfter: true, // 缓动后显示
+      videoFillBefore: true, // 视频播放前显示
+      videoFillAfter: true, // 视频播放后显示
       tween: [
         {
           action: 'to',

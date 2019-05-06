@@ -357,6 +357,7 @@ let obj = {
     
     textContainer.addChild(textOutlineObj);
     textContainer.addChild(textObj);
+    textContainer.shadow = new c.Shadow(item.shadowColor || '#000000', item.shadowOffsetX || 0, item.shadowOffsetY || 0, item.shadowBlur || 0);
     textContainer.set({
       visible: item.visible
     })
@@ -613,6 +614,7 @@ let obj = {
       // 现在采用绝对点，所以要减去上一个的
       if(projectTween[tIndex-1]) {
         tDuration -= (projectTween[tIndex-1].time || 0);
+        // alert(tDuration);
       }
       switch (currentAction) {
         // 设置
@@ -623,13 +625,26 @@ let obj = {
         case 'to':
           // 如果是第一个缓动节点
           if(tIndex == 0) {
-            /*if(item.sprite) {
-              item.sprite.gotoAndStop(0);
-            }*/
-            tween[currentAction](props, 0, c.Ease[t.ease] || c.Ease.linear);
-            tween.wait(tDuration).call(()=>{
-              item.sprite && item.sprite.gotoAndPlay(0);
-            });
+            // 缓动前显示
+            if(item.fillBefore) {
+              tween[currentAction](props, 0, c.Ease[t.ease] || c.Ease.linear);
+              tween[currentAction](props, tDuration, c.Ease[t.ease] || c.Ease.linear);
+            } else {
+
+              tween[currentAction]({...props, alpha: 0 }, 0, c.Ease[t.ease] || c.Ease.linear);
+              tween[currentAction]({alpha: 0 }, tDuration, c.Ease[t.ease] || c.Ease.linear);
+              tween[currentAction]({alpha: 1, ...props}, 0, c.Ease[t.ease] || c.Ease.linear);
+            }
+          } else if(projectTween.length == (tIndex + 1)) {
+            // 最后一个
+            // 缓动前显示
+            if(item.fillAfter) {
+              tween[currentAction](props, tDuration, c.Ease[t.ease] || c.Ease.linear);
+            } else {
+              tween[currentAction](props, tDuration, c.Ease[t.ease] || c.Ease.linear);
+              tween[currentAction]({alpha: 0}, 1, c.Ease[t.ease] || c.Ease.linear);
+            }
+            // tween[currentAction](props, tDuration, c.Ease[t.ease] || c.Ease.linear);
           } else {
             tween[currentAction](props, tDuration, c.Ease[t.ease] || c.Ease.linear);
           }
@@ -683,7 +698,7 @@ let obj = {
           // document.body.appendChild(clipListItem);
           /* shapeObj.graphics.clear();
           shapeObj.graphics.bf(clipListItem).r(0,0, videoWidth, videoHeight);*/
-          if(!item.fillBefore) {
+          if(!item.videoFillBefore) {
             obj.removeAllChildren();
             videoTween.wait(0).call(()=>{
               obj.removeAllChildren();
@@ -733,7 +748,7 @@ let obj = {
               obj.addChild(bitmap)
               console.log('<<<<<<');
             }*/
-            if(!item.fillAfter) {
+            if(!item.videoFillAfter) {
               obj.removeAllChildren();
             }
           } else {
@@ -745,8 +760,9 @@ let obj = {
       })
       let currentTime = timeline.position;
       if(currentTime < firstTime) {
+
       } else if(currentTime > (firstTime + item.list.length * item.interval)){
-          if(item.fillAfter) {
+          if(item.videoFillAfter) {
             obj.removeAllChildren();
             let bitmap = new c.Bitmap(item.list[item.list.length - 1]);
             obj.addChild(bitmap)

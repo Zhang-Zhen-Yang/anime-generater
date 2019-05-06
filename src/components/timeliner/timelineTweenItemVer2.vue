@@ -10,7 +10,9 @@
       :data-index="index"
     >
       <div :class="['tween-props-dot-handle']">
-
+        <span class="fill-before-fill-after" v-if="index==0&&!anTween.fillBefore">|</span>
+        <span class="fill-before-fill-after" v-if="(index + 1)==tweenLocal.length && !anTween.fillAfter">|</span>
+        
       </div>
     </div>
 
@@ -290,6 +292,12 @@ export default {
       background-color: #6ECEDF;
     }
 
+  }
+  .fill-before-fill-after{
+    color: red;
+    position: absolute;
+    left:3px;
+    top:-4px;
   }
 
 

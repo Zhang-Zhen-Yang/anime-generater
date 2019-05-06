@@ -13,6 +13,8 @@ let obj = {
       shadowOffsetY: 0,
       shadowBlur: 0,
       shadowColor: '#000000',
+      fillBefore: true,
+      fillAfter: true,
       tween: [
         {
           action: 'to',
@@ -60,6 +62,12 @@ let obj = {
     visible: true,
     editable: true,
     layerName: '文本',
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
+    shadowBlur: 100,
+    shadowColor: '#000000',
+    fillBefore: true,
+    fillAfter: true,
     tween: [
       {
         action: 'to',
@@ -102,6 +110,8 @@ let obj = {
     editable: true,
     layerName: '形状',
     asMask: false,
+    fillBefore: true,
+    fillAfter: true,
     graphics: {
       // 方形
       /* type: 'rect',
@@ -192,6 +202,8 @@ let obj = {
       layerName: '文件夹',
       width: 300,
       height: 300,
+      fillBefore: true,
+      fillAfter: true,
       // 子对象
       children: [
       ],
@@ -243,6 +255,10 @@ let obj = {
     sprite: null,
     list: [],
     lastAction: 'init',
+    videoFillBefore: true,
+    videoFillAfter: true,
+    fillBefore: true,
+    fillAfter: true,
     tween: [
       {
         action: 'to',
