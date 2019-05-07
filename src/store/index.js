@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-04 16:20:42
+ * @Last Modified time: 2019-05-07 09:45:11
  */
 
 import http from '../script/http';
@@ -214,29 +214,64 @@ const store = {
 		},
 		// 初始化字体  
 		initLoadFonts({state, commit, dispatch, getters}) {
+			let fontsUse = {
+
+			};
 			state.project.layers.forEach((item, index)=>{
 				if(item.type == 'text') {
-					dispatch('loadFont', {
+					/*dispatch('loadFont', {
 						fontFamily:item.fontFamily,
 						text: item.text,
 						callback: () => {
 							dispatch('updateTween', {topIndex: index, subIndex: -1});
 						}
-					})
+					})*/
+					fontsUse[item.fontFamily] = true;
 				} else if(item.type == 'container'){
 					item.children.forEach((cItem, cIndex)=>{
 						if(cItem.type == 'text') {
-							dispatch('loadFont', {
+							/*dispatch('loadFont', {
 								fontFamily:cItem.fontFamily,
 								text: cItem.text,
 								callback: () => {
 									dispatch('updateTween', {topIndex: index, subIndex: cIndex});
 								}
-							})
+							})*/
+							fontsUse[cItem.fontFamily] = true;
 						}
 					});
 				}
 			});
+			Object.keys(fontsUse).filter((item)=>{state.os.localFonts.indexOf(item) < 0}).forEach((item)=>{
+				dispatch('loadFont', {
+					fontFamily:item,
+					text: item.text,
+					callback: () => {
+						// 图层
+						state.project.layers.forEach((lItem, index)=>{
+							if(lItem.type == 'text' && lItem.fontFamily == item) {
+								dispatch('updateTween', {topIndex: index, subIndex: -1});
+							} else if(lItem.type == 'container'){
+								lItem.children.forEach((cItem, cIndex)=>{
+									if(cItem.type == 'text' && lItem.fontFamily == item) {
+										dispatch('updateTween', {topIndex: index, subIndex: cIndex});
+									}
+								});
+							}
+						});
+						// 音频
+						let fontFamilyInVoice = false;
+						state.project.voices.forEach((vItem)=>{
+							if(vItem.fontFamily == item) {
+								fontFamilyInVoice = true;
+							}
+						})
+						if(fontFamilyInVoice) {
+							canvasRender.renderSubtitle({project: state.project, parent: window.stage, timeline: window.timeline});
+						}
+					}
+				})
+			})
 		},
 		// 初始化 网络请求
 		init({state, commit, dispatch, getters}){
@@ -442,6 +477,7 @@ const store = {
 			}
 			
 		},
+		// 获取合成后的音频
 		getGenerateVoice({state, commit, dispatch, getters}, {callback}) {
 			let voices = state.project.voices;
 
@@ -525,6 +561,7 @@ const store = {
 			})
 			
 		},
+		// 获取所有的图片帧
 		getGenerateImage({state, commit, dispatch, getters}, {callback}) {
 			let datas = [];
 			console.log('new');
@@ -655,6 +692,7 @@ const store = {
 			});
 			
 		},
+		// 从图片和音频生成视频
 		generateVideoFromImageAndVoice({state, commit, dispatch, getters}, {voice, image}) {
 			let {width, height} = state.stage.canvas;
 			let total = width * height;

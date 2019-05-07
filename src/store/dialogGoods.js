@@ -21,7 +21,7 @@ const store = {
 		allowCount: 5,
 		
 		pageNo: 1,
-		pageNo:1,
+		// pageNo:1,
 		pageSize: 15,
 		type:'onsale',
 		cid: 'all',
@@ -146,9 +146,13 @@ const store = {
 							prev_price: item.price,
 							num_iid:item.numIid,
 							num: item.num,
+							loastAction: '',
+							images: [],
+							showImages: false,
 						}
 					});
 					state.count = res.data.totalCount;
+					
 					state.pageNo = pageNo;
 					state.lastAction = 'success';
 				} else {
@@ -299,6 +303,38 @@ const store = {
 					}
 				})
 
+			}
+		},
+		toggleShowImages({state, commit}, {item}) {
+			item.showImages = !item.showImages;
+			if(item.showImages && item.lastAction != 'success' && item.lastAction != 'progress') {
+				item.lastAction = 'progress';
+				let req = {
+					numIid: item.num_iid,
+					fields: 'pic_url,item_img,product_id',
+				};
+				http.post(api.getItemInfo, req).then((res)=>{
+					if(res.status == 200) {
+						// console.log(res.data);
+						if(res.data.success) {
+							item.lastAction = 'success';
+							item.images = res.data.item.itemImgs;
+							// state.goodsMainPics[`n${num_iid}`] = {...state.goodsMainPics[`n${num_iid}`], lastAction: 'success', list: res.data.item.itemImgs}
+						} else {
+							item.lastAction = 'error';
+						
+							item.msg = res.data.msg;
+						}
+						
+					} else {
+						item.lastAction = 'error';
+					}
+					Vue.set(state, 'goodsMainPics', {...state.goodsMainPics});
+				}, (res) => {
+					item.lastAction = 'error';
+				})
+
+				console.log(item.num_iid);
 			}
 		}
 	}// end actions 

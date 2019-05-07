@@ -1,4 +1,7 @@
 export default [{
+    name: '黑体',
+    value: '黑体'
+},{
     name: '站酷小薇LOGO',
     value: '站酷小薇LOGO'
 }, {

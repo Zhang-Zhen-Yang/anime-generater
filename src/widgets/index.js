@@ -27,6 +27,7 @@ import toggle from './toggle/toggle.vue';
 import blockSlice from './blockSlice/blockSlice.vue';
 import numResize from './numResize/numResize.vue';
 import checkbox from './checkbox/checkbox.vue';
+import searchInput from './searchInput/searchInput.vue';
 
 
 const options = {
@@ -51,7 +52,8 @@ const options = {
 	toggle,
 	blockSlice,
 	numResize,
-	checkbox
+	checkbox,
+	searchInput
 };
 options.install = (Vue) => {
     for (let component in options) {

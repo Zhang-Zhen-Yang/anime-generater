@@ -12,13 +12,13 @@
     <table slot="subHeader">
       <tr>
         <td class="left">
-          <dialog-tab :tabs="['海报素材','我的海报','图片空间', '图片链接']"
+          <dialog-tab :tabs="['海报素材','我的海报','图片空间', '图片链接', '宝贝图片']"
             :hideIndex="app == 'wb'? -1 : 1"
             :tabIndex="tabIndex"
             @setTabIndex="(index)=>{tabIndex = index;}">
           </dialog-tab>
         </td>
-        <td style="width:350px;">
+        <td style="width:250px;">
           <!--手动输入图片链接-->
           <div class="left img-input" v-if="false">
             <input type="text" v-model="selectedPic"><button class="btn primary" @click="confirmImgLink">确定</button>
@@ -31,12 +31,16 @@
         </td>
       </tr>
     </table>
-    <!--4 -->
+    <!--宝贝 获取图片  -->
+    <div class="dialog-image-content-wrap" v-if="tabIndex==4" slot="content" style="padding-left:0;">
+      <dialogImageGoods></dialogImageGoods>
+    </div>
+    <!--图片链接获取图片------------------------------------------- -->
     <div class="dialog-image-content-wrap" v-if="tabIndex==3" slot="content" style="padding-left:0;">
       <dialogImageNetwork />
     </div>
     <!--3-->
-    <!--图片空间  content-->
+    <!--图片空间 获取图片-------------------------------------------- content-->
     <div class="dialog-image-content-wrap" slot="content" v-if="tabIndex == 2">
       <!--图片空间列表-->
       <div style="position: absolute;left:0;top:0;width: 250px;top: 90px;height:450px;overflow:auto;" class="scrollbar-overwrite" >
@@ -62,7 +66,7 @@
     </div>
 
     <!--2-->
-    <!--我的海报-->
+    <!--我的海报 ----------------------------------------------------------------------- -->
     <dialogImageMyposter slot="content" v-if="tabIndex == 1"></dialogImageMyposter>
 
 
@@ -126,6 +130,8 @@
           <pagination v-if="tabIndex == 0" :pageSize="posterPageSize" :pageNo="posterPageNo" :count="posterCount" @goToPage="posterGoToPage"></pagination>
           <!--我的海报-->
           <pagination v-if="tabIndex == 1" :pageSize="myposterPageSize" :pageNo="myposterPageNo" :count="myposterCount" @goToPage="myposterGoToPage"></pagination>
+          <!--宝贝图片-->
+          <pagination v-if="tabIndex == 4" :pageSize="goodsPageSize" :pageNo="goodsPageNo" :count="goodsCount" @goToPage="goodsGoToPage"></pagination>
         </td>
         <td>
         </td>
@@ -144,10 +150,11 @@ import imageSpace from './dialogImageSpace';
 import dialogImageUpload from './dialogImageUpload';
 import dialogImageMyposter from './dialogImageMyposter';
 import dialogImageNetwork from './dialogImageNetwork';
+import dialogImageGoods from './dialogImageGoods';
 
 export default {
   name: 'temp',
-  components: {imageSpace, dialogImageUpload, dialogImageMyposter, dialogImageNetwork},
+  components: {imageSpace, dialogImageUpload, dialogImageMyposter, dialogImageNetwork, dialogImageGoods},
   data () {
     return {
       posterSort:[{
@@ -293,9 +300,22 @@ export default {
     },
     myposterLastAction(){
       return this.md.myposterLastAction;
-    }
+    },
+    // 
+    goodsPageSize() {
+      return this.$store.state.dialogGoods.pageSize;
+    },
+    goodsPageNo() {
+      return this.$store.state.dialogGoods.pageNo;
+    },
+    goodsCount() {
+      return this.$store.state.dialogGoods.count;
+    },
   },
   methods: {
+    goodsGoToPage(page) {
+      this.$store.dispatch('fetchGoods', {pageNo: page});
+    },
     dismiss(){
       this.modal.show = false;
     },

@@ -1,8 +1,8 @@
 /*
  * @Author: zhangzhenyang 
  * @Date: 2018-10-31 15:42:59 
- * @Last Modified by:   zhangzhenyang 
- * @Last Modified time: 2018-10-31 15:42:59 
+ * @Last Modified by: zhangzhenyang
+ * @Last Modified time: 2019-05-07 15:05:49
  */
 // 分页
 <template>
@@ -68,6 +68,9 @@ export default {
     font-size: 14px;
     height: 10px;
     white-space: nowrap;
+    li{
+      margin: 0 4px;
+    }
     .active{
       color: red;
     }

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-06 16:20:04
+ * @Last Modified time: 2019-05-07 09:02:58
  */
  // 时间轴组件
 import http from '../script/http';
@@ -27,6 +27,8 @@ const store = {
     subIndex: -1,
     tweenIndex: -1,*/
     loadedFonts: {},
+    // 本地安全字体
+    localFonts: ['黑体']
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -236,13 +238,12 @@ const store = {
     },
     // 加载字体
     loadFont({state, rootState,commit,dispatch}, {fontFamily, text, callback}) {
-      if(state.loadedFonts[fontFamily]) {
+      if(state.loadedFonts[fontFamily] || state.localFonts.indexOf(fontFamily) > -1) {
         if(callback) {
           callback();
         } else {
           dispatch('upadateWordLayerByText', {text});
         }
-        
         return;
       }
       WebFont.load({
