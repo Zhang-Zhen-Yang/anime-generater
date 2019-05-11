@@ -101,6 +101,7 @@ export default {
     tlScale() {
       return this.tl.scale;
     },
+    // 设置时间轴所定义的时间长度
     tlDuration:{
       get() {
         return (this.tl.duration / 1000);
@@ -108,7 +109,7 @@ export default {
       set(val) {
         let toSetValue = val * 1000;
         console.log([toSetValue, this.durationNum]);
-        if(toSetValue >= this.durationNum && ((toSetValue < this.durationNum * 10) || (toSetValue < 9000))) {
+        if(toSetValue >= this.durationNum && ((toSetValue < this.durationNum * 1000) || (toSetValue < 9000))) {
           this.tl.duration = Math.ceil(toSetValue);
         }
       }

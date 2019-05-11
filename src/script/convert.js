@@ -53,7 +53,7 @@ function processInWebWorker() {
 }
 
 
-function accessWorder() {
+function accessWorker() {
 	return new Promise((resolve, reject)=>{
 		let initWorder = processInWebWorker();
 		initWorder.onmessage = function(event) {
@@ -265,4 +265,4 @@ function convertImageToVideo(imagesArray, audio, {f, t, b}, callback) {
 
 }
 
-export { convertStreams, accessWorder, convertImageToVideo };
+export { convertStreams, accessWorker, convertImageToVideo };

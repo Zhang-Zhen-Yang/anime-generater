@@ -7,9 +7,9 @@ let demo = {
   ver: 2,
   // tts
   voices: [
-    {
+    /* {
       time: 0,
-      tex: '五等分的花嫁',
+      tex: '你妈逼的',
       per: 0, // 人声
       spd: 5, // 语速
       pit: 5,// 音调
@@ -21,10 +21,10 @@ let demo = {
       outline: 5,
       outlineColor: '#aaaaaa',
       showSubtitle: true,
-    },
+    },*/
     {
       time: 3000,
-      tex: '三玖天下第一',
+      tex: '你打篮球像蔡徐坤',
       per: 0,
       data: '',
       spd: 5, // 音速
@@ -41,7 +41,7 @@ let demo = {
   // 层
   layers: [
     // 图片图层
-    /*{
+    {
       type: 'image',
       obj: null,
       UUID: '',
@@ -55,6 +55,12 @@ let demo = {
       pic_url: 'http://imgs.aixifan.com/content/2019_4_11/1.5549672019131007E9.png',
       fillBefore: false,
       fillAfter: false,
+      
+      brightness: 0, // 亮度 [-255 - 255]
+      contrast: 0, // 对比 [-100, 100]
+      saturation: 0, // 饱和 [-100, 100]
+      hue: 0, // 色调 [-180, 180]
+      blur: 100,
       tween: [
         {
           action: 'to',
@@ -86,7 +92,7 @@ let demo = {
         },
 
       ]
-    },*/
+    },
     // // 形状图层
     // {
     //   type: 'shape',
@@ -396,18 +402,20 @@ let demo = {
       sprite: null,
       list: [],
       lastAction: 'init',
-      fillBefore: true, // 缓动前显示
-      fillAfter: true, // 缓动后显示
+      
       videoFillBefore: true, // 视频播放前显示
       videoFillAfter: true, // 视频播放后显示
+      fillBefore: true, // 缓动前显示
+      fillAfter: true, // 缓动后显示
+      videoStartTime: 2000,
       tween: [
         {
           action: 'to',
           props: {
             x: 400,
             y: 400,
-            scaleX: 0.5,
-            scaleY: 0.5,
+            scaleX: 0.8,
+            scaleY: 0.8,
             alpha: 1,
             rotation: 0,
             regX: 'ow / 2',
@@ -416,7 +424,7 @@ let demo = {
           time: 2000,
           ease: 'linear',
         },
-        {
+        /*{
           action: 'to',
           props: {
             x: 100,
@@ -428,7 +436,7 @@ let demo = {
           },
           time: 6000,
           ease: 'linear',
-        },
+        },*/
 
       ]
     }

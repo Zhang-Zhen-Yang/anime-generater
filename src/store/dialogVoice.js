@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-04 11:10:53
+ * @Last Modified time: 2019-05-11 09:28:08
  */
 // 文本转语音 百度tts
 
@@ -36,9 +36,11 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
+		// 重新生成字幕
 		renderSubtitle({rootState, state, commit, dispatch, getters}) {
 			canvasRender.renderSubtitle({project: rootState.project, parent: window.stage, timeline: window.timeline});
 		},
+		// 检查 token
 		checkTok({rootState, state, commit, dispatch, getters}) {
 			return new Promise((resolve, reject)=>{
 				http.post('',{}).then((res)=>{
@@ -48,7 +50,8 @@ const store = {
 				})
 			})
 		},
-		fetchTTSAudio({rootState, state, commit, dispatch, getters}, {tex, oldTex, spd=5, pit=5, per=0, callback}){
+		// 获取生成语音
+		fetchTTSAudio({rootState, state, commit, dispatch, getters}, {tex, oldTex, spd=5, pit=5, per=0, callback,showSnackbar = true}){
 			/*dispatch('checkTok').then((res)=>{
 				alert('ddddd');
 			})*/
@@ -72,6 +75,10 @@ const store = {
 						pit,
 					})
 					dispatch('renderSubtitle');
+					showSnackbar && commit('showSnackbar',{
+						text: '语音生成成功！',
+						timeout: 1000
+					});
 					// canvasRender.renderSubtitle({project: rootState.project, parent: window.stage, timeline: window.timeline});
 				})
 			} else {
@@ -115,7 +122,10 @@ const store = {
 								pit,
 							})
 							dispatch('renderSubtitle');
-
+							showSnackbar && commit('showSnackbar',{
+								text: '语音生成成功！',
+								timeout: 1000
+							});
 						});
 	
 					},
@@ -129,6 +139,10 @@ const store = {
 							oldTex,
 							tex
 						})
+						showSnackbar && commit('showSnackbar',{
+							text: '语音生成失败！',
+							timeout: 1000
+						});
 						
 					},
 					onTimeout: function () {
@@ -138,11 +152,17 @@ const store = {
 							oldTex,
 							tex
 						})
+						showSnackbar && commit('showSnackbar',{
+							text: '语音生成失败！超时，请重新尝试',
+							timeout: 1000
+						});
 					}
 				});
 			}
 
 		},
+
+		// 根据voice 列表生成所有的语音
 		fillVoices({state, commit, dispatch, getters},{project}) {
 			
 			let voices = project.voices;
@@ -155,6 +175,7 @@ const store = {
 					spd: item.spd,
 					pit: item.pit,
 					per: item.per,
+					showSnackbar: false,
 					callback: (res)=>{
 						if(res.success) {
 							// alert(res.duration);
@@ -168,6 +189,7 @@ const store = {
 				console.log(item);
 			})
 		},
+		// 不用
 		getTTSAudio({state, commit, dispatch, getters}, {text} = {text: ''}) {
 			// let tempText = '偶像，是女孩子们一直以来的憧憬。但能站在顶点的，只有仅仅数人。13位少女，就此经她们所属的事务所"765 Production"，跨进了那个充满竞争的世界。出道约半年，事务所来了一位全新的制作人。他跟少女们都下定决心，向顶级偶像之路进发。';
 			// let tempText = '做事一本正经，对于歌唱有比普通人多一倍的热情和才能，觉得不能唱歌就活不下去，其实是为了已去世的弟弟如月优而唱歌。对唱歌以外的东西没有兴趣，所以一开始时很排斥"呱呱厨房"，但是在贵音和制作人的帮助下放下偏见。在意自己的小胸部，有着奇怪的笑点，不擅长使用电子设备。';

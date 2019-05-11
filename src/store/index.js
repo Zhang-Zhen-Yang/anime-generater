@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-07 09:45:11
+ * @Last Modified time: 2019-05-11 10:56:25
  */
 
 import http from '../script/http';
@@ -11,11 +11,13 @@ import util from '../script/util';
 import utilTimeline from '../script/utilTimeline';
 import canvasRender from '../script/canvasRender';
 // import templates from '../script/templates/templates';
-import {convertStreams, accessWorder, convertImageToVideo, combineAudio} from '../script/convert.1.js';
+import {convertStreams, accessWorker, convertImageToVideo, combineAudio} from '../script/convert.1.js';
+import {convertStreams2, accessWorker2, convertImageToVideo2, combineAudio2, convertTo264} from '../script/convert.2.js';
+
 import watermark from '../script/watermark';
 import Vue from 'vue';
 
-// import {convertStreamsNew, accessWorderNew} from '../script/convertNew.js';
+// import {convertStreamsNew, accessWorkerNew} from '../script/convertNew.js';
 
 // import {covertNew} from '../script/termimal.js';
 
@@ -29,6 +31,7 @@ import dialogSetting from './dialogSetting';
 import dialogDownload from './dialogDownload';
 import dialogVideoClip from './dialogVideoClip';
 import dialogVoice from './dialogVoice';
+import dialogFeedBack from './dialogFeedBack';
 
 import tl from './tl';
 import test from './test.js';
@@ -39,6 +42,7 @@ import demo3 from '../script/templateDemo3.js'; // 新
 import demoEmpty from '../script/templateEmpty'; // 空白模板
 const store = {
 	state: {
+		convertVer: 2, // [1, 2]
 		goods: {
 			list: [],
 			price: 200,
@@ -180,9 +184,11 @@ const store = {
 	// -------------------------------------------------------------------------------------------------------------
 	actions: {
 		initnew({state, commit, dispatch, getters}){
+			dispatch('getSettingFromStorage');
 			window.localImages = {};
 			state.project = demo3;
-			state.project.voices.forEach((item, index)=>{
+			dispatch('fillVoices', {project: state.project});
+			/* state.project.voices.forEach((item, index)=>{
 				console.log(item);
 				dispatch('fetchTTSAudio', {
 					tex: item.tex,
@@ -196,21 +202,25 @@ const store = {
 						}
 					}
 				})
-			})
+			})*/
 			canvasRender.render({
 				canvas: document.getElementById('canvas'),
 				project: state.project,
 				state: state
 			})
 			window.timeline.gotoAndStop(0);
-			accessWorder().then(()=>{
+			dispatch('accessWorker');
+			dispatch('initLoadFonts');
+		},
+		accessWorker({state}) {
+			state.asmInitedStatus = 'initing';
+			(state.convertVer == 1 ? accessWorker() : accessWorker2()).then(()=>{
 				// alert('ddddd');
 				state.asmInitedStatus = 'success';
 			}, ()=>{
 				alert('视频合成库加载失败，可能无法生成视频。');
 				state.asmInitedStatus = 'error';
 			})
-			dispatch('initLoadFonts');
 		},
 		// 初始化字体  
 		initLoadFonts({state, commit, dispatch, getters}) {
@@ -276,7 +286,7 @@ const store = {
 		// 初始化 网络请求
 		init({state, commit, dispatch, getters}){
 			dispatch('getSettingFromStorage');
-			accessWorder().then(()=>{
+			accessWorker().then(()=>{
 				// alert('ddddd');
 				state.asmInitedStatus = 'success';
 			}, ()=>{
@@ -502,7 +512,7 @@ const store = {
 							time: item.time,
 						})
 					})
-				},()=>{})
+				},()=>{});
 			})
 			
 			Promise.all(allVoicesPromises).then((res)=>{
@@ -510,13 +520,13 @@ const store = {
 				let padVoices = res.map((item)=>{
 					let appender = new WaveEditor();
 					return appender.delay([item.data], parseInt(item.time / 10) / 100, 'blob', 'AppendedWav');
-				})
+				});
 
 
 				
 				let allPadVoicesArrayBuffer = padVoices.map((item)=>{
 					return util.blobToArrayBuffer(item);
-				})
+				});
 
 				if(state.bgMusic) {
 					allPadVoicesArrayBuffer.push(util.blobToArrayBuffer(state.bgMusic));
@@ -528,7 +538,7 @@ const store = {
 					//return appender.mix(res, 'play', 'AppendedWav');
 					let distAudioList = res.map((item)=>{return new Uint8Array(item)});
 					// distAudioList.push(window.music);
-					combineAudio(
+					(state.convertVer == 1 ? combineAudio : combineAudio2)(
 						distAudioList,
 						//[window.music, new Uint8Array(res[0])],
 						(res)=>{
@@ -552,24 +562,21 @@ const store = {
 							}
 						},
 						window.timeline.duration / 1000
-
 					);
-					
-
 				})
-				
 			})
-			
 		},
 		// 获取所有的图片帧
 		getGenerateImage({state, commit, dispatch, getters}, {callback}) {
 			let datas = [];
 			console.log('new');
+			let pwidth = state.project.width;
+			let pheight = state.project.height;
 
 			state.timeline.removeAllEventListeners();
 			
 			// 时长
-			const duration = state.timeline.duration
+			const duration = state.timeline.duration;
 			let currentPosition = 0;
 			state.timeline.gotoAndStop(0.05);
 			// 显示弹窗
@@ -587,10 +594,21 @@ const store = {
 				//刷新 动画画面
 				state.stage.update();
 
-				
 				// 获取图片数据(1)
-				const base64str = window.canvas.toDataURL('image/jpeg', 0.9);
-				var imgdata =  base64str.slice(23)
+				let base64str;
+				if(state.convertVer == 1) {
+					base64str = window.canvas.toDataURL('image/jpeg', 1);
+				} else {
+					/*let tempCanvas = document.createElement('canvas');
+					tempCanvas.width = pwidth * 2;
+					tempCanvas.height = pheight * 2;
+					tempCanvas.getContext('2d').drawImage(window.canvas,0,0,pwidth * 2,pheight * 2);
+					base64str = tempCanvas.toDataURL('image/jpeg', 1);
+					tempCanvas = null;*/
+
+					base64str = window.canvas.toDataURL('image/jpeg', 1);
+				}
+				var imgdata =  base64str.slice(23);
 				var bytes = atob(imgdata);
 				//console.log('ddddddddddddddddddddddddddddddddddddddddddddddddd', bytes.slice(0, 100));
 				//var bytes = base64;
@@ -675,7 +693,7 @@ const store = {
 					voice.success = res.success;
 					voice.res = res.res;
 					if (image.done) {
-						dispatch('generateVideoFromImageAndVoice', {voice: voice.res, image: image.res})
+						dispatch('generateVideoFromImageAndVoice', {voice: voice.res, image: image.res});
 					}
 				}
 			});
@@ -685,7 +703,7 @@ const store = {
 					image.success = res.success;
 					image.res = res.res;
 					if (voice.done) {
-						dispatch('generateVideoFromImageAndVoice', {voice: voice.res, image: image.res})
+						dispatch('generateVideoFromImageAndVoice', {voice: voice.res, image: image.res});
 					}
 				}
 				
@@ -706,7 +724,8 @@ const store = {
 			// console.log('voice voice voice voice ',voice);
 			// console.log('777777777777777777777777777777777777777777777',new Uint8Array(voice));
 			// 转换图片到视频
-			convertImageToVideo(
+		
+			(state.convertVer == 1 ? convertImageToVideo : convertImageToVideo2)(
 				image,
 				voice? new Uint8Array(voice) : null,
 				{
@@ -721,22 +740,46 @@ const store = {
 						
 					} else if (msg.type == "start") {
 					} else if (msg.type == "done") {
-						state.dialogGenerate.show = false;
-						setTimeout(()=>{
-							commit('showSnackbar', {
-								text: '视频生成完毕,请点击链接下载！',
-							});
-							// alert();
-						},0)
-						state.dialogDownload.show = true;
-						Vue.nextTick(()=>{
+						if(state.convertVer == 1) {
+							state.dialogGenerate.show = false;
+							setTimeout(()=>{
+								commit('showSnackbar', {
+									text: '视频生成完毕,请点击链接下载！',
+								});
+								// alert();
+							},0)
+							state.dialogDownload.show = true;
+							Vue.nextTick(()=>{
+	
+							})
+						} else {
+							state.dialogGenerate.show = false;
+							setTimeout(()=>{
+								commit('showSnackbar', {
+									text: '视频生成完毕,请点击链接下载！',
+								});
+								// alert();
+							},0)
+							state.dialogDownload.show = true;
+							Vue.nextTick(()=>{
+	
+							})
+							return;
+							console.log('msg ---------------------------------------------------------------');
+							console.log(msg);
+							let data = msg.data[0].data;
 
-						})
+							/*convertTo264(new Uint8Array(data),(res)=>{
+
+							})*/
+						}
 					} else if(msg.type == "error") {
 						state.dialogGenerate.show = false;
 						alert('出错:' + msg.e.message || '');
 					}
-				}
+				},
+				`${state.project.width}*${state.project.height}`,
+				state.dialogSetting.encoder
 			);
 		},
 		// 更新时间轴
@@ -764,7 +807,7 @@ const store = {
 			let images = [];
 			state.project.queue.forEach((item, index)=>{
 				if(item.file) {
-					images.push(item.file)
+					images.push(item.file);
 				}
 				console.log(images.length);
 			})
@@ -846,7 +889,7 @@ const store = {
 		// 保存到后端
 		saveUpload({state, commit}){
 			let obj = utilTimeline.cloneObj(state.project);
-			obj.layers.forEach((layer)=>{
+			obj.layers.forEach((layer) => {
 				if(layer.type == 'image') {
 					layer.pic_url = utilTimeline.getPicKeyByItem(layer);
 				} else if(layer.type == 'container') {
@@ -881,6 +924,7 @@ const store = {
 		os: optionsSetting,
 		dialogVideoClip,
 		dialogVoice,
+		dialogFeedBack,
 		test,
 	}
 }

@@ -2,14 +2,14 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:40:11 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-04-30 09:27:46
+ * @Last Modified time: 2019-05-10 08:57:37
  */
 
 // 测试
 
 import http from '../script/http';
 import api from '../script/api';
-import {convertStreams, accessWorder, convertImageToVideo, combineAudio} from '../script/convert.1.js';
+import {convertStreams, accessWorker, convertImageToVideo, combineAudio} from '../script/convert.1.js';
 import util from '../script/util';
 import Vue from 'vue';
 import { join } from 'path';

@@ -43,7 +43,7 @@
             <!--节点的属性值-->
             <table cellspacing="0" cellpadding="0" style="width:100%;table-layout:fixed;">
               <tr>
-                <td style="width: 8em;">
+                <td class="width1-4">
                   <span class="prop-name-x">对齐</span>
                 </td>
                 <td colspan="3">
@@ -500,9 +500,6 @@ export default {
     }
   },
   methods: {
-    
-
-    
     initChange({type, value}){
 
     },

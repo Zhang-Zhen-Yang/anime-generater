@@ -320,6 +320,17 @@ let obj = {
         scaleY: scale,
         visible: item.visible,
       });
+      // 字彩调节
+      let colorMatrix = new c.ColorMatrix(
+        item.brightness || 0,
+        item.contrast || 0,
+        item.saturation || 0,
+        item.hue || 0,
+      );
+      let colorMatrixFilter = new c.ColorMatrixFilter(colorMatrix);
+      let blurFilter = new c.BlurFilter(item.blur, item.blur, 2);
+      imgObj.filters = [colorMatrixFilter, blurFilter];
+      imgObj.cache(0, 0, imageW, imageH);
       imgObj.shadow = new c.Shadow(item.shadowColor || '#000000', item.shadowOffsetX || 0, item.shadowOffsetY || 0, item.shadowBlur || 0);
       callback({
         obj: imgObj,
@@ -572,6 +583,11 @@ let obj = {
         if (['regX', 'regY', 'x', 'y', 'width', 'height', 'scaleX', 'scaleY'].indexOf(i) > -1) {
           if (typeof props[i] === 'string') {
             let bounds = obj.getBounds() || {width: 0, height: 0};
+            if(item.type == 'image') {
+              // console.log([bounds.width, bounds.height]);
+              // console.log([obj.image.width, obj.image.height]);
+              bounds = {width: obj.image.width, height: obj.image.height}
+            }
             // alert(bounds);
             // console.log(bounds);
             let ow = bounds.width;
@@ -616,6 +632,13 @@ let obj = {
         tDuration -= (projectTween[tIndex-1].time || 0);
         // alert(tDuration);
       }
+      // 如果有blur 会产生偏移
+      if(item.type == 'image' && item.blur > 0) {
+        // console.log('=======================================================');
+        // console.log(props);
+        /*props.x -= blur / 2;
+        props.Y -= blur / 2;*/
+      }
       switch (currentAction) {
         // 设置
         case 'set':
@@ -657,17 +680,19 @@ let obj = {
       }
     });
     let videoTween = null;
+
+    // 如果是视频图层
     if(item.type == 'video') {
       console.log('obj',obj);
       let shapeObj = obj.children[0];
       console.log('shapeObj', shapeObj);
       videoTween = c.Tween.get(shapeObj);
       // alert(item.list.length);
-      let firstTime = projectTween[0] ? projectTween[0].time : 0;
+      let firstTime = item.videoStartTime; // projectTween[0] ? projectTween[0].time : 0;
       let videoWidth = 0;
       let videoHeight = 0;
       
-      item.list.forEach((clipListItem, index)=>{
+      (item.list || []).forEach((clipListItem, index)=>{
         if(index == 0) {
           // alert(shapeObj);
           /*videoWidth = clipListItem.width

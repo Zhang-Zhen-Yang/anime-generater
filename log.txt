@@ -4,6 +4,9 @@ showSnackbar(state,{text,timeout=2000}) {
 
 
 
+this.$store.commit('showSnackbar',{text, timeout: 1000});
+
+
 
 
 

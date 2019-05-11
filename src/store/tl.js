@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-06 11:49:23
+ * @Last Modified time: 2019-05-11 09:50:04
  */
 
  // 时间轴组件
@@ -876,7 +876,7 @@ const store = {
         project: rootState.project,
         state: rootState
       })
-
+      dispatch('fillVoices', {project: rootState.project});
       rootState.project.layers.forEach((layer)=>{
         if(layer.type == 'image') {
           commit('setLocalImagesKeyFromBase64', {image: layer.pic_url});
@@ -888,6 +888,7 @@ const store = {
           })
         }
       })
+      window.timeline.gotoAndStop(0)
     },
     // 重新设置遮罩
     checkAsMask({rootState, state, dispatch, commit}, {layers}) {

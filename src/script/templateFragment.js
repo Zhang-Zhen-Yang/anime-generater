@@ -13,6 +13,13 @@ let obj = {
       shadowOffsetY: 0,
       shadowBlur: 0,
       shadowColor: '#000000',
+
+      brightness: 0, // 亮度 [-255 - 255]
+      contrast: 0, // 对比 [-100, 100]
+      saturation: 0, // 饱和 [-100, 100]
+      hue: 0, // 色调 [-180, 180]
+      blur: 0,
+
       fillBefore: true,
       fillAfter: true,
       tween: [
@@ -57,14 +64,14 @@ let obj = {
     fontFamily: '黑体',
     textBaseline: 'top',
     color: '#FF9729',
-    outline: 5,
+    outline: 0,
     outlineColor: 'rgba(179,105,105,1)',
     visible: true,
     editable: true,
     layerName: '文本',
     shadowOffsetX: 0,
     shadowOffsetY: 0,
-    shadowBlur: 100,
+    shadowBlur: 0,
     shadowColor: '#000000',
     fillBefore: true,
     fillAfter: true,
@@ -247,11 +254,13 @@ let obj = {
     shadowOffsetY: 0,
     shadowBlur: 100,
     shadowColor: '#000000',
-    src: `${window.assets}video.mp4`,
+    // src: `${window.assets}video.mp4`,
+    src: 'https://oss.wonbao.net/wonbao-graphicvideo/audio/mad.mp4',
     // src: 'https://tbm-auth.alicdn.com/IIII1iCvvtm2UjjI3Kw/JxYS29AhMzDempx9vuU@@hd_hq.mp4?auth_key=1555732426-0-0-0a40a70867ff932519d177f16cb32dee',
     interval: 50,
-    start_time: 28000,
-    end_time: 29000,
+    timestamp: 0,
+    start_time: 0,
+    end_time: 1000,
     sprite: null,
     list: [],
     lastAction: 'init',
@@ -259,6 +268,7 @@ let obj = {
     videoFillAfter: true,
     fillBefore: true,
     fillAfter: true,
+    videoStartTime: 0,
     tween: [
       {
         action: 'to',

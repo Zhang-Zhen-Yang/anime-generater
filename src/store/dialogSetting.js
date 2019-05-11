@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-10 16:46:16 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-03-27 15:26:15
+ * @Last Modified time: 2019-05-10 11:13:23
  */
 
 
@@ -17,6 +17,8 @@ const store = {
 		lastAction: 'loading',
 		quality: 50,
 		frames: 20,
+		encoder: 'mpeg4',
+		switchShow: false,
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -30,15 +32,23 @@ const store = {
 	},
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
-		getSettingFromStorage({state, rootState}) {
+		getSettingFromStorage({rootState,state}) {
 			let quality = localStorage.getItem('setting-quality');
 			let frames = localStorage.getItem('setting-frames');
+			let encoder = localStorage.getItem('setting-encoder');
+			let asmVer = localStorage.getItem('setting-asmVer');
 			
 			if(quality) {
 				state.quality = quality;
 			}
 			if(frames) {
 				state.frames = frames;
+			}
+			if(encoder) {
+				state.encoder = encoder;
+			}
+			if(asmVer) {
+				rootState.convertVer = asmVer;
 			}
 		}
 		

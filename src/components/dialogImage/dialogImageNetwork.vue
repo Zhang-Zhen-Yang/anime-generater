@@ -3,7 +3,7 @@
       <div style="padding: 10px;">
         <table style="table-layout:fixed;width: 100%;">
           <tr>
-            <td style="width: 8em;">
+            <td class="width1-4">
               <span class="font14">请输入图片链接:</span>
             </td>
             <td style="position: relative;">

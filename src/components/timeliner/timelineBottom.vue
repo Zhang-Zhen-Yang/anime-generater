@@ -11,7 +11,7 @@
     </div>
     <span id="log"></span>
     <!--asm-->
-    <div id="asm-status">
+    <div id="asm-status" :title="'ver.'+ asmVersion" @dblclick="showSwitchDialog">
       <div class="asm-status asm-status-initing" v-if="asmInitedStatus == 'initing'" title="正在加载视频生成库文件">
         <material-spinner></material-spinner>
       </div>
@@ -56,6 +56,9 @@ export default {
     },
     asmInitedStatus() {
       return  this.$store.state.asmInitedStatus;
+    },
+    asmVersion() {
+      return this.$store.state.convertVer;
     }
   },
   methods: {
@@ -75,6 +78,9 @@ export default {
     },
     menuClick(val) {
       this.$store.dispatch('layerAction', {type: 0, layerType: val})
+    },
+    showSwitchDialog() {
+      this.$store.state.dialogSetting.switchShow = true;
     }
   },
   created() {

@@ -14,6 +14,100 @@
         <img v-if="cLayer && cLayer.type=='image'" :src="cLayer.pic_url" alt="" style="max-width: 100%;">
       </mask-replace>
     </div>
+    <!--色彩调节-->
+    <div class="c-layer-title">
+      <span class="prop-name">色彩调节</span>
+    </div>
+    <div style="padding-left: 15px;">
+      <table cellspacing="0" cellpadding="0" style="width: 100%;">
+        <tr>
+          <td class="width1-4">亮度</td>
+          <td class="width1-4">
+            <num-resize
+              v-model="brightness"
+              :min="-255"
+              :max="255"
+              @start="startSetValue"
+              @change="initChange({type:'brightness',value: brightness, updateColorMatrix: true})">
+              <span >
+                {{ brightness }}
+              </span>
+            </num-resize>
+          </td>
+          <td class="width1-4">
+            对比度
+          </td>
+          <td>
+            <num-resize
+              v-model="contrast"
+              :min="-100"
+              :max="100"
+              @start="startSetValue"
+              @change="initChange({type:'contrast',value: contrast, updateColorMatrix: true})">
+              <span >
+                {{ contrast }}
+              </span>
+            </num-resize>
+          </td>
+        </tr>
+        <tr>
+          <td class="width1-4">色相</td>
+          <td>
+            <num-resize
+              v-model="hue"
+              :min="-180"
+              :max="180"
+              @start="startSetValue"
+              @change="initChange({type:'hue',value: hue, updateColorMatrix: true})">
+              <span >
+                {{ hue }}
+              </span>
+            </num-resize>
+          </td>
+          <td>
+            饱合度
+          </td>
+          <td>
+            <num-resize
+              v-model="saturation"
+              :min="-100"
+              :max="100"
+              @start="startSetValue"
+              @change="initChange({type:'saturation',value: saturation, updateColorMatrix: true})">
+              <span >
+                {{ saturation }}
+              </span>
+            </num-resize>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!--模糊-->
+    <div class="c-layer-title">
+      <span class="prop-name">模糊</span>
+    </div>
+    <div style="padding-left: 15px;">
+      <table cellspacing="0" cellpadding="0" style="width: 100%;">
+        <tr>
+          <td class="width1-4">blur</td>
+          <td>
+            <num-resize
+              v-model="blur"
+              :min="0"
+              :max="100"
+              @start="startSetValue"
+              @change="initChange({type:'blur',value: blur, updateColorMatrix: true})">
+              <span >
+                {{ blur }}
+              </span>
+            </num-resize>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
     <!--投影-->
     <div class="c-layer-title">
       <span class="prop-name">投影</span>
@@ -21,8 +115,8 @@
     <div style="padding-left: 15px;">
       <table cellspacing="0" cellpadding="0" style="width: 100%;">
         <tr>
-          <td style="width: 8em;">offsetX</td>
-          <td colspan="2">
+          <td class="width1-4">offsetX</td>
+          <td class="width1-4">
             <num-resize
               v-model="shadowOffsetX"
               @start="startSetValue"
@@ -31,12 +125,11 @@
                 {{ shadowOffsetX }}
               </span>
             </num-resize>
-            <input type="number" v-if="false" v-model="shadowOffsetX" @change="initChange({type:'shadowOffsetX',value: shadowOffsetX})">
           </td>
-        </tr>
-        <tr>
-          <td>offsetY</td>
-          <td colspan="2">
+          <td class="width1-4">
+            offsetY
+          </td>
+          <td>
             <num-resize
               v-model="shadowOffsetY"
               @start="startSetValue"
@@ -45,12 +138,11 @@
                 {{ shadowOffsetY }}
               </span>
             </num-resize>
-            <input type="number" v-if="false" v-model="shadowOffsetY" @change="initChange({type:'shadowOffsetY',value: shadowOffsetY})">
           </td>
         </tr>
         <tr>
           <td>blur</td>
-          <td colspan="2">
+          <td colspan="3">
             <num-resize
               v-model="shadowBlur"
               @start="startSetValue"
@@ -60,7 +152,6 @@
                 {{ shadowBlur }}
               </span>
             </num-resize>
-            <input type="number" v-if="false" v-model="shadowBlur" @change="initChange({type:'shadowBlur',value: shadowBlur})">
           </td>
         </tr>
         <tr>
@@ -68,7 +159,7 @@
           <td v-if="false">
             <div class="color-dot" :style="{backgroundColor: shadowColor}"></div>&nbsp;
           </td>
-          <td colspan="2">
+          <td colspan="3">
             <color-picker title="颜色" v-model="shadowColor" :showTitle="false" @start="startSetValue"></color-picker>
           </td>
         </tr>
@@ -174,6 +265,61 @@ export default {
         this.update();
       }
     },
+    // 亮度
+    brightness: {
+      get() {
+        return this.cLayer.brightness;
+      },
+      set(val) {
+        // this.as();
+        this.cLayer.brightness = val;
+        this.update(true, 'color');
+      }
+    },
+    // 对比度
+    contrast: {
+      get() {
+        return this.cLayer.contrast;
+      },
+      set(val) {
+        // this.as();
+        this.cLayer.contrast = val;
+        this.update(true, 'color');
+      }
+    },
+    // 饱和度
+    saturation: {
+      get() {
+        return this.cLayer.saturation;
+      },
+      set(val) {
+        // this.as();
+        this.cLayer.saturation = val;
+        this.update(true, 'color');
+      }
+    },
+    // 色调
+    hue: {
+      get() {
+        return this.cLayer.hue;
+      },
+      set(val) {
+        // this.as();
+        this.cLayer.hue = val;
+        this.update(true, 'color');
+      }
+    },
+    // 模糊
+    blur: {
+      get() {
+        return this.cLayer.blur;
+      },
+      set(val) {
+        // this.as();
+        this.cLayer.blur = val;
+        this.update(true, 'blur');
+      }
+    },
   },
   methods: {
         // 添加历史记录
@@ -205,14 +351,46 @@ export default {
         this.$store.dispatch('imageChange', {img});
       }
     },
-    initChange({type, value}){
-
+    initChange({type, value, updateColorMatrix = false}){
+      if(updateColorMatrix) {
+        this.updateColorMatrix();
+      }
     },
-    update() {
+    updateColorMatrix() {
+      let colorMatrix = new createjs.ColorMatrix(
+        this.brightness || 0,
+        this.contrast || 0,
+        this.saturation || 0,
+        this.hue || 0,
+      );
+      let colorMatrixFilter = new createjs.ColorMatrixFilter(colorMatrix);
+
+      this.cLayer.obj.filters[0] = colorMatrixFilter;
+      this.cLayer.obj.updateCache();
+    },
+    updateBlur() {
+      let blurFilter = new createjs.BlurFilter(this.blur, this.blur, 2);
+      this.cLayer.obj.filters[1] = blurFilter;
+      this.cLayer.obj.updateCache();
+    },
+    update(throttle, type) {
       let {topIndex, subIndex} = this.$store.state.tl; 
       this.$store.dispatch('updateTween', {topIndex, subIndex});
+      if(throttle) {
+        let curTime = Date.now();
+        if(curTime - this.lastTime > 200) {
+          this.lastTime = curTime;
+          if(type == 'color') {
+            this.updateColorMatrix();
+          } else if(type == 'blur'){
+            this.updateBlur();
+          }
+        }
+      }
+
     },
     startSetValue() {
+      this.lastTime = Date.now();
       // alert('dd');
       this.as();
       this.$store.dispatch('startSetValue');

@@ -75,33 +75,6 @@ const store = {
 				name: '感动催泪的背景音乐',
 				url: '11.mp3'
 			},
-
-
-
-
-
-
-
-			/*{
-				name: '绯闻女孩 - Good Day',
-				url: 'audio/绯闻女孩 - Good Day.mp3',
-			},
-			{
-				name: '欧美群星-Ima Boss(Meek Mill and Rick Ross)',
-				url: 'audio/欧美群星-Ima Boss(Meek Mill and Rick Ross).mp3',
-			},
-			{
-				name: 'wav 欧美群星-Ima Boss(Meek Mill and Rick Ross)',
-				url: 'audio/欧美群星-Ima Boss(Meek Mill and Rick Ross)_WAV.wav',
-			},
-			{
-				name: '早晨轻松愉快的音乐',
-				url: 'audio/早晨轻松愉快的音乐.wav',
-			},
-			{
-				name: '鈴木雅之,伊原六花 - ラブ・ドラマティック (TV Size)',
-				url: 'audio/鈴木雅之,伊原六花 - ラブ・ドラマティック (TV Size).mp3',
-			},*/
 		].map((item)=>{return {name: item.name,url: `${window.audioAssets}${item.url}`}})
 
 	},
@@ -149,10 +122,15 @@ const store = {
 						let blob = xhr.response;
 						if(blob) {
 							callback(blob);
+							// alert('加载成功！');
+							commit('showSnackbar',{
+								text: '加载背景音乐成功！',
+								timeout: 1000
+							});
 						}
 					} else {
 						commit('showSnackbar', {
-							text: '加载出错！',
+							text: '加载背景音乐出错！',
 						});
 					}
 				}
@@ -167,19 +145,17 @@ const store = {
 			xhr.send(null);
 		},
 
-
 		// 获取宝贝列表
 		fetchTemplates({rootState, state, commit},{pageNo = 1}){
 			
 		},
+		// 不用
 		fetchAudio({rootState, state, commit}) {
 			let audioUrl =  `${window.audioAssets}1.a`;
 			http.get(audioUrl,{}).then((res)=>{
 				if(res.status == 200 || res.status == 304) {
 					// let blob = new Blob([Array.prototype.map.call( res.data , function( c ) { return c.charCodeAt(0); } )], {type: "audio/wav"});
 					// let blob = new Blob([res.data], {type: "audio/wav"});
-					
-
 					try{
 						// console.log(res.data.code);
 						// 将base64解码
@@ -218,6 +194,7 @@ const store = {
 				}
 			})
 		},
+		// 不用
 		fetchAudioNew({rootState, state, commit}, {item}) {
 			state.selectedAudioID = item.id;
 			let audioUrl =  `${window.audioAssets}${item.url}`;
@@ -228,30 +205,8 @@ const store = {
 			document.body.appendChild(sn);
 
 			return;
-			http.get(audioUrl,{}).then((res)=>{
-				console.log(res.data.id)
-				let id = res.data.id;
-				state.list.forEach((item, index)=>{
-					if(item.id == id){
-						state.list[index].data = res.data.code;
-					}
-				})
-				
-				/*let bytes = atob(res.data.code);
-				var bytesCode = new ArrayBuffer(bytes.length);
-				// 转换为类型化数组
-				var byteArray = new Uint8Array(bytesCode);
-				
-				// 将base64转换为ascii码
-				for (var i = 0; i < bytes.length; i++) {
-					byteArray[i] = bytes.charCodeAt(i);
-				}
-				// 生成Blob对象（文件对象）
-				let b =  new Blob( [bytesCode] , {type : 'audio/mp3'});
-				// console.log(b);
-				rootState.audio = b;*/
-			})
 		},
+		//  不用
 		jsonpCallback({rootState, state, commit}, data) {
 
 			let id = data.id;
@@ -265,7 +220,7 @@ const store = {
 				document.body.removeChild(sn);
 			}
 			if(!rootState.playing) {
-				commit('togglePlayState')
+				commit('togglePlayState');
 			}
 		}
 		

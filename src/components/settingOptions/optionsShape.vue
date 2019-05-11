@@ -17,7 +17,7 @@
       <!--形状属性 多边形-->
       <table cellspacing="0" cellpadding="0" style="width:100%;" v-if="shapeType == 'polyStar'">
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">边数</span>
           </td>
           <td>
@@ -35,7 +35,7 @@
         </tr>
         <!--内陷-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">内陷</span>
           </td>
           <td>
@@ -54,7 +54,7 @@
         </tr>
         <!--半径-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">半径</span>
           </td>
           <td>
@@ -72,7 +72,7 @@
         </tr>
         <!--颜色-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">fill</span>
           </td>
           <td>
@@ -87,7 +87,7 @@
         
         <!--半径-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">半径</span>
           </td>
           <td>
@@ -105,7 +105,7 @@
         </tr>
         <!--颜色-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">fill</span>
           </td>
           <td>
@@ -120,7 +120,7 @@
         
         <!--半径-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">圆角半径</span>
           </td>
           <td>
@@ -138,7 +138,7 @@
         </tr>
         <!--宽-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">width</span>
           </td>
           <td>
@@ -156,7 +156,7 @@
         </tr>
         <!--半径-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">height</span>
           </td>
           <td>
@@ -174,7 +174,7 @@
         </tr>
         <!--颜色-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">fill</span>
           </td>
           <td>

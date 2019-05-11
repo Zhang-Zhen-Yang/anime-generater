@@ -1,5 +1,5 @@
 <template>
-  <div class="timeline-tween-video-length" :style="style">
+  <div class="timeline-tween-video-length" :style="style" ref="video-length-block">
     <div :data-timestamp="item.timestamp" v-if="item.videoObj" class="video-length-inner" :style="{width: (item.videoObj.canvasList.length - 1) * item.interval / videoDuration *100 + '%'}">
       <!--{{ item.timestamp }} || {{ item.videoObj.canvasList.length }}-->
     </div>
@@ -25,11 +25,20 @@ export default {
           }
         ]
       }
-    }
+    },
+    topIndex: {
+      type: Number,
+      defatult: -1
+    },
+    subIndex: {
+      type: Number,
+      defatult: -1
+    },
   },
   data () {
     return {
-      msg: 'timeline-tween-video-length'
+      msg: 'timeline-tween-video-length',
+      dragging: false,
     }
   },
   computed: {
@@ -54,10 +63,19 @@ export default {
       
       // console.log('videoDuration', this.videoDuration);
       // console.log('this.tlDuration', this.tlDuration);
+      let videoStartTime = this.item.videoStartTime;
+
+      let left = (videoStartTime / this.tlDuration) * 100;
+      console.log('left----------------------------------------------------------', left);
+      let borderLeft = this.item.videoFillBefore ? 'none': '1px solid red';
+      let borderRight = this.item.videoFillAfter ? 'none': '1px solid red';
       return {
-        left: `${min}%`,
+        left: `${left}%`,
         width: `${this.videoDuration / this.tlDuration * 100}%`,
         minWidth: '0',
+        borderLeft,
+        borderRight,
+        overflow: 'hidden'
       }
     },
     progressStyle() {
@@ -70,11 +88,59 @@ export default {
     }
   },
   methods: {
+    as() {
 
+    },
+    bindDrag() {
+      this.$vb.draggable({
+        containment: 'parent',
+        axis: 'x',
+        start: () => {
+          this.dragging = true;
+          this.as();
+          
+        },
+        stop: (e, ui) => {
+          this.dragging = false;
+
+          //this.$store.dispatch('updateTween', {topIndex: this.topIndex, subIndex: this.subIndex});
+          let originalPosition = ui.originalPosition;
+          let position = ui.position;
+          let totalWidth = this.$vb.parent().width();
+          let offset = position.left;
+
+          let totalPosition = offset / totalWidth * this.tlDuration;
+          console.log(totalPosition);
+          this.item.videoStartTime = totalPosition
+          this.$store.dispatch('updateTween', {topIndex: this.topIndex, subIndex: this.subIndex});
+
+        },
+        drag: (e, ui)=>{
+          // console.log(ui);
+          /*let originalPosition = ui.originalPosition;
+          let position = ui.position;
+          let totalWidth = this.$tweensMoveBlock.parent().width();
+          let offset = position.left - originalPosition.left;
+
+          let totalPosition = offset / totalWidth * this.tlDuration;
+          console.log(totalPosition);
+          console.log(this.dragStartPositionList);
+          this.currentTween.forEach((item, index)=>{
+            item.time = this.dragStartPositionList[index] + totalPosition;
+          })*/
+        }
+
+      })
+    }
   },
   created() {
     
   },
+  mounted() {
+    this.vb = this.$refs['video-length-block'];
+    this.$vb = $(this.vb);
+    this.bindDrag();
+  }
 }
 </script>
 

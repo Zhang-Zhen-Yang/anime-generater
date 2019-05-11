@@ -8,8 +8,9 @@
         <block-slice slot="e" :staticIndex="1" :staticValue="timelineHeight + 'px'">
           <block-slice slot="e" dir="horizontal" :staticIndex="0" :staticValue="'60px'">
             <div id="left-bar" slot="s" style="background-color: #2C2C2C;height: 100%;">
-              left-bar
+              <!--left-bar-->
               <undoredo></undoredo>
+              <leftBar></leftBar>
             </div>
             <!--工作区-->
             <workSpace slot="e"></workSpace>
@@ -31,7 +32,11 @@
     <dialogDownload v-show="dialogDownload.show"></dialogDownload>
     <dialogLoading v-if="uploading"></dialogLoading>
     <dialogVideoClip v-if="dialogVideoClip.show"></dialogVideoClip>
+    <dialogSetting v-if="dialogSetting.show"></dialogSetting>
+    <dialogFeedBack v-show="dialogFeedBack.show"/>
+    <dialogAsmSwitch v-if="dialogSetting.switchShow"/>
     <contextMenu></contextMenu>
+    <snackbar ref="snackbar"></snackbar>
   </div>
 </template>
 
@@ -45,9 +50,13 @@ import dialogGenerate from './components/dialogGenerate/dialogGenerate';
 import dialogDownload from './components/dialogDownload/dialogDownload';
 import dialogLoading from './components/dialogLoading/dialogLoading';
 import dialogVideoClip from './components/dialogVideoClip/dialogVideoClip';
+import dialogFeedBack from './components/dialogFeedBack/dialogFeedBack';
 import contextMenu from './components/contextMenu';
 import undoredo from './components/undoredo.vue';
 import audioTrigger from './components/audioTrigger.vue';
+import dialogSetting from './components/dialogSetting/dialogSetting.vue';
+import dialogAsmSwitch from './components/dialogSetting/dialogAsmSwitch.vue';
+import leftBar from './components/leftBar.vue';
 export default {
   name: 'app',
   components: {
@@ -60,9 +69,13 @@ export default {
     dialogImage,
     dialogDownload,
     dialogVideoClip,
+    dialogFeedBack,
     contextMenu,
     undoredo,
-    audioTrigger
+    audioTrigger,
+    dialogSetting,
+    leftBar,
+    dialogAsmSwitch
   },
   data () {
     return {
@@ -86,10 +99,19 @@ export default {
     dialogVideoClip() {
       return this.$store.state.dialogVideoClip;
     },
+    dialogSetting() {
+      return this.$store.state.dialogSetting;
+    },
+    dialogFeedBack() {
+      return this.$store.state.dialogFeedBack;
+    },
     // 是否在上传
     uploading() {
       return this.$store.state.dialogDownload.uploading;
-    }
+    },
+    snackbar(){
+      return this.$store.state.snackbar;
+    },
   },
   methods: {
 
@@ -134,17 +156,21 @@ export default {
           this.timelineHeight = height;
         }
       })
+
+      // 右侧配置面板可调整宽度
       $('#options-panel-wrap').resizable({
         handles: "w",
-        minWidth: 100,
-        maxWidth: 400,
+        minWidth: 300,
+        maxWidth: 600,
         // grid: [ 100,],
         resize: (e, ui) =>{
           let width = ui.size.width;
           this.settingPanelWidth = width;
         }
       })
+      
     })
+
     this.interval = setInterval(()=>{
       if(window.timeline) {
         let position = window.timeline.position;
@@ -163,8 +189,19 @@ export default {
 
     this.$store.dispatch('initnew');
 
-    this.$store.dispatch('convertAudioTest');
+    // this.$store.dispatch('convertAudioTest');
   },
+  watch: {
+    snackbar:{
+      handler(e){
+        if(e.show){
+          this.$refs.snackbar.show(this.snackbar.text, this.snackbar.timeout);
+          this.$store.state.snackbar.show=false;
+        }
+      },
+      deep: true,
+    }
+  }
 }
 </script>
 

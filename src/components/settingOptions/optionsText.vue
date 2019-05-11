@@ -37,7 +37,7 @@
       <table cellspacing="0" cellpadding="0" style="width:100%;">
         <!--边宽-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">边宽</span>
           </td>
           <td>
@@ -55,7 +55,7 @@
         </tr>
         <!--描边颜色-->
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">描边颜色</span>
           </td>
           <td>
@@ -73,7 +73,7 @@
     <div style="padding-left: 15px;">
       <table cellspacing="0" cellpadding="0" style="width: 100%;">
         <tr>
-          <td style="width: 8em;">offsetX</td>
+          <td class="width1-4">offsetX</td>
           <td colspan="2">
             <num-resize
               v-model="shadowOffsetX"

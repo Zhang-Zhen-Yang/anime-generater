@@ -9,7 +9,7 @@
       <div style="padding-left: 15px;">
         <table cellspacing="0" cellpadding="0" style="width: 100%;">
           <tr>
-            <td style="width: 8em;">文本</td>
+            <td class="width1-4">文本</td>
             <td class="relative">
               <textarea
                 v-model="text"
@@ -94,14 +94,14 @@
         <table cellspacing="0" cellpadding="0" style="width: 100%;">
           <!--show-->
           <tr>
-            <td style="width: 8em;">show</td>
+            <td class="width1-4">show</td>
             <td class="relative">
               <checkbox v-model="showSubtitle"></checkbox>
             </td>
           </tr>
           <!--fontSize-->
           <tr>
-            <td style="width: 8em;">fontSize</td>
+            <td class="width1-4">fontSize</td>
             <td class="relative">
               <num-resize
                 v-model="fontSize"
@@ -119,7 +119,7 @@
           </tr>
           <!--color-->
           <tr>
-            <td style="width: 8em;">color</td>
+            <td class="width1-4">color</td>
             <td class="relative">
               <color-picker title="颜色" v-model="color" :showTitle="false" @start="()=>{}">
               </color-picker>
@@ -128,7 +128,7 @@
           </tr>
           <!--font-->
           <tr>
-            <td style="width: 8em;">font</td>
+            <td class="width1-4">font</td>
             <td class="relative">
               <select name="" id="" v-model="fontFamily" style="background-color:#57595a;color:white;border-radius:2px;">
                 <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
@@ -137,7 +137,7 @@
           </tr>
           <!--outline-->
           <tr>
-            <td style="width: 8em;">outline</td>
+            <td class="width1-4">outline</td>
             <td class="relative">
               <num-resize
                 v-model="outline"
@@ -155,7 +155,7 @@
           </tr>
           <!--outlineColor-->
           <tr>
-            <td style="width: 8em;">outlineColor</td>
+            <td class="width1-4">outlineColor</td>
             <td class="relative">
               <color-picker title="颜色" v-model="outlineColor" :showTitle="false" @start="()=>{}">
               </color-picker>
@@ -327,6 +327,7 @@ export default {
         this.textOrigin = voice.tex;
         this.per = voice.per;
         this.pit = voice.pit;
+        this.spd = voice.spd;
       }
     },
     // 获取音频

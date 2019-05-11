@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anime Editor</title>
+    <link rel="shortcut icon" href="./assets/favicon.ico">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      // var remote = './';
+      // window.remote = 'http://192.168.1.134:8090/wonbaoWeb/';
+      window.remote = 'http://wdb.wonbao.net/';
+        // 图片目录地址
+        window.assets = '/assets/';
+        // 音频目录地址
+        window.audioAssets = 'http://localhost:8080/audio/';
+        window.asm = 'http://localhost:8080/script/ffmpeg_asm.js';
+        window.asm2 = 'http://localhost:8080/script2/ffmpeg-all-codecs.js';
+        // window.asm = 'https://oss.wonbao.net/wonbao-graphicvideo/script/ffmpeg_asm.js';
+        window.user = {
+
+        }
+        // wb wn
+        window.app = 'wb';
+    </script>
+    <script src="./script/createjs-2015.11.26.min.js"></script>
+    <script src="./script/jquery-1.11.0.min.js"></script>
+    <script src="./script/jquery-ui.js"></script>
+    <script src="./script/jquery.ui.rotatable.js"></script>
+    <script src="./script/webfontloader.js"></script>
+    <script src="./script/waveEditor.js"></script>
+    <!--<script src="./script/baidu_tts_cors.js"></script>-->
+    <!--<script src="/dist/timeliner.js"></script>-->
+    <script src="/dist/anime.build.js"></script>
+  </body>
+</html>

@@ -8,7 +8,7 @@
     <div style="padding-left: 15px;">
         <table cellspacing="0" cellpadding="0" style="width: 100%;">
           <tr>
-            <td style="width: 8em;">宽</td>
+            <td class="width1-4">宽</td>
             <td colspan="2">
               <num-resize
                 v-model="projectWidth"
@@ -22,7 +22,7 @@
             </td>
           </tr>
           <tr>
-            <td style="width: 8em;">高</td>
+            <td class="width1-4">高</td>
             <td colspan="2">
               <num-resize
                 v-model="projectHeight"

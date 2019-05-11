@@ -99,7 +99,7 @@ function processInWebWorker() {
 }
 
 
-function accessWorderNew() {
+function accessWorkerNew() {
 	return new Promise((resolve, reject)=>{
 		let initWorder = processInWebWorker();
 		/*initWorder.postMessage({
@@ -221,4 +221,4 @@ else {
 }
 }
 
-export { convertStreamsNew, accessWorderNew };
+export { convertStreamsNew, accessWorkerNew };

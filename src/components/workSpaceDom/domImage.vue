@@ -13,6 +13,7 @@
 <script>
 import  utilTimeline from '../../script/utilTimeline.js';
 import  util from '../../script/util.js';
+import obj from '../../script/canvasRender.js';
 export default {
   name: 'dom-image',
   props: {
@@ -76,10 +77,16 @@ export default {
       return this.tl.currentTween;
     },
     objWidth() {
-      return this.obj.image.width * Math.abs(this.obj.scaleX);
+      let objWidth = this.obj.image.width * Math.abs(this.obj.scaleX);
+      // let boundWidth = this.obj.getBounds().width * this.obj.scaleX;
+      // console.log('image objWidth', objWidth);
+      // console.log('image bound objWidth', boundWidth);
+      return objWidth;// boundWidth; //objWidth;
     },
     objHeight() {
-      return this.obj.image.height * Math.abs(this.obj.scaleY);
+      let objHeight = this.obj.image.height * Math.abs(this.obj.scaleY);
+      // let boundHeight = this.obj.getBounds().height * this.obj.scaleY;
+      return objHeight;// boundHeight;
     },
     pSize() {
       let {width, height} = this.parentObj.getBounds();
@@ -112,7 +119,7 @@ export default {
         top:  (top - height / 2) * pScaleY * this.zoom + 'px',
         width: width  * pScaleX * this.zoom + 'px',
         height: height * pScaleY * this.zoom+ 'px',
-        transform: `${this.obj.scaleX < 0 ?'scaleX(-1)': ''} ${this.obj.scaleY < 0 ?'scaleY(-1)': ''} rotateZ(${this.obj.rotation}deg)`
+        transform: `${this.obj.scaleX < 0 ?'scaleX(-1)': ''} ${this.obj.scaleY < 0 ?'scaleY(-1)': ''} rotateZ(${this.obj.rotation}deg) `
       }
     },
     dragStyle() {
@@ -122,7 +129,9 @@ export default {
       let style = {
         position: 'absolute',
         left: this.style.left,
-        top: this.style.top
+        top: this.style.top,
+        // transform: `translate(${-50 * this.zoom}px, ${-50 * this.zoom}px)`
+
       };
       if(this.topIndex == this.index) {
         style['z-index'] = 1000;

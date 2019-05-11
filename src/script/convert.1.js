@@ -53,7 +53,7 @@ function processInWebWorker() {
 }
 
 
-function accessWorder() {
+function accessWorker() {
 	return new Promise((resolve, reject)=>{
 		let initWorder = processInWebWorker();
 		initWorder.onmessage = function(event) {
@@ -312,7 +312,9 @@ function combineAudio(array, callback, duration) {
 	}).join('')
 	// let commands = `${inputs.join(' ')} -filter_complex amix=inputs=${audioCount}:duration=longest:dropout_transition=${audioCount} -ar 24k -ab 768k output.wav`;
 	// let commands = `${inputs.join(' ')} -filter_complex ${volume};${inputsVolume}amix=inputs=${audioCount}:duration=longest:dropout_transition=${audioCount} -ar 24k -ab 768k output.wav`;
-	let commands = `${inputs.join(' ')} -filter_complex ${volume};${inputsVolume}amix=inputs=${audioCount}:duration=longest:dropout_transition=${2} -ar 24k -ab 768k output.wav`;
+	// let commands = `${inputs.join(' ')} -filter_complex ${volume};${inputsVolume}amix=inputs=${audioCount}:duration=longest:dropout_transition=${2} -ar 24k -ab 768k output.wav`;
+	let commands = `${inputs.join(' ')} -filter_complex ${volume};${inputsVolume}amix=inputs=${audioCount}:dropout_transition=${2} -ar 24k -ab 768k -t ${duration} output.wav`;
+
 	console.log(commands);
 	// let commands = `-i input1.wav -i input0.wav  -filter_complex amerge output.wav`;
 	// let commands = `ffmpeg -filters`;
@@ -362,4 +364,4 @@ function combineAudio(array, callback, duration) {
 	}
 }
 
-export { convertStreams, accessWorder, convertImageToVideo, combineAudio };
+export { convertStreams, accessWorker, convertImageToVideo, combineAudio };

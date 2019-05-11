@@ -1,6 +1,6 @@
 <template>
   <div class="timeline-tween-item relative" ref="timeline-tween-item" @dblclick="addTween">
-    <timelineTweenVideoLength v-if="anTween.type == 'video'" :item="anTween" :tween="tweenLocal"></timelineTweenVideoLength>
+    <timelineTweenVideoLength v-if="anTween.type == 'video'" :item="anTween" :tween="tweenLocal" :topIndex="topIndex" :subIndex="subIndex"></timelineTweenVideoLength>
     <timelineTweensMoveBlock :topIndex="topIndex" :subIndex="subIndex" :tween="tweenLocal"></timelineTweensMoveBlock>
     <div
       v-for="t,index in tweenLocal"

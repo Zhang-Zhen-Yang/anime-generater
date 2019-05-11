@@ -7,7 +7,7 @@
     <div style="padding-left: 15px;">
       <table cellspacing="0" cellpadding="0" style="width:100%;">
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">宽</span>
           </td>
           <td>
@@ -24,7 +24,7 @@
           </td>
         </tr>
         <tr>
-          <td style="width: 8em;">
+          <td class="width1-4">
             <span class="prop-name-x">高</span>
           </td>
           <td>
