@@ -107,10 +107,10 @@ export default {
       // alert([left, top]);
       let left = this.obj.x;
       let top = this.obj.y;
-      if(this.isSub) {
+      /* if(this.isSub) {
         left += this.pSize.width /2;
         top += this.pSize.height / 2;
-      }
+      }*/
       let bounds = this.bounds;
       // console.log('this.obj.getBounds()----------',this.obj.getBounds());
       let width = bounds.width * Math.abs(this.obj.scaleX); //this.obj.image.width * Math.abs(this.obj.scaleX);
@@ -199,14 +199,14 @@ export default {
           // alert(initScale);
           if(currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
-            if(this.isSub) {
+            /*if(this.isSub) {
               currentLayer.tween[this.tweenIndex].props.x = x / pScaleX  - this.pSize.width/2;
               currentLayer.tween[this.tweenIndex].props.y = y / pScaleY  - this.pSize.height/2;
 
-            } else {
+            } else {*/
               currentLayer.tween[this.tweenIndex].props.x = x / pScaleX;
               currentLayer.tween[this.tweenIndex].props.y = y / pScaleY;
-            }
+            //}
             currentLayer.tween[this.tweenIndex].props.scaleX = scaleX / initScale / pScaleX;
             currentLayer.tween[this.tweenIndex].props.scaleY = scaleY /initScale / pScaleY;
             this.$store.dispatch('propsChange', {target: this.obj});
@@ -233,13 +233,13 @@ export default {
           // console.log([this.domTextD.style.left,y]);
           this.obj.scaleX = scaleX / pScaleX;
           this.obj.scaleY = scaleY / pScaleY;
-          if(this.isSub) {
+          /*if(this.isSub) {
             this.obj.x = x / pScaleX - this.pSize.width/2;
             this.obj.y = y / pScaleY - this.pSize.height/2;
-          } else {
+          } else {*/
             this.obj.x = x / pScaleX;
             this.obj.y = y / pScaleY;
-          }
+          //}
           this.u();
           // console.log(ui);
         }
@@ -308,13 +308,13 @@ export default {
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
-            if(this.isSub) {
+            /*if(this.isSub) {
               currentLayer.tween[this.tweenIndex].props.x = left / pScaleX - this.pSize.width/2;
               currentLayer.tween[this.tweenIndex].props.y = top / pScaleY - this.pSize.width/2;
-            } else {
+            } else {*/
               currentLayer.tween[this.tweenIndex].props.x = left / pScaleX;
               currentLayer.tween[this.tweenIndex].props.y = top / pScaleY;
-            }
+            //}
             this.$store.dispatch('propsChange', {target: this.obj});
           }
         },
@@ -327,14 +327,14 @@ export default {
           }
           let left = ui.position.left / this.zoom - 0 + (this.objWidth / 2 * pScaleX);
           let top = ui.position.top /this.zoom - 0 + (this.objHeight / 2 * pScaleY);
-          if(this.isSub) {
+          /*if(this.isSub) {
             this.obj.x = left / pScaleX - this.pSize.width/2;
             this.obj.y = top / pScaleY - this.pSize.height/2;
 
-          } else {
+          } else {*/
             this.obj.x = left / pScaleX;
             this.obj.y = top / pScaleY;
-          }
+          //}
           this.u();
           // console.log([left, top]);
         },

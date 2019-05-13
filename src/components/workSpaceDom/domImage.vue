@@ -108,8 +108,8 @@ export default {
         // this.parentObj
         // let {width:pWidth, height:pHeight} = this.parentObj.getBounds();
         // alert([pWidth, pHeight]);
-        left += this.pSize.width /2;
-        top += this.pSize.height / 2;
+        //left += this.pSize.width /2;
+        // top += this.pSize.height / 2;
       }
       let width = this.obj.image.width * Math.abs(this.obj.scaleX);
       let height = this.obj.image.height * Math.abs(this.obj.scaleY);
@@ -202,13 +202,13 @@ export default {
           // alert(initScale);
           if(currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
-            if(this.isSub) {
+            /*if(this.isSub) {
               currentLayer.tween[this.tweenIndex].props.x = x / pScaleX - this.pSize.width/2;
               currentLayer.tween[this.tweenIndex].props.y = y / pScaleY - this.pSize.height/2;
-            } else {
+            } else {*/
               currentLayer.tween[this.tweenIndex].props.x = x / pScaleX;
               currentLayer.tween[this.tweenIndex].props.y = y / pScaleY;
-            }
+            //}
 
             currentLayer.tween[this.tweenIndex].props.scaleX = scaleX / initScale / pScaleX;
             currentLayer.tween[this.tweenIndex].props.scaleY = scaleY /initScale / pScaleY;
@@ -238,13 +238,13 @@ export default {
           this.obj.scaleX = scaleX / pScaleX;
           this.obj.scaleY = scaleY / pScaleY;
 
-          if(this.isSub) {
+          /*if(this.isSub) {
             this.obj.x = x / pScaleX  - this.pSize.width/2;
             this.obj.y = y / pScaleY  - this.pSize.height/2;
-          } else {
+          } else {*/
             this.obj.x = x / pScaleX;
             this.obj.y = y / pScaleY;
-          }
+          // }
           this.u();
           // console.log(ui);
         }
@@ -316,14 +316,14 @@ export default {
           let currentLayer = utilTimeline.getCurrentLayer({rootState: this.$store.state});
           if(currentLayer && currentLayer.tween && currentLayer.tween[this.tweenIndex]) {
             // alert('uuu');
-            if(this.isSub) {
-               currentLayer.tween[this.tweenIndex].props.x = left / pScaleX - this.pSize.width/2;
+            /*if(this.isSub) {
+              currentLayer.tween[this.tweenIndex].props.x = left / pScaleX - this.pSize.width/2;
               currentLayer.tween[this.tweenIndex].props.y = top / pScaleY - this.pSize.height/2;
 
-            } else {
+            } else {*/
               currentLayer.tween[this.tweenIndex].props.x = left / pScaleX;
               currentLayer.tween[this.tweenIndex].props.y = top / pScaleY;
-            }
+            //}
             this.$store.dispatch('propsChange', {target: this.obj});
           }
         },
@@ -337,13 +337,13 @@ export default {
           let left = ui.position.left / this.zoom - 0 + (this.objWidth / 2 * pScaleX);
           let top = ui.position.top / this.zoom - 0 + (this.objHeight / 2 * pScaleY);
           // console.log([ui.position.left, ui.position.top]);
-          if(this.isSub) {
+          /*if(this.isSub) {
             this.obj.x = left / pScaleX - this.pSize.width/2;
             this.obj.y = top / pScaleY - this.pSize.height / 2;
-          } else {
+          } else {*/
             this.obj.x = left / pScaleX;
             this.obj.y = top / pScaleY;
-          }
+          //}
           this.u();
           // console.log([left, top]);
         },

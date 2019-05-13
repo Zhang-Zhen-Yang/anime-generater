@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-11 10:56:25
+ * @Last Modified time: 2019-05-13 14:42:04
  */
 
 import http from '../script/http';
@@ -187,6 +187,13 @@ const store = {
 			dispatch('getSettingFromStorage');
 			window.localImages = {};
 			state.project = demo3;
+			/* dispatch('checkTok').then((res)=>{
+				if(res.success) {
+					alert('ddddd');
+				} else {
+
+				}
+			})*/
 			dispatch('fillVoices', {project: state.project});
 			/* state.project.voices.forEach((item, index)=>{
 				console.log(item);

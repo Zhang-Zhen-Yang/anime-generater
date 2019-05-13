@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-11 09:50:04
+ * @Last Modified time: 2019-05-13 16:51:10
  */
 
  // 时间轴组件
@@ -94,6 +94,7 @@ const store = {
         return;
       }
       dispatch('addStep');
+      let uuid = utilTimeline.getCurrentUUID({rootState: rootState});
       /*if(fromSubIndex < 0 && toSubIndex > -1) {
         return;
       }*/
@@ -160,24 +161,25 @@ const store = {
           } else {
             toDistIndex = shouldToIndex;
           }
+          // alert(toDistIndex);
         }
       
       // 下
       } else {
         console.log([fromIndex, '-------------------',fromSubIndex]);
         // console.log();
+        // alert(fromSubIndex);
         pickItem = rootState.project.layers[fromIndex].children.splice(fromSubIndex,1);
          // 下上
          if(!toIsSub) {
         
           // 下下
           } else {
-            if(fromSubIndex < shouldToIndex) {
-              toDistSubIndex = shouldToIndex;
+            if(fromSubIndex < shouldToSubIndex) {
+              toDistSubIndex = shouldToSubIndex - 1;
             } else {
-              toDistSubIndex = shouldToIndex - 1
+              toDistSubIndex = shouldToSubIndex;
             }
-            // alert(toDistSubIndex);
           }
       }
       
@@ -190,7 +192,6 @@ const store = {
       // console.log(fromObj);
       fromObj.parent.parent.removeChild(fromObj.parent);
 
-
       let toItem;
       // 如果移动到的是第一层
       if(!toIsSub) {
@@ -199,7 +200,7 @@ const store = {
         toItem = rootState.project.layers[toDistIndex].children[0];
       }
       let toObj = originToItem ? originToItem.obj : null;// toItem.obj;
-      let toObjWithContainer = originToItem && originToItem.obj ? originToItem.obj.parent : null; //toItem.obj.parent;
+      let toObjWithContainer = (originToItem && originToItem.obj) ? originToItem.obj.parent : null; //toItem.obj.parent;
      
 
       // 如果是移动到上层
@@ -215,7 +216,7 @@ const store = {
         rootState.project.layers.splice(toDistIndex,0,pickItem[0]);
         toObjWithContainer.parent.addChildAt(fromObjWithContainer, toDistIndex + 1);
 
-      } else {
+      } else { // 移动到下层
         /* if(position == 0) {
           rootState.project.layers[toIndex].children.splice(toSubIndex,0,pickItem[0]);
           toObjWithContainer.parent.addChildAt(fromObjWithContainer, toSubIndex);
@@ -226,8 +227,10 @@ const store = {
         rootState.project.layers[toDistIndex].children.splice(toDistSubIndex,0,pickItem[0]);
         if(dropInNoneContainer) {
           // alert([toIndex, toDistIndex]);
-          rootState.project.layers[toDistIndex].obj.addChildAt(fromObjWithContainer, toDistSubIndex)
+          // rootState.project.layers[toDistIndex].obj.addChildAt(fromObjWithContainer, toDistSubIndex)
+          rootState.project.layers[toDistIndex].obj.addChildAt(fromObjWithContainer);
         } else {
+          // alert(toDistSubIndex);
           toObjWithContainer.parent.addChildAt(fromObjWithContainer, toDistSubIndex);
         }
       }
@@ -241,6 +244,7 @@ const store = {
       // window.stage.swipe();
       window.stage.swapChildren(nextChild, prevChild);*/
       dispatch('checkAsMask', {layers: rootState.project.layers});
+      utilTimeline.setActiveIndexByUUID({rootState: rootState, uuid});
 		},
     // 添加图层，文件夹， 删除图层
 		layerAction({state, rootState,commit,dispatch}, {type, layerType}) {
@@ -280,8 +284,8 @@ const store = {
     removeLayer({state, rootState,commit,dispatch}, {}) {
       // alert('ddd');
       let activeLayerIndex = rootState.activeLayerIndex;
-      let topIndex = typeof activeLayerIndex[0] == 'number' ? activeLayerIndex[0] : -1;
-      let subIndex = typeof activeLayerIndex[1] == 'number' ? activeLayerIndex[1] : -1;
+      let topIndex = state.topIndex; //typeof activeLayerIndex[0] == 'number' ? activeLayerIndex[0] : -1;
+      let subIndex = state.subIndex; // typeof activeLayerIndex[1] == 'number' ? activeLayerIndex[1] : -1;
       if(topIndex >-1 && subIndex > -1) {
         let currentLayer = rootState.project.layers[topIndex].children[subIndex] || {};
         let removeItem = rootState.project.layers[topIndex].children.splice(subIndex, 1);
@@ -297,6 +301,9 @@ const store = {
         window.timeline.removeTween(currentTweenObj);*/
         let currentTweenObj = currentLayer.tweenObj;
         window.timeline.removeTween(currentTweenObj);
+        if(!rootState.project.layers[topIndex].children[subIndex]) {
+          state.subIndex = rootState.project.layers[topIndex].children.length - 1;
+        }
         
       } else if(topIndex > -1){
         let currentLayer = rootState.project.layers[topIndex] || {};
@@ -307,6 +314,10 @@ const store = {
         }
         let removeItemObj = removeItem[0].obj;
         removeItemObj.parent.parent.removeChild(removeItemObj.parent);
+        if(!rootState.project.layers[topIndex]) {
+          // alert(rootState.project.layers.length - 1);
+          state.topIndex = rootState.project.layers.length - 1;
+        }
         
 
         /*let currentContainer = window.stage.children[topIndex + 1];
@@ -552,12 +563,20 @@ const store = {
         let voices = rootState.project.voices;
         if(voices[voiceIndex]) {
           dispatch('addStep');
-          voices.splice(voiceIndex,1);
+          let removedItem = voices.splice(voiceIndex,1);
           if(!voices[voiceIndex]) {
             state.voiceIndex = voiceIndex - 1;
           }
+          let tweenObjUUID = removedItem[0].tweenObjUUID;
+          // console.log(removedItem);
+          if(tweenObjUUID) {
+            let tweenObj = window.uuidMap[tweenObjUUID];
+            window.timeline.removeTween(tweenObj);
+          }
+          dispatch('renderSubtitle');
         }
       } else {
+
         let topIndex = state.topIndex;
         let subIndex = state.subIndex;
         let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
@@ -567,8 +586,12 @@ const store = {
             dispatch('addStep');
             currentLayer.tween.splice(tweenIndex,1);
             dispatch('updateTween', {topIndex, subIndex});
+            if(!currentLayer.tween[tweenIndex] && tweenIndex > 0) {
+              state.tweenIndex -= 1;
+            }
           }
         }
+        
       }
     },
     // 鼠标按下事件

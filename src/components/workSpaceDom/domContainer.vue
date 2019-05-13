@@ -19,7 +19,7 @@
         ></domImage>
         <!--容器下的text-->
         <domText
-          v-if="i.type == 'text'|| i.type == 'shape'"
+          v-if="i.type == 'text'|| i.type == 'shape' || i.type == 'video'"
           :isShape="i.type == 'shape'"
           :isSub="true"
           :obj="i.obj"

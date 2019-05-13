@@ -218,12 +218,15 @@ let obj = {
         {
           action: 'to',
           props: {
+            regX: 'ow / 2',
+            regY: 'oh / 2',
             scaleX: 1,
             scaleY: 1,
             x: 0,
             y: 0,
             rotation: 0,
-            alpha: 1
+            alpha: 1,
+
           },
           time: 0,
           ease: 'linear',

@@ -261,12 +261,13 @@ function convertImageToVideo2(imagesArray, audio, {f, t, b}, callback,size, enco
 	// let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -t ${t} -b:v ${b / 10}k -t ${t} -pix_fmt yuvj420p -preset slow -profile:v baseline -q:v 4 -s  ${size} output.mp4`; // 不可用
 	
 	
-	let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t} -vcodec mpeg4 -af volume=1dB output.mp4`; // 可用 但不是h.264
+	// let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t} -vcodec mpeg4 -af volume=1dB output.mp4`; // 可用 但不是h.264
+	let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t} -vcodec mpeg4 -af volume=1.5 output.mp4`; // 可用 但不是h.264
 	// let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -t ${t} -b:v ${b / 10}k -t ${t} -pix_fmt yuv420p output.mp4`; // 可用
 	
 	if(encoder == 'H.264') {
 		// alert('H.264');
-		commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -t ${t} -b:v ${b / 10}k -t ${t} -pix_fmt yuv420p output.mp4`;
+		commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -t ${t} -b:v ${b / 10}k -t ${t} -pix_fmt yuv420p -af volume=1.5 output.mp4`;
 	}
 
 	let args = util.parseArguments(commands);
@@ -348,7 +349,7 @@ function combineAudio2(array, callback, duration) {
 	console.log('duration', duration);
 	let volume =  array.map((item, index)=>{
 		let isLast = index + 1 == array.length;
-		return `[${index}:a]volume=${isLast ? 1 : 1}[a${index +1}]`;
+		return `[${index}:a]volume=${isLast ? 1 : 2}[a${index +1}]`;
 	}).join(';');
 	let inputsVolume = array.map((item, index)=>{
 		return `[a${index+1}]`

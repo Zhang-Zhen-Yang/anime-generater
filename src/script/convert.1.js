@@ -225,7 +225,7 @@ function convertImageToVideo(imagesArray, audio, {f, t, b}, callback) {
 	})
 
 	// let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t}  -af volume=5dB output.mp4`;
-	let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t} -af volume=4dB output.mp4`;
+	let commands = `-r ${f}  -f image2 -i input%d.jpeg ${audio? '-i input.wav' :  '' }  -strict -2 -b:v ${b}k -t ${t} -af volume=1.5 output.mp4`;
 
 	let args = util.parseArguments(commands);
 
@@ -305,7 +305,7 @@ function combineAudio(array, callback, duration) {
 	console.log('duration', duration);
 	let volume =  array.map((item, index)=>{
 		let isLast = index + 1 == array.length;
-		return `[${index}:a]volume=${isLast ? 0.7 : 2}[a${index +1}]`;
+		return `[${index}:a]volume=${isLast ? 1 : 1}[a${index +1}]`;
 	}).join(';');
 	let inputsVolume = array.map((item, index)=>{
 		return `[a${index+1}]`

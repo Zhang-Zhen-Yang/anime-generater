@@ -97,7 +97,8 @@ class VideoCapture {
                             } else {
                                 setTimeout(()=>{
                                     let nextTime = this.video.currentTime + this.interval;
-                                    if(nextTime >= this.video.duration) {
+
+                                    if(nextTime >= this.end_time) {
                                         resolve({
                                             success: true,
                                             cancel: false,
@@ -106,8 +107,18 @@ class VideoCapture {
                                             height: distHeight, // this.video.videoHeight,
                                         })
                                     } else {
-                                        this.video.currentTime = nextTime;
-                                        this.current_time = nextTime;
+                                        if(nextTime >= this.video.duration) {
+                                            resolve({
+                                                success: true,
+                                                cancel: false,
+                                                list: this.canvasList,
+                                                width: distWidth, //this.video.videoWidth,
+                                                height: distHeight, // this.video.videoHeight,
+                                            })
+                                        } else {
+                                            this.video.currentTime = nextTime;
+                                            this.current_time = nextTime;
+                                        }
                                     }
                                 },0);
         

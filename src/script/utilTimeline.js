@@ -29,17 +29,36 @@ let Object = {
         let currentLayer = null;
         if(topIndex > -1 && subIndex > -1) {
             currentLayer = rootState.project.layers[topIndex].children[subIndex];
-           
         } else if(topIndex > -1){
             currentLayer = rootState.project.layers[topIndex];
-           
         }
         return currentLayer;
     },
     // 获取当前的UUID
     getCurrentUUID({rootState}){
         let currentLayer = this.getCurrentLayer({rootState});
+        // console.log(currentLayer);
         return currentLayer ? currentLayer.UUID : null;
+    },
+    // 通过UUID 设置activeindex
+    setActiveIndexByUUID({rootState, uuid}) {
+        console.log('uuid----------------------------------');
+        console.log(uuid);
+        rootState.project.layers.forEach((item, index)=>{
+            let curUUID = item.UUID;
+            if(curUUID ==  uuid) {
+                rootState.tl.topIndex = index;
+                rootState.tl.subIndex = -1;
+            }
+            if(item.type == 'container') {
+                item.children.forEach((cItem, cIndex)=>{
+                    if(cItem.UUID == uuid) {
+                        rootState.tl.topIndex = index;
+                        rootState.tl.subIndex = cIndex;
+                    }
+                })
+            }
+        })
     },
     // 获取当前对象的值
     getCurrentProps({project, obj}) {
@@ -111,7 +130,7 @@ let Object = {
             if(fType == 'video') {
                 this.fillVideoListCheck({project, fUUID, fItem});
             } else if(fType == 'container'){
-                fItem.children.forEach((fChildItem, index)=>{
+                (fItem.children||[]).forEach((fChildItem, index)=>{
                     if(fChildItem.type == "video") {
                         this.fillVideoListCheck({project, fUUID, fItem: fChildItem});
                     }
@@ -126,6 +145,7 @@ let Object = {
 
 
         let prevItem = this.getLayerByVideoTag({layers: project.layers, tag: fItemTag});
+        // console.log('prevItem', prevItem);
 
         if(prevItem) {
             fItem.videoObj = new VideoCapture({
@@ -134,6 +154,7 @@ let Object = {
                 end_time: fItem.end_time,
                 interval: fItem.interval
             });
+            // console.log('fItem', fItem);
             fItem.list = fItem.videoObj.canvasList = prevItem.videoObj.canvasList;
             fItem.videoObj.lastAction = 'success';
             
@@ -179,7 +200,7 @@ let Object = {
                     if(cItem.type == 'video') {
                         let thisTag = `${cItem.start_time}-${cItem.end_time}-${cItem.src}`;
                         if(thisTag == tag) {
-                            findItem = item;
+                            findItem = cItem;
                         }
                     }
                 })

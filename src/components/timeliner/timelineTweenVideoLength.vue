@@ -39,6 +39,7 @@ export default {
     return {
       msg: 'timeline-tween-video-length',
       dragging: false,
+      blockWidth: 0,
     }
   },
   computed: {
@@ -69,6 +70,7 @@ export default {
       console.log('left----------------------------------------------------------', left);
       let borderLeft = this.item.videoFillBefore ? 'none': '1px solid red';
       let borderRight = this.item.videoFillAfter ? 'none': '1px solid red';
+      this.blockWidth = this.videoDuration / this.tlDuration * 100 + '%';
       return {
         left: `${left}%`,
         width: `${this.videoDuration / this.tlDuration * 100}%`,
@@ -88,8 +90,8 @@ export default {
     }
   },
   methods: {
+    // addStep
     as() {
-
     },
     bindDrag() {
       this.$vb.draggable({
@@ -98,7 +100,6 @@ export default {
         start: () => {
           this.dragging = true;
           this.as();
-          
         },
         stop: (e, ui) => {
           this.dragging = false;
@@ -113,6 +114,9 @@ export default {
           console.log(totalPosition);
           this.item.videoStartTime = totalPosition
           this.$store.dispatch('updateTween', {topIndex: this.topIndex, subIndex: this.subIndex});
+          this.$vb.css({
+            width: this.blockWidth,
+          })
 
         },
         drag: (e, ui)=>{

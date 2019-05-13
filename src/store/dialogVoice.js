@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-11 09:28:08
+ * @Last Modified time: 2019-05-13 11:22:01
  */
 // 文本转语音 百度tts
 
@@ -43,18 +43,20 @@ const store = {
 		// 检查 token
 		checkTok({rootState, state, commit, dispatch, getters}) {
 			return new Promise((resolve, reject)=>{
-				http.post('',{}).then((res)=>{
+				if(state.tokNew) {
 					resolve({success: true});
-				}, (res)=>{
-					resolve({success: false});
-				})
+				} else{
+					http.get(api.getToken,{}).then((res)=>{
+						resolve({success: true});
+					}, (res)=>{
+						resolve({success: false});
+					})
+					state.tokNew = true;
+				}
 			})
 		},
 		// 获取生成语音
 		fetchTTSAudio({rootState, state, commit, dispatch, getters}, {tex, oldTex, spd=5, pit=5, per=0, callback,showSnackbar = true}){
-			/*dispatch('checkTok').then((res)=>{
-				alert('ddddd');
-			})*/
 			let tag = `tag:${tex}-${spd}-${pit}-${per}`;
 			// 没有文本
 			if(!tex) {

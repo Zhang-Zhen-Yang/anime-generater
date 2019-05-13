@@ -2,6 +2,7 @@ import util from './util';
 
 import VideoCaptureClass from './videoCapture';
 let uuidMap = {};
+window.uuidMap = uuidMap;
 
 let c = window.createjs;
 /* c.MyText = class extends c.Text{
@@ -692,6 +693,8 @@ let obj = {
       let videoWidth = 0;
       let videoHeight = 0;
       
+      let totalTime = 0;
+      // alert('length:'+ (item.list || []).length);
       (item.list || []).forEach((clipListItem, index)=>{
         if(index == 0) {
           // alert(shapeObj);
@@ -740,11 +743,17 @@ let obj = {
               obj.addChild(bitmap)
             })
           }
-          videoTween.wait(firstTime);
+          videoTween.wait(firstTime).call(()=>{
+            let bitmap = new c.Bitmap(clipListItem);
+            obj.addChild(bitmap);
+          });
+          totalTime += firstTime;
+          return;
 
         } 
         // console.log(firstTime + index*item.interval);
-        videoTween.wait(item.interval).call(()=>{
+        totalTime += item.interval;
+        videoTween.wait(item.interval - 0).call(()=>{
           /*let distTime = (firstTime + item.interval*index) /1000;;
           // if() {}
           let c = document.createElement('canvas');
@@ -783,6 +792,7 @@ let obj = {
           }
         });
       })
+      // alert(totalTime);
       let currentTime = timeline.position;
       if(currentTime < firstTime) {
 

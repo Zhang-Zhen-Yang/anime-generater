@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-11 15:54:40
+ * @Last Modified time: 2019-05-13 16:01:19
  */
  // 时间轴组件
 import http from '../script/http';
@@ -332,7 +332,8 @@ const store = {
         // 左
         case 'left':
           if(isChildren) {
-            currentLayer.tween[tweenIndex].props.x = -(parentObj.getBounds().width - bounds.width *  currentLayer.obj.scaleX) / 2;
+            // currentLayer.tween[tweenIndex].props.x = -(parentObj.getBounds().width - bounds.width *  currentLayer.obj.scaleX) / 2;
+            currentLayer.tween[tweenIndex].props.x = bounds.width *  currentLayer.obj.scaleX / 2;
           } else {
             currentLayer.tween[tweenIndex].props.x = bounds.width *  currentLayer.obj.scaleX / 2;
           }
@@ -340,7 +341,7 @@ const store = {
         // 水平居中
         case 'center':
           if(isChildren) {
-            currentLayer.tween[tweenIndex].props.x = 0; // parentObj.getBounds().width / 2;
+            currentLayer.tween[tweenIndex].props.x = parentObj.getBounds().width / 2;
           } else {
             currentLayer.tween[tweenIndex].props.x = width / 2;
           }
@@ -348,7 +349,8 @@ const store = {
         // 右对齐
         case 'right':
           if(isChildren) {
-            currentLayer.tween[tweenIndex].props.x = (parentObj.getBounds().width - bounds.width *  currentLayer.obj.scaleX) / 2;
+            // currentLayer.tween[tweenIndex].props.x = (parentObj.getBounds().width - bounds.width *  currentLayer.obj.scaleX) / 2;
+            currentLayer.tween[tweenIndex].props.x = parentObj.getBounds().width - bounds.width *  currentLayer.obj.scaleX / 2;
             // parentObj.getBounds().width - bounds.width *  currentLayer.obj.scaleX / 2;
           } else {
             currentLayer.tween[tweenIndex].props.x = width - bounds.width *  currentLayer.obj.scaleX / 2;
@@ -357,7 +359,8 @@ const store = {
         // 顶对齐
         case 'top':
         if(isChildren) {
-          currentLayer.tween[tweenIndex].props.y = -(parentObj.getBounds().height - bounds.height *  currentLayer.obj.scaleY) / 2;
+          // currentLayer.tween[tweenIndex].props.y = -(parentObj.getBounds().height - bounds.height *  currentLayer.obj.scaleY) / 2;
+          currentLayer.tween[tweenIndex].props.y = bounds.height *  currentLayer.obj.scaleY / 2;
         } else {
           currentLayer.tween[tweenIndex].props.y = bounds.height *  currentLayer.obj.scaleY / 2;
 
@@ -366,7 +369,7 @@ const store = {
         // 垂直居中
         case 'middle':
           if(isChildren) {
-            currentLayer.tween[tweenIndex].props.y = 0; // parentObj.getBounds().height / 2;
+            currentLayer.tween[tweenIndex].props.y = parentObj.getBounds().height / 2;
           } else {
             currentLayer.tween[tweenIndex].props.y = height / 2;
           }
@@ -374,7 +377,7 @@ const store = {
         // 底对齐
         case 'bottom':
           if(isChildren) {
-            currentLayer.tween[tweenIndex].props.y = (parentObj.getBounds().height - bounds.height *  currentLayer.obj.scaleY) / 2;
+            currentLayer.tween[tweenIndex].props.y = parentObj.getBounds().height - bounds.height *  currentLayer.obj.scaleY / 2;
           } else {
             currentLayer.tween[tweenIndex].props.y = height - bounds.height *  currentLayer.obj.scaleY / 2;
           }

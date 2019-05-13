@@ -91,8 +91,9 @@ export default {
       set(val) {
         this.cLayer.width = val;
         this.cLayer.obj.setBounds(0,0,val,this.cLayer.height);
+        console.log(this.cLayer.obj.regX);
         this.cLayer.obj.set({
-          regX: this.cLayer.width / 2,
+          regX: val / 2,
           regY: this.cLayer.height / 2,
         });
       }

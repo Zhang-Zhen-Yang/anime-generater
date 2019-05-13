@@ -7,7 +7,7 @@
 
       <div @click="setActiveLayer([index])"
         @dragstart="dragStart($event, item, index)"
-        draggable="true"
+        :draggable="onInput ? false: true"
         :data-index="index"
         :class="['layer'+index,'timeline-layer-title', activeLayerIndex.length == 1 && activeLayerIndex[0] == index ? 'activeLayer' : '']"
       >
@@ -85,7 +85,7 @@
           <div v-for="c, cindex in item.children"
             :key="cindex" style="height: 25px;position: relative;"
             @dragover="dragoverMask(index, cindex)"
-            draggable="true"
+            :draggable="onInput ? false: true"
             @dragstart="dragStartSub($event, item, index, cindex)"
           >
             <!--图层名称-->
@@ -170,12 +170,25 @@ export default {
     }
   },
   computed: {
+    tl() {
+      return this.$store.state.tl;
+    },
     activeLayerIndex() {
-      return this.$store.state.activeLayerIndex;
+      let topIndex = this.tl.topIndex;
+      let subIndex = this.tl.subIndex;
+      if(subIndex > -1) {
+        return [topIndex, subIndex]
+      } else {
+        return [topIndex]
+      }
+      // return this.$store.state.activeLayerIndex;
     },
     isDropToContainer() {
       return this.dragOverPageX - this.dragStartPageX > 35;
     },
+    onInput() {
+      return this.focusIndex[0] > -1 && this.focusIndex[1] > -1;
+    }
   },
   methods: {
     // 设置要修改哪个层的名字

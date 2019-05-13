@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-10 16:43:16 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-10 10:52:08
+ * @Last Modified time: 2019-05-13 10:46:02
  */
 
 <template>
@@ -59,7 +59,7 @@
               <label class="radioWrap">
                 <input type="radio" name="encoder" value="H.264" v-model="encoder">
                 <div class="radio sm"></div>
-                <span>H.264</span>
+                <span>H.264(慢)</span>
               </label>
             </div>
           </template>
