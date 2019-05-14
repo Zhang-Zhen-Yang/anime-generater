@@ -18,4 +18,4 @@ window.p = new Vue({
   store,
   render: h => h(App)
 })
-console.log('created 2019-5-13 10:10');
+console.log('created 2019-5-14 11:10');

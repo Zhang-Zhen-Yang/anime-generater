@@ -5,21 +5,9 @@
 
 1.时间轴
 
-
-
-
-
-
 一样先登录: 192.168.1.134:8090/wonbaoWeb/local?userId=105227988
 
 console.log(window.p.$store.state.project.voices);
-
-
-
-
-
-
-
 
 音频列表
 getAudioList
@@ -52,4 +40,10 @@ getAudioList
 
 视频列表
 
-格式与上音频大致一样
+格式与上面音频大致一样
+
+
+
+
+
+

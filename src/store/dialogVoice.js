@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-13 11:22:01
+ * @Last Modified time: 2019-05-14 17:40:38
  */
 // 文本转语音 百度tts
 
@@ -47,6 +47,7 @@ const store = {
 					resolve({success: true});
 				} else{
 					http.get(api.getToken,{}).then((res)=>{
+						state.tok = res.data.token;
 						resolve({success: true});
 					}, (res)=>{
 						resolve({success: false});

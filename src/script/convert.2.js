@@ -6,6 +6,7 @@ var workerPath = window.asm2;
 	workerPath = location.href.replace(location.href.split('/').pop(), '') + 'script/ffmpeg_asm.js';
 	// alert(workerPath);
 }*/
+let commandWorker;
 function processInWebWorker() {
 	var blob = URL.createObjectURL(new Blob(
 		[
@@ -473,7 +474,142 @@ function convertTo264(input, callback) {
 	}
 }
 
-export { convertStreams2, accessWorker2, convertImageToVideo2, combineAudio2, convertTo264 };
+// 获取视频帧
+function getVideoFrames2(input, {s, t, fps, scale}, callback) {
+	var worker;	
+	if (!worker) {
+		worker = processInWebWorker();
+	}
+
+	let files = [
+		{
+			name: 'input.mp4',
+			data: input
+		}
+	]
+
+	//let commands = '-i input.mp4 -strict -2 -c:v libx264 output.mp4';
+	// let commands = '-i input.mp4 -r 1 -ss 00:00:26 -t 00:00:07 %03d.png';
+	let commands = `-i input.mp4 -f image2 -vf fps=fps=${fps}${scale ? ',scale=w=500:h=500:force_original_aspect_ratio=decrease' : ''} ${s ? ('-ss '+ s ): ''} ${t ? ('-t '+ t) : ''} -an out%d.jpeg`;
+
+	let args = util.parseArguments(commands);
+	let postMessage = ()=>{
+		worker.postMessage({
+			type: 'command',
+			arguments:  args,
+			files
+		})
+	}
+
+
+	// console.log(files);
+	worker.onmessage = function(event) {
+		var message = event.data;
+		if(callback) {
+			callback(message);
+		}
+		if (message.type == "ready") {
+			log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file has been loaded.');
+			// workerReady = true;
+			postMessage();
+		} else if (message.type == "stdout") {
+			log(message.data);
+		} else if (message.type == "start") {
+			log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file received ffmpeg command.');
+		} else if (message.type == "done") {
+			var result = message && message.data ? message.data[0] : '' ;
+			console.log('convert h.264 success');
+			console.log(result);
+			/*log(JSON.stringify(message));
+			var result = message.data[0];
+			log(JSON.stringify(result));
+			var blob = new Blob([result.data], {
+				type: 'audio/wav'
+			});
+			log(JSON.stringify(blob));
+			PostBlob(blob);
+			worker = null;*/
+		}
+	};
+	worker.onerror = function(e){
+		if(callback) {
+			callback({
+				type: 'error',
+				e: e,
+			})
+		}
+	}
+}
+
+function runCommand2({files, command}, callback) {
+	let worker = commandWorker;	
+	
+
+	/*let files = [
+		{
+			name: 'input.mp4',
+			data: input
+		}
+	]*/
+
+	// let commands = `-i input.mp4 -f image2 -vf fps=fps=${fps}${scale ? ',scale=w=500:h=500:force_original_aspect_ratio=decrease' : ''} ${s ? ('-ss '+ s ): ''} ${t ? ('-t '+ t) : ''} -an out%d.jpeg`;
+
+	let args = util.parseArguments(commands);
+	let postMessage = ()=>{
+		worker.postMessage({
+			type: 'command',
+			arguments:  args,
+			files
+		})
+	}
+	if (!worker) {
+		worker = processInWebWorker();
+	} else {
+		postMessage();
+	}
+
+
+	// console.log(files);
+	worker.onmessage = function(event) {
+		var message = event.data;
+		if(callback) {
+			callback(message);
+		}
+		if (message.type == "ready") {
+			log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file has been loaded.');
+			// workerReady = true;
+			postMessage();
+		} else if (message.type == "stdout") {
+			log(message.data);
+		} else if (message.type == "start") {
+			log('<a href="'+ workerPath +'" download="ffmpeg-asm.js">ffmpeg-asm.js</a> file received ffmpeg command.');
+		} else if (message.type == "done") {
+			var result = message && message.data ? message.data[0] : '' ;
+			console.log('convert h.264 success');
+			console.log(result);
+			/*log(JSON.stringify(message));
+			var result = message.data[0];
+			log(JSON.stringify(result));
+			var blob = new Blob([result.data], {
+				type: 'audio/wav'
+			});
+			log(JSON.stringify(blob));
+			PostBlob(blob);
+			worker = null;*/
+		}
+	};
+	worker.onerror = function(e){
+		if(callback) {
+			callback({
+				type: 'error',
+				e: e,
+			})
+		}
+	}
+}
+
+
+export { convertStreams2, accessWorker2, convertImageToVideo2, combineAudio2, convertTo264, getVideoFrames2, runCommand2};
 
 
 

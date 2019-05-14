@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-10 16:43:16 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-13 10:46:02
+ * @Last Modified time: 2019-05-14 14:34:52
  */
 
 <template>
@@ -37,7 +37,7 @@
             <vue-slider
                 v-model="frames"
                 :min="1"
-                :max="24"
+                :max="25"
                 :interval="1"
                 :piecewise="false"
                 :processStyle="{backgroundColor: '#1284e7'}"

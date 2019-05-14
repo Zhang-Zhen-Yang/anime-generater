@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:32:17 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-03 16:57:39
+ * @Last Modified time: 2019-05-14 17:21:09
  */
 
 <template>
@@ -14,8 +14,25 @@
     :showHeader="true"
   >
     <div class="dialog-video-content" slot="content" style="padding: 50px 20px 0 10px;">
-        <div>
-          <input type="text" class="content-item-input" v-model="videoSrc">
+        <div style="padding:0 80px 10px;">
+          <table cellpadding="0" cellspacing="0" style="width: 100%;">
+            <tr>
+              <td style="vertical-align:middle;">
+                <input type="text" class="content-item-input" v-model="videoSrc">
+              </td>
+              <td style="text-align: right;width:100px;">
+                <label class="btn primary">
+                  本地
+                  <input
+                    type="file"
+                    accept=".mp4,.avi,.flv,.mov,.mkv,.wmv,.f4v,.rmvb,.webm"
+                    style="display:none;"
+                    ref="videoFileInput"
+                    @change="fileChange($event)">
+                </label>
+              </td>
+            </tr>
+          </table>
         </div>
         <table cellspacing="0" cellpadding="0" style="width:100%;">
           <tr>
@@ -32,6 +49,7 @@
                   @loadedmetadata="loadedmetadata"
                   @error="loaderror"
                   style="max-width:750px;max-height:400px;vertical-align:middle;"></video>
+                
                 <div v-show="usable" class="relative" style="width:100%;height:15px;background-color: #181818;">
                   <!--滑块-->
                   <div class="absolute video-select-block" style="width:10px;height: 100%;left:0;top:0;background-color:#37393A;" ref="video-select-block">
@@ -40,6 +58,7 @@
                     </div>
                   </div>
                 </div>
+
                 <div v-show="usable" style="font-size: 14px;user-select:none;line-height: 20px;">
                   <table>
                     <tr>
@@ -104,6 +123,7 @@ export default {
       end_time: 0,
       src: '',
       usable: false,
+      isNet: true,
     }
   },
   computed: {
@@ -119,6 +139,7 @@ export default {
       },
       set(val) {
         this.src = val;
+        this.isNet = true;
       }
     }
     
@@ -132,8 +153,11 @@ export default {
       // alert('ddd');
     },
     loaderror(e){
+      // 有可能是无效的视频地址或浏览器不支持播放。
+      console.log(e);
       console.log('出错');
       this.usable = false;
+
     },
     dismiss(){
       this.modal.show = false;
@@ -200,6 +224,28 @@ export default {
       this.start_time = pLeft / this.$refs.video.clientWidth * this.duration * 1000;
       this.end_time = (pLeft + pWidth) / this.$refs.video.clientWidth * this.duration * 1000;
       console.log([pLeft]);
+    },
+    // 本地选择视频
+    fileChange(e) {
+      let file = e.target.files[0];
+      console.log(file);
+      let fileReader = new FileReader();
+      fileReader.onload = () =>  {
+          // console.log(fileReader.result);
+          window.videoArrayBuffer = fileReader.result;
+          let blob = new Blob([ window.videoArrayBuffer], {type: 'video/mp4'});
+          let url = URL.createObjectURL(blob);
+          this.$refs.video.src = url;
+          // URL.revokeObjectURL(url);
+          this.isNet = false;
+          this.$store.dispatch('getVideoMessage', {
+            data: fileReader.result,
+            name: file.name,
+            size: file.size
+          });
+          this.$refs.videoFileInput.value = '';
+      }
+      fileReader.readAsArrayBuffer(file);
     }
   },
   created() {
@@ -284,8 +330,8 @@ export default {
       color: #555;
       background-color: #fff;
       border: 1px solid #ccc;
-      width: 800px;
-      margin-bottom: 10px;
+      // width: 800px;
+      // margin-bottom: 10px;
     }
     .video-video-icon{
       position: absolute;

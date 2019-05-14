@@ -57,7 +57,8 @@ if(window.app == 'wb') {
    
 	   getPolicySignature: 'marketing/mpicvideonew/getPolicySignature',
 	   uploadideospace: 'marketing/mpicvideonew/uploadideospace',
-	   getToken: 'wonbaoWeb/marketing/mpicvideonew/speechsynthesis'
+	   getToken: 'marketing/mpicvideonew/speechsynthesis'
+	   				
    } 
    
 } else if (window.app == 'wn') {
@@ -109,7 +110,7 @@ if(window.app == 'wb') {
 	
 		getPolicySignature: 'mpicvideonew/mpicvideo/getPolicySignature',
 		uploadideospace: 'mpicvideonew/mpicvideo/uploadideospace',
-		getToken: 'wonbaoWeb/marketing/mpicvideonew/speechsynthesis',
+		getToken: 'marketing/mpicvideonew/speechsynthesis',
 	} 
 
 }
