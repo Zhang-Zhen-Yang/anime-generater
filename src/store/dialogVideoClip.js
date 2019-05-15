@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:34:53 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-14 17:30:45
+ * @Last Modified time: 2019-05-15 16:51:51
  */
 
 
@@ -38,38 +38,86 @@ const store = {
 	// ------------------------------------------------------------------------------------------------------------
 	actions: {
 		// 获取视频信息
-		getVideoMessage({state, commit, dispatch, getters}, {data, name, size}) {
+		getVideoMessage({state, commit, dispatch, getters}, {data, name, size,callback}) {
+			let fps = 1;
 			let UUID = new util.getUUID().id;
-			state.localVideo[UUID] = {
+			/* state.localVideo[UUID] = {
 				data,
 				name,
 				size,
 				list: [],
 				thumbnails: [],// 存放缩略图 
-				duration: 0
+				duration: 0,
+				canplay: false,
+				lastAction: 'initing',
+			}*/
+			Vue.set(state.localVideo, UUID, {
+				data,
+				name,
+				size,
+				list: [],
+				thumbnails: [],// 存放缩略图 
+				duration: 0,
+				canplay: false,
+				lastAction: 'initing',
+				fps
+			})
+
+			let video = document.createElement('video');
+
+			let blob = new Blob([data], {type: 'video/mp4'});
+			let url = URL.createObjectURL(blob);
+			video.src = url;
+			
+			// 视频能在网页播放
+			video.onloadedmetadata = ()=>{
+				console.log(video.duration);
+				state.localVideo[UUID].canplay = true;
+				state.localVideo[UUID].duration = video.duration;
+
+				callback({
+					uuid: UUID
+				})
+				video = null;
+
+			}
+			// 视频不能在网页播放
+			video.onerror = ()=>{
+				let duration = 0;
+				callback({
+					uuid: UUID
+				})
+				state.localVideo[UUID].canplay = false;
+				let files = [
+					{
+						name: 'input.mp4',
+						data: new Uint8Array(data)
+					}
+				]
+				let command = `-i input.mp4 -f image2 -vf fps=fps=${fps},scale=w=300:h=300:force_original_aspect_ratio=decrease -an out%d.jpeg`;
+				runCommand2({files, command}, (res)=>{
+					console.log(res);
+					if(res.type == 'stdout') {
+						if(res.data.indexOf('Duration') > -1){
+							// alert(res.data);
+							// let 
+							state.localVideo[UUID].duration = util.getDurationByMessage({message: res.data});
+							state.localVideo[UUID].lastAction = 'duration';
+						}
+					} else if (res.type == 'done') {
+						state.localVideo[UUID].thumbnails = res.data.map((item)=>{
+							console.log(item);
+							// return 'https://imgs.aixifan.com/content/2019_5_13/1.5577201185622222E9.png';
+							let url = URL.createObjectURL(new Blob([item.data], {type: 'image/jpeg'}));
+							return url;
+						})
+						state.localVideo[UUID].lastAction = 'done';
+					}
+	
+				});
 			}
 
-			let files = [
-				{
-					name: 'input.mp4',
-					data: new Uint8Array(data)
-				}
-			]
 
-			let command = `-i input.mp4 -f image2 -vf fps=fps=${1},scale=w=500:h=500:force_original_aspect_ratio=decrease -an out%d.jpeg`;
-
-			runCommand2({files, command}, (res)=>{
-				console.log(res);
-				if(res.type == 'stdout') {
-					if(res.data.indexOf('Duration') > -1){
-						alert(res.data);
-						// let 
-					}
-				} else if (res.type == 'done'){
-
-				}
-
-			});
 
 		},
 		

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:32:17 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-14 17:21:09
+ * @Last Modified time: 2019-05-15 16:00:43
  */
 
 <template>
@@ -38,19 +38,24 @@
           <tr>
             <td style="text-align:center;">
               <div style="display:inline-block;">
-                <div v-if="!usable" class="color-red" style="width: 100%;text-align:center;padding: 100px 0;">
+                <div v-if="!usable && isNet" class="color-red" style="width: 100%;text-align:center;padding: 100px 0;">
                   无效的视频链接
                 </div>
                 <!--视频-->
                 <video
+                  v-show="usable"
                   ref="video"
-                  :src="src"
+                  :src="trueVideoSrc"
                   crossorigin="anonymous"
                   @loadedmetadata="loadedmetadata"
                   @error="loaderror"
-                  style="max-width:750px;max-height:400px;vertical-align:middle;"></video>
+                  style="max-width:700px;max-height:400px;vertical-align:middle;"></video>
+                <div v-if="!isNet" >
+                  <!--{{ position }}-->
+                  <img :src="thumbnail" alt="" style="width: 700px;">
+                </div>
                 
-                <div v-show="usable" class="relative" style="width:100%;height:15px;background-color: #181818;">
+                <div v-show="usable || !isNet" class="relative" style="width:700px;height:15px;background-color: #181818;">
                   <!--滑块-->
                   <div class="absolute video-select-block" style="width:10px;height: 100%;left:0;top:0;background-color:#37393A;" ref="video-select-block">
                     <div class="video-select-block-point" ref="video-select-block-point" style="width:0;">
@@ -59,7 +64,7 @@
                   </div>
                 </div>
 
-                <div v-show="usable" style="font-size: 14px;user-select:none;line-height: 20px;">
+                <div v-show="usable || !isNet" style="font-size: 14px;user-select:none;line-height: 20px;">
                   <table>
                     <tr>
                       <td>开始：</td>
@@ -121,9 +126,11 @@ export default {
       duration: 0,
       start_time: 0,
       end_time: 0,
+      position: 0,
       src: '',
       usable: false,
       isNet: true,
+
     }
   },
   computed: {
@@ -132,6 +139,30 @@ export default {
     },
     show() {
       return this.modal.show;
+    },
+    localVideoData() {
+      return this.modal.localVideo[this.src];
+    },
+    trueVideoSrc() {
+      if(this.localVideoData) {
+        let blob = new Blob([this.localVideoData.data], {type: 'video/mp4'});
+        let url = URL.createObjectURL(blob);
+        this.isNet = false;
+        return url;
+      }
+      this.isNet = true;
+      return this.src; 
+    },
+    thumbnail() {
+      console.log(this. position)
+
+      if(this.localVideoData) {
+        let index = parseInt(this.position * this.localVideoData.fps);
+        console.log([index, this.localVideoData.thumbnails.length]);
+        let tunmbnailData = this.localVideoData.thumbnails[index];
+        return tunmbnailData || '';
+      }
+      return '';
     },
     videoSrc: {
       get() {
@@ -164,16 +195,28 @@ export default {
     },
     // 确定
     confirm() {
-      if(this.usable) {
+      // alert(typeof this.trueVideoSrc);
+      if(this.usable && this.isNet) {
         this.$store.dispatch('videoChange', {
           start_time: this.start_time,
           end_time: this.end_time,
           item: this.modal.item,
           src: this.src,
+          isNet: true,
           callback: () => {
           }
         });
         this.dismiss();
+      } else if(!this.isNet && (this.trueVideoSrc.indexOf('blob')>-1)) {
+        this.$store.dispatch('videoChange', {
+          start_time: this.start_time,
+          end_time: this.end_time,
+          item: this.modal.item,
+          src: this.src,
+          isNet: false,
+          callback: () => {
+          }
+        });
       } else {
           this.$store.commit('showSnackbar', {text: '请输入有效的视频链接'});
       }
@@ -186,12 +229,16 @@ export default {
       let pLeft = this.$bp.position().left;
       let pbLeft = this.$b.position().left;
       let totalLeft = pLeft + pbLeft;
-      let position = totalLeft / this.video.clientWidth * this.duration;
+      let position = totalLeft / 700 * this.duration;
       // console.log(position);
-      this.video.currentTime = position;
+      this.position = position;
+      if(this.usable) {
+        this.video.currentTime = position;
+      }
     },
     // 设置滑块的位置
     setBlock() {
+      console.log('setBlock');
       if(this.duration > 0) {
         console.log([this.end_time, this.start_time, this.duration*1000]);
         // 如果截取的视频片段大于视频总长
@@ -203,7 +250,7 @@ export default {
           this.start_time = this.duration*1000 - (this.end_time - this.start_time);
           this.end_time = this.duration*1000;
         }
-        let videoClientWidth = this.$refs.video.clientWidth
+        let videoClientWidth = 700;// this.$refs.video.clientWidth
         let left = this.start_time / this.duration / 1000 * videoClientWidth;
         let width = (this.end_time - this.start_time) / 1000 / this.duration * videoClientWidth;
         console.log([left, width]);
@@ -214,15 +261,17 @@ export default {
         this.$bp.css({
           left: 0
         })
-        this.video.currentTime = this.start_time / 1000;
-        
+        this.position = this.start_time / 1000;
+        if(this.usable) {
+          this.video.currentTime = this.start_time / 1000;
+        }
       }
     },
     setStartEndTime() {
       let pLeft = this.$b.position().left;
       let pWidth = this.$b.width();
-      this.start_time = pLeft / this.$refs.video.clientWidth * this.duration * 1000;
-      this.end_time = (pLeft + pWidth) / this.$refs.video.clientWidth * this.duration * 1000;
+      this.start_time = pLeft / /*this.$refs.video.clientWidth*/ 700 * this.duration * 1000;
+      this.end_time = (pLeft + pWidth) / /*this.$refs.video.clientWidth*/ 700 * this.duration * 1000;
       console.log([pLeft]);
     },
     // 本地选择视频
@@ -233,15 +282,18 @@ export default {
       fileReader.onload = () =>  {
           // console.log(fileReader.result);
           window.videoArrayBuffer = fileReader.result;
-          let blob = new Blob([ window.videoArrayBuffer], {type: 'video/mp4'});
-          let url = URL.createObjectURL(blob);
-          this.$refs.video.src = url;
+          // let blob = new Blob([ window.videoArrayBuffer], {type: 'video/mp4'});
+          // let url = URL.createObjectURL(blob);
+          // this.$refs.video.src = url;
           // URL.revokeObjectURL(url);
           this.isNet = false;
           this.$store.dispatch('getVideoMessage', {
             data: fileReader.result,
             name: file.name,
-            size: file.size
+            size: file.size,
+            callback: ({uuid})=>{
+              this.src = uuid;
+            }
           });
           this.$refs.videoFileInput.value = '';
       }
@@ -309,6 +361,7 @@ export default {
     })
     this.start_time = this.modal.start_time;
     this.end_time = this.modal.end_time;
+    
     this.src = this.modal.src;
   },
   watch: {
@@ -320,6 +373,17 @@ export default {
         this.setBlock();
       }*/
     },
+    localVideoData: {
+      deep: true,
+      handler() {
+        if(this.localVideoData) {
+          // alert(this.localVideoData.duration);
+          this.duration = this.localVideoData.duration;
+          this.setBlock();
+        }
+        // alert('fffff');
+      }
+    }
   }
 }
 </script>
@@ -383,11 +447,14 @@ export default {
     .ui-resizable-w{
       left: -1.5px;
     }
+    .video-select-block{
+      top: 0!important;
+    }
     .video-select-block-point{
       position: absolute;
       width: 0;
       left: 0;
-      top: -12px;
+      top: -12px!important;;
     }
     .video-select-block-point:after{
       content: '';

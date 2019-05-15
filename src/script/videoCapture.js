@@ -1,7 +1,9 @@
 import util from './util';
-import { join } from 'path';
+// import { join } from 'path';
+// import { promises } from 'fs';
+import {convertStreams2, accessWorker2, convertImageToVideo2, combineAudio2, convertTo264, getVideoFrames2, runCommand2} from '../script/convert.2.js';
 class VideoCapture {
-    constructor({src, start_time, end_time, interval}) {
+    constructor({src, start_time, end_time, interval, isNet, localData}) {
         this.video = document.createElement('video');
         this.canvas = document.createElement('canvas');
         this.canvas.style="width: 300px;position:absolute;left:0;top:300px;background-color: rgba(255,255,255,0.2)";
@@ -11,6 +13,8 @@ class VideoCapture {
         this.start_time = start_time;
         this.current_time = start_time;
         this.end_time = end_time;
+        this.isNet = isNet;
+        this.localData = localData;
         this.interval = interval;
         this.canceled = false
         // this.video.style="position:absolute;left:70px;top:100px;background-color: white;width: 200px;opacity: 0.5";
@@ -24,6 +28,15 @@ class VideoCapture {
 
     }
     start() {
+        // 在网页能播放
+        if(this.isNet) {
+            return this.promise1();
+        } else {
+            return this.promise2();
+        }
+        
+    }
+    promise1() {
         let promise = new Promise((resolve, reject)=>{
             let canvasList = [];
             // this.video.pause();
@@ -64,13 +77,12 @@ class VideoCapture {
                         let url = URL.createObjectURL(res);
                         let img = new Image();
                         img.onload = ()=>{
-
                             this.canvasList.push(img);
                             URL.revokeObjectURL(url);
                             // this.canvasList.push(canvas);
                             try{
                                 window.p.$store.dispatch('updateVideoCaptureTimestap', {src: this.src});
-                            }catch(e){
+                            } catch(e) {
         
                             }
                             this.timeStamp = Date.now();
@@ -140,6 +152,61 @@ class VideoCapture {
                     list: [],
                 })
             }
+        })
+        this.promise = promise;
+        return promise;
+    }
+    promise2() {
+        alert('promise2');
+        let promise = new Promise((resolve, reject)=>{
+            let fps = 20;
+            let start_time = this.start_time;
+            let end_time = this.end_time;
+            let ss = util.getMessageByTime(start_time);
+            let t = util.getMessageByTime(end_time - start_time);
+            console.log([ss, t]);
+
+            let command = `-i input.mp4 -f image2 -vf fps=fps=${fps}  -ss ${ss} -t ${t} -an out%d.jpeg`;
+            let files = [
+                {
+                    name: 'input.mp4',
+                    data: new Uint8Array(this.localData)
+                }
+            ]
+            runCommand2({files, command}, (res)=>{
+                console.log(res);
+                if(res.type == 'stdout') {
+                    if(res.data.indexOf('Duration') > -1){
+                        alert(res.data);
+                        
+                    }
+                } else if (res.type == 'done') {
+                    this.canvasList = res.data.map((item)=>{
+                        // console.log(item);
+                        let url = URL.createObjectURL(new Blob([item.data], {type: 'image/jpeg'}));
+                        let image = new Image();
+                        image.src = url;
+                        image.onload = ()=>{
+                            URL.revokeObjectURL(url);
+                        }
+                        return image;
+                    })
+                    setTimeout(()=>{
+                        alert([this.canvasList[0].width, this.canvasList[0].height]);
+                        resolve({
+                            success: true,
+                            cancel: false,
+                            list: this.canvasList,
+                            width:  this.canvasList[0] ?  this.canvasList[0].width : 100, //videoWidth,
+                            height: this.canvasList[0] ?  this.canvasList[0].height : 100, // videoHeight,
+                        })
+
+                    }, 1000)
+                } else if (res.type == 'error') {
+                    console.log(res);
+                }
+
+            });
         })
         this.promise = promise;
         return promise;

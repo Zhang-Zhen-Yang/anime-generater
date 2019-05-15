@@ -501,6 +501,7 @@ let obj = {
         start_time: item.start_time / 1000,
         end_time: item.end_time / 1000,
         interval: item.interval / 1000,
+        isNet: true
       })
       item.videoObj = videoCapture;
       let promise = videoCapture.start();

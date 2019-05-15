@@ -542,6 +542,7 @@ function getVideoFrames2(input, {s, t, fps, scale}, callback) {
 }
 
 function runCommand2({files, command}, callback) {
+	// alert('worker2');
 	let worker = commandWorker;	
 	
 
@@ -554,7 +555,7 @@ function runCommand2({files, command}, callback) {
 
 	// let commands = `-i input.mp4 -f image2 -vf fps=fps=${fps}${scale ? ',scale=w=500:h=500:force_original_aspect_ratio=decrease' : ''} ${s ? ('-ss '+ s ): ''} ${t ? ('-t '+ t) : ''} -an out%d.jpeg`;
 
-	let args = util.parseArguments(commands);
+	let args = util.parseArguments(command);
 	let postMessage = ()=>{
 		worker.postMessage({
 			type: 'command',
