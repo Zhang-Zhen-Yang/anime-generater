@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:34:53 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-15 16:51:51
+ * @Last Modified time: 2019-06-05 17:36:10
  */
 
 
@@ -94,30 +94,58 @@ const store = {
 						data: new Uint8Array(data)
 					}
 				]
-				let command = `-i input.mp4 -f image2 -vf fps=fps=${fps},scale=w=300:h=300:force_original_aspect_ratio=decrease -an out%d.jpeg`;
-				runCommand2({files, command}, (res)=>{
-					console.log(res);
-					if(res.type == 'stdout') {
-						if(res.data.indexOf('Duration') > -1){
-							// alert(res.data);
-							// let 
-							state.localVideo[UUID].duration = util.getDurationByMessage({message: res.data});
-							state.localVideo[UUID].lastAction = 'duration';
+				let promiseVideoData = new Promise((resolve, reject) => {
+					let command = `-i input.mp4`;
+					runCommand2({files, command}, (res)=>{
+						if(res.type == 'stdout') {
+							if(res.data.indexOf('Duration') > -1){
+								
+								// alert(util.getDurationByMessage({message: res.data}));
+								let duration = util.getDurationByMessage({message: res.data});
+								state.localVideo[UUID].duration = duration;
+								state.localVideo[UUID].lastAction = 'duration';
+								resolve({duration});
+							}
+						} else if (res.type == 'done') {
+
 						}
-					} else if (res.type == 'done') {
-						state.localVideo[UUID].thumbnails = res.data.map((item)=>{
-							console.log(item);
-							// return 'https://imgs.aixifan.com/content/2019_5_13/1.5577201185622222E9.png';
-							let url = URL.createObjectURL(new Blob([item.data], {type: 'image/jpeg'}));
-							return url;
-						})
-						state.localVideo[UUID].lastAction = 'done';
-					}
-	
+					})
+
 				});
+				
+				promiseVideoData.then(({duration})=>{
+					console.log('duration', duration);
+					let t;
+					if(duration > 60) {
+						t = 60;
+					}
+					let command = `-i input.mp4 -f image2 -vf fps=fps=${fps},scale=w=300:h=300:force_original_aspect_ratio=decrease,showinfo ${t ? ('-t '+t) : ''} -an out%d.jpeg`;
+					runCommand2({files, command}, (res)=>{
+						console.log(res);
+						if(res.type == 'stdout') {
+							if(res.data.indexOf('Duration') > -1){
+								// alert(res.data);
+								// let 
+								state.localVideo[UUID].duration = util.getDurationByMessage({message: res.data});
+								state.localVideo[UUID].lastAction = 'duration';
+							}
+						} else if (res.type == 'done') {
+							state.localVideo[UUID].thumbnails = res.data.map((item)=>{
+								console.log(item);
+								// return 'https://imgs.aixifan.com/content/2019_5_13/1.5577201185622222E9.png';
+								let url = URL.createObjectURL(new Blob([item.data], {type: 'image/jpeg'}));
+								return url;
+							})
+							state.localVideo[UUID].lastAction = 'done';
+						}
+		
+					});
+				}, ()=>{
+
+				});
+
+				
 			}
-
-
 
 		},
 		

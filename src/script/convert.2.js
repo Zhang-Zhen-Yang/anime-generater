@@ -8,6 +8,8 @@ var workerPath = window.asm2;
 }*/
 let commandWorker;
 function processInWebWorker() {
+	// 生成时内容区大小
+	let TOTAL_MEMORY =  1024 * 1024 * 128;
 	var blob = URL.createObjectURL(new Blob(
 		[
 			`importScripts("${workerPath}");
@@ -32,7 +34,7 @@ function processInWebWorker() {
 				  printErr: print,
 				  files: message.files || [],
 				  arguments: message.arguments || [],
-				  TOTAL_MEMORY: 268435456
+				  TOTAL_MEMORY: message.totalMemory || ${ TOTAL_MEMORY}
 				  // Can play around with this option - must be a power of 2
 				  // TOTAL_MEMORY: 268435456
 				};
@@ -234,7 +236,7 @@ function log(message) {
 }
 
 // 将图片生成视频
-function convertImageToVideo2(imagesArray, audio, {f, t, b}, callback,size, encoder) {
+function convertImageToVideo2(imagesArray, audio, {f, t, b}, callback,size, encoder, totalMemory) {
 	var worker;	
 	if (!worker) {
 		worker = processInWebWorker();
@@ -277,7 +279,8 @@ function convertImageToVideo2(imagesArray, audio, {f, t, b}, callback,size, enco
 		worker.postMessage({
 			type: 'command',
 			arguments:  args,
-			files
+			files,
+			totalMemory,
 		})
 	}
 	// console.log(files);
@@ -490,7 +493,7 @@ function getVideoFrames2(input, {s, t, fps, scale}, callback) {
 
 	//let commands = '-i input.mp4 -strict -2 -c:v libx264 output.mp4';
 	// let commands = '-i input.mp4 -r 1 -ss 00:00:26 -t 00:00:07 %03d.png';
-	let commands = `-i input.mp4 -f image2 -vf fps=fps=${fps}${scale ? ',scale=w=500:h=500:force_original_aspect_ratio=decrease' : ''} ${s ? ('-ss '+ s ): ''} ${t ? ('-t '+ t) : ''} -an out%d.jpeg`;
+	let commands = `-i input.mp4 -f image2 -vf fps=fps=${fps}${scale ? ',scale=w=500:h=500:force_original_aspect_ratio=decrease' : ''},showinfo ${s ? ('-ss '+ s ): ''} ${t ? ('-t '+ t) : ''} -an out%d.jpeg`;
 
 	let args = util.parseArguments(commands);
 	let postMessage = ()=>{

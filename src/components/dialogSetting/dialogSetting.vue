@@ -2,14 +2,14 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-10 16:43:16 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-14 14:34:52
+ * @Last Modified time: 2019-06-05 09:14:40
  */
 
 <template>
   <modal-dialog
     @dismiss="dismiss"
     @confirm="dismiss"
-    :sty="`width: 500px;height:${ convertVer ==2 ? 340 : 300 }px`"
+    :sty="`width: 500px;height:${ convertVer ==2 ? 380 : 340 }px`"
     :showFooter="false"
     title="设置">
     <div class="dialog-setting-content-wrap" slot="content" >
@@ -62,8 +62,14 @@
                 <span>H.264(慢)</span>
               </label>
             </div>
+            <p></p>
           </template>
-          
+          <p></p>
+          <div>
+            <span>图片帧质量:</span> <input class="setting-input" ref="imageQuality" v-model="imageQuality" type="number" min="1" max="100" value="90">
+            &emsp;
+            <span>内存分配:</span> <input class="setting-input" ref="totalMemory" v-model="totalMemory" type="number" min="10" max="512" value="128">
+          </div>
         </div>
 
       </div>
@@ -131,8 +137,37 @@ export default {
         this.modal.frames = val;
         localStorage.setItem('setting-frames', val);
       }
-    }
-    
+    },
+    // 图片获取质量
+    imageQuality: {
+      get() {
+        return this.modal.imageQuality;  
+      },
+      set(val) {
+        this.modal.imageQuality = val;
+        localStorage.setItem('setting-imageQuality', val);
+      }
+    },
+    // 内存分配
+    totalMemory: {
+      get() {
+        return this.modal.totalMemory;  
+      },
+      set(val) {
+        if(val < 10) {
+          this.$nextTick(()=>{
+            this.modal.totalMemory = 10;
+            localStorage.setItem('setting-totalMemory', 10);
+          })
+        } else if(val > 512) {
+          this.modal.totalMemory = 512;
+          localStorage.setItem('setting-totalMemory', 512);
+        } else {
+          this.modal.totalMemory = val;
+          localStorage.setItem('setting-totalMemory', val);
+        }
+      }
+    },
 
   },
   methods: {

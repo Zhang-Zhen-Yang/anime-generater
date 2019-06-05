@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-14 17:41:21
+ * @Last Modified time: 2019-06-05 16:00:12
  */
 
 import http from '../script/http';
@@ -187,15 +187,15 @@ const store = {
 			dispatch('getSettingFromStorage');
 			window.localImages = {};
 			state.project = demo3;
-			/*dispatch('checkTok').then((res)=>{
+			/* dispatch('checkTok').then((res)=>{
 				if(res.success) {
 					dispatch('fillVoices', {project: state.project});
 				} else {
 
 				}
-			})
-			*/
-			dispatch('fillVoices', {project: state.project});
+			})*/
+			
+			// dispatch('fillVoices', {project: state.project});
 			/* state.project.voices.forEach((item, index)=>{
 				console.log(item);
 				dispatch('fetchTTSAudio', {
@@ -225,7 +225,8 @@ const store = {
 			(state.convertVer == 1 ? accessWorker() : accessWorker2()).then(()=>{
 				// alert('ddddd');
 				state.asmInitedStatus = 'success';
-			}, ()=>{
+			}, (res)=>{
+				console.log(res);
 				alert('视频合成库加载失败，可能无法生成视频。');
 				state.asmInitedStatus = 'error';
 			})
@@ -504,6 +505,7 @@ const store = {
 			})
 			
 			let allVoicesPromises = voices.filter((item)=>{return !!item.data});
+			// alert(allVoicesPromises.length);
 
 			if(allVoicesPromises.length == 0) {
 				callback({
@@ -545,32 +547,47 @@ const store = {
 					let appender = new WaveEditor();
 					//return appender.mix(res, 'play', 'AppendedWav');
 					let distAudioList = res.map((item)=>{return new Uint8Array(item)});
-					// distAudioList.push(window.music);
-					(state.convertVer == 1 ? combineAudio : combineAudio2)(
-						distAudioList,
-						//[window.music, new Uint8Array(res[0])],
-						(res)=>{
-							console.log(res);
-							if(res.type == 'done') {
-								let blob = new Blob([res.data[0].data], {
-									type: 'audio/wav'
-								});
-								// util.funDownload('', blob, 'test.wav');
-								util.blobToArrayBuffer(blob).then((data)=>{
-									console.log('=======================================',data);
-									callback({
-										success: true,
-										res: data
-									})
-								})
-
-							} else if(res.type == 'error') {
-								state.dialogGenerate.show = false;
-								alert('出错:' + res.e.message || '');
-							}
-						},
-						window.timeline.duration / 1000
-					);
+					if(distAudioList.length > 0 ) {
+						// distAudioList.push(window.music);
+						(state.convertVer == 1 ? combineAudio : combineAudio2)(
+							distAudioList,
+							//[window.music, new Uint8Array(res[0])],
+							(res)=>{
+								console.log(res);
+								if(res.type == 'done') {
+									if(res.data[0]) {
+										let blob = new Blob([res.data[0].data], {
+											type: 'audio/wav'
+										});
+										// util.funDownload('', blob, 'test.wav');
+										util.blobToArrayBuffer(blob).then((data)=>{
+											console.log('=======================================',data);
+											callback({
+												success: true,
+												res: data
+											})
+										})
+	
+									} else {
+										callback({
+											success: true,
+											res: []
+										})
+									}
+	
+								} else if(res.type == 'error') {
+									state.dialogGenerate.show = false;
+									alert('出错:' + res.e.message || '');
+								}
+							},
+							window.timeline.duration / 1000
+						);
+					} else {
+						callback({
+							success: true,
+							res: []
+						})
+					}
 				})
 			})
 		},
@@ -595,6 +612,10 @@ const store = {
 			let f = state.dialogSetting.frames;
 			// 每帧占用的时间
 			let tseperate = 1000 / f;
+			let imageQuality = state.dialogSetting.imageQuality;
+			if(imageQuality <= 0 || imageQuality > 100) {
+				imageQuality = 90;
+			}
 			state.recording = true;
 			var tickHandler = state.timeline.on('change', () => {
 				const thisPosition = state.timeline.position;
@@ -605,7 +626,7 @@ const store = {
 				// 获取图片数据(1)
 				let base64str;
 				if(state.convertVer == 1) {
-					base64str = window.canvas.toDataURL('image/jpeg', 1);
+					base64str = window.canvas.toDataURL('image/jpeg', imageQuality / 100);
 				} else {
 					/*let tempCanvas = document.createElement('canvas');
 					tempCanvas.width = pwidth * 2;
@@ -614,7 +635,7 @@ const store = {
 					base64str = tempCanvas.toDataURL('image/jpeg', 1);
 					tempCanvas = null;*/
 
-					base64str = window.canvas.toDataURL('image/jpeg', 1);
+					base64str = window.canvas.toDataURL('image/jpeg', imageQuality / 100);
 				}
 				var imgdata =  base64str.slice(23);
 				var bytes = atob(imgdata);
@@ -700,6 +721,7 @@ const store = {
 					voice.done = true;
 					voice.success = res.success;
 					voice.res = res.res;
+					console.log('audio res=============================', res);
 					if (image.done) {
 						dispatch('generateVideoFromImageAndVoice', {voice: voice.res, image: image.res});
 					}
@@ -720,6 +742,10 @@ const store = {
 		},
 		// 从图片和音频生成视频
 		generateVideoFromImageAndVoice({state, commit, dispatch, getters}, {voice, image}) {
+			// console.log('generateVideoFromImageAndVoice', voice);
+
+
+
 			let {width, height} = state.stage.canvas;
 			let total = width * height;
 			let f = state.dialogSetting.frames;
@@ -732,10 +758,11 @@ const store = {
 			// console.log('voice voice voice voice ',voice);
 			// console.log('777777777777777777777777777777777777777777777',new Uint8Array(voice));
 			// 转换图片到视频
-		
+			let totalMemory = state.dialogSetting.totalMemory * 1024 * 1024;
+
 			(state.convertVer == 1 ? convertImageToVideo : convertImageToVideo2)(
 				image,
-				voice? new Uint8Array(voice) : null,
+				(voice && voice.length > 0)? new Uint8Array(voice) : null,
 				{
 					f: f,
 					t: state.timeline.duration / 1000,
@@ -787,7 +814,8 @@ const store = {
 					}
 				},
 				`${state.project.width}*${state.project.height}`,
-				state.dialogSetting.encoder
+				state.dialogSetting.encoder,
+				totalMemory,
 			);
 		},
 		// 更新时间轴

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-15 16:43:23
+ * @Last Modified time: 2019-06-05 15:52:42
  */
  // 时间轴组件
 import http from '../script/http';
@@ -193,7 +193,7 @@ const store = {
       }
     },
     // 更改视频片段
-    videoChange({state, rootState,commit,dispatch},{start_time, end_time, src, item, isNet, callback}) {
+    videoChange({state, rootState,commit,dispatch},{start_time, end_time, src, item, isNet, hasVideoImage, callback}) {
       item.start_time = start_time;
       item.end_time = end_time;
       item.src = src;
@@ -209,6 +209,7 @@ const store = {
         interval: item.interval / 1000,
         isNet,
         localData,
+        hasVideoImage,
       })
       let videoContainer = item.obj;
       if(item.videoObj) {
@@ -217,7 +218,11 @@ const store = {
       }
       item.videoObj = videoCapture;
       let promise = videoCapture.start();
+      if(hasVideoImage) {
+        rootState.dialogVideoClip.show = false;
+      }
       promise.then((res)=>{
+        rootState.dialogVideoClip.show = false;
         if(res.success) {
           videoContainer.setBounds(0, 0, res.width, res.height);
           videoContainer.set({

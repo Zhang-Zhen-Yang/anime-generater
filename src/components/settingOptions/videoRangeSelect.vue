@@ -3,7 +3,7 @@
     <div class="video-range-select">
       <mask-replace-video @selectVideo="selectVideo" @clipVideo="clipVideo">
         <div ref="videoWrap">
-          <video :src="layer.src" style="max-width: 100%;vertical-align:middle;"></video>
+          <videoRangeDIsplayImage :layer="layer"></videoRangeDIsplayImage>
         </div>
         <div :data-timestamp="timestamp" style="width: 100%;overflow: hidden;">
           <div class="capture-progress" :style="{width: (layer.videoObj.canvasList.length - 1) * layer.interval / videoDuration *100 +'%'}"></div>
@@ -44,8 +44,10 @@
 </template>
 
 <script>
+import videoRangeDIsplayImage from './videoRangeDIsplayImage.vue';
 export default {
   name: 'video-range-select',
+  components: {videoRangeDIsplayImage},
   props: {
     layer: {
       type: Object,
@@ -61,6 +63,7 @@ export default {
     }
   },
   computed: {
+    
     dialogVideoClip() {
       return this.$store.state.dialogVideoClip;
     },
@@ -141,9 +144,9 @@ export default {
       // alert('clipVideo');
     },
     appendVideo() {
-      this.currentVideo = this.layer.videoObj.video;
+      /* this.currentVideo = this.layer.videoObj.video;
       this.$refs.videoWrap.innerHTML='';
-      this.$refs.videoWrap.appendChild(this.layer.videoObj.video);
+      this.$refs.videoWrap.appendChild(this.layer.videoObj.video);*/
     }
   },
   created() {

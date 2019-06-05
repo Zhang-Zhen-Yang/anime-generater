@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-10 16:46:16 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-10 11:13:23
+ * @Last Modified time: 2019-06-05 09:24:15
  */
 
 
@@ -15,10 +15,12 @@ const store = {
 	state: {
 		show: false,
 		lastAction: 'loading',
-		quality: 50,
-		frames: 20,
-		encoder: 'mpeg4',
+		quality: 50,// 生成质量
+		frames: 20, // 帧数
+		encoder: 'mpeg4',// 编码类型
 		switchShow: false,
+		imageQuality: 90,// 图片质量
+		totalMemory: 128// 分配的内存大小
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -37,6 +39,9 @@ const store = {
 			let frames = localStorage.getItem('setting-frames');
 			let encoder = localStorage.getItem('setting-encoder');
 			let asmVer = localStorage.getItem('setting-asmVer');
+
+			let imageQuality = localStorage.getItem('setting-imageQuality');
+			let totalMemory = localStorage.getItem('setting-totalMemory');
 			
 			if(quality) {
 				state.quality = quality;
@@ -49,6 +54,12 @@ const store = {
 			}
 			if(asmVer) {
 				rootState.convertVer = asmVer;
+			}
+			if(imageQuality) {
+				state.imageQuality = imageQuality;
+			}
+			if(totalMemory) {
+				state.totalMemory = totalMemory;
 			}
 		}
 		

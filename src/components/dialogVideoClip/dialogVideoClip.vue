@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:32:17 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-15 16:00:43
+ * @Last Modified time: 2019-06-05 15:35:07
  */
 
 <template>
@@ -50,7 +50,7 @@
                   @loadedmetadata="loadedmetadata"
                   @error="loaderror"
                   style="max-width:700px;max-height:400px;vertical-align:middle;"></video>
-                <div v-if="!isNet" >
+                <div v-if="!isNet&&thumbnail" >
                   <!--{{ position }}-->
                   <img :src="thumbnail" alt="" style="width: 700px;">
                 </div>
@@ -130,6 +130,7 @@ export default {
       src: '',
       usable: false,
       isNet: true,
+      hasVideoImage: true,
 
     }
   },
@@ -143,6 +144,7 @@ export default {
     localVideoData() {
       return this.modal.localVideo[this.src];
     },
+    // 
     trueVideoSrc() {
       if(this.localVideoData) {
         let blob = new Blob([this.localVideoData.data], {type: 'video/mp4'});
@@ -180,14 +182,26 @@ export default {
       console.log('loadedmetadata');
       this.duration = this.$refs.video.duration;
       this.setBlock();
+      // 能播放
       this.usable = true;
+      let video = this.$refs.video;
+      let videoWidth = this.video.videoWidth;
+      if(videoWidth == 0) {
+        this.hasVideoImage = false;
+      } else {
+        this.hasVideoImage = true;
+      }
+      // console.log([this.video.videoWidth, this.video.videoHeight]);
+
       // alert('ddd');
     },
     loaderror(e){
       // 有可能是无效的视频地址或浏览器不支持播放。
       console.log(e);
       console.log('出错');
+      // 不能播放
       this.usable = false;
+      this.hasVideoImage = false;
 
     },
     dismiss(){
@@ -196,6 +210,7 @@ export default {
     // 确定
     confirm() {
       // alert(typeof this.trueVideoSrc);
+      // 如果可用而且视频来自网络
       if(this.usable && this.isNet) {
         this.$store.dispatch('videoChange', {
           start_time: this.start_time,
@@ -203,17 +218,19 @@ export default {
           item: this.modal.item,
           src: this.src,
           isNet: true,
+          hasVideoImage: this.hasVideoImage,
           callback: () => {
           }
         });
         this.dismiss();
-      } else if(!this.isNet && (this.trueVideoSrc.indexOf('blob')>-1)) {
+      } else if(!this.isNet && (this.trueVideoSrc.indexOf('blob')>-1)) { // 视频来自本地
         this.$store.dispatch('videoChange', {
           start_time: this.start_time,
           end_time: this.end_time,
           item: this.modal.item,
           src: this.src,
           isNet: false,
+          hasVideoImage: this.hasVideoImage,
           callback: () => {
           }
         });

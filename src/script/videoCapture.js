@@ -3,7 +3,7 @@ import util from './util';
 // import { promises } from 'fs';
 import {convertStreams2, accessWorker2, convertImageToVideo2, combineAudio2, convertTo264, getVideoFrames2, runCommand2} from '../script/convert.2.js';
 class VideoCapture {
-    constructor({src, start_time, end_time, interval, isNet, localData}) {
+    constructor({src, start_time, end_time, interval, isNet, localData,hasVideoImage=true}) {
         this.video = document.createElement('video');
         this.canvas = document.createElement('canvas');
         this.canvas.style="width: 300px;position:absolute;left:0;top:300px;background-color: rgba(255,255,255,0.2)";
@@ -23,16 +23,24 @@ class VideoCapture {
         this.promise = null;
         this.lastAction = 'initing'; // [initing, process, success, error]
         this.timeStamp = Date.now();
+        this.hasVideoImage = hasVideoImage;
         this.src = src;
        
 
     }
     start() {
-        // 在网页能播放
+        // 视频来自网络 在网页能播放
         if(this.isNet) {
             return this.promise1();
         } else {
-            return this.promise2();
+            // alert(this.hasVideoImage);
+            if(this.hasVideoImage) {
+                // console.log(this.localData);
+                this.video.src = URL.createObjectURL(new Blob([this.localData]), {type: 'video/mp4'});
+                return this.promise1();
+            } else {
+                return this.promise2();
+            }
         }
         
     }
@@ -166,7 +174,7 @@ class VideoCapture {
             let t = util.getMessageByTime(end_time - start_time);
             console.log([ss, t]);
 
-            let command = `-i input.mp4 -f image2 -vf fps=fps=${fps}  -ss ${ss} -t ${t} -an out%d.jpeg`;
+            let command = `-i input.mp4 -f image2 -vf fps=fps=${fps},showinfo -ss ${ss} -t ${t} -an out%d.jpeg`;
             let files = [
                 {
                     name: 'input.mp4',
@@ -180,6 +188,16 @@ class VideoCapture {
                         alert(res.data);
                         
                     }
+                    // time=00:00:01.00 b
+                    let str = res.data;
+                    let regx = /time=([^&]+)bitrate/mig;
+                    let result = regx.exec(str);
+                    if (result && result[1]) {
+                        console.warn(result[1]);
+                        // localStorage.setItem('sessionKey', result[1]);
+                    }
+
+                    window.p.$store.dispatch('updateVideoCaptureTimestap', {src: this.src, });
                 } else if (res.type == 'done') {
                     this.canvasList = res.data.map((item)=>{
                         // console.log(item);
@@ -188,17 +206,31 @@ class VideoCapture {
                         image.src = url;
                         image.onload = ()=>{
                             URL.revokeObjectURL(url);
+                            console.log(image.width);
                         }
                         return image;
                     })
                     setTimeout(()=>{
-                        alert([this.canvasList[0].width, this.canvasList[0].height]);
+                        let videoWidth = this.canvasList[1] ?  this.canvasList[1].width : 100;
+                        let videoHeight = this.canvasList[1] ?  this.canvasList[1].height : 100;
+                        let scale = util.getImageScale({img: {
+                            width: videoWidth,
+                            height: videoHeight,
+                        }, cw: 800, ch: 800, type: 'contain'});
+                        if(scale > 1) {
+                            scale = 1;
+                        }
+                        let distWidth = videoWidth * scale;
+                        let distHeight = videoHeight * scale;
+                        
+                        console.log(['8888888888888888888', videoWidth, videoHeight, scale, distWidth, distHeight]);
+                        // alert([this.canvasList[0].width, this.canvasList[0].height]);
                         resolve({
                             success: true,
                             cancel: false,
                             list: this.canvasList,
-                            width:  this.canvasList[0] ?  this.canvasList[0].width : 100, //videoWidth,
-                            height: this.canvasList[0] ?  this.canvasList[0].height : 100, // videoHeight,
+                            width:  videoWidth, //videoWidth,
+                            height: videoHeight, // videoHeight,
                         })
 
                     }, 1000)
@@ -217,3 +249,5 @@ class VideoCapture {
     }
 }
 export default VideoCapture; 
+
+

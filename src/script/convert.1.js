@@ -5,6 +5,7 @@ var workerPath = window.asm;
 	// alert(workerPath);
 }*/
 function processInWebWorker() {
+	let TOTAL_MEMORY =  1024 * 1024 * 128;
 	var blob = URL.createObjectURL(new Blob(
 		[
 			`importScripts("${ workerPath }");
@@ -23,7 +24,7 @@ function processInWebWorker() {
 						printErr: print,
 						files: message.files || [],
 						arguments: message.arguments || [],
-						TOTAL_MEMORY: 268435456
+						TOTAL_MEMORY: message.totalMemory || ${ TOTAL_MEMORY}
 				};
 				postMessage({
 					"type" : "start",
@@ -207,7 +208,7 @@ function log(message) {
 }
 
 // 将图片生成视频
-function convertImageToVideo(imagesArray, audio, {f, t, b}, callback) {
+function convertImageToVideo(imagesArray, audio, {f, t, b}, callback, size, encoder, totalMemory) {
 	var worker;	
 	if (!worker) {
 		worker = processInWebWorker();
@@ -233,7 +234,8 @@ function convertImageToVideo(imagesArray, audio, {f, t, b}, callback) {
 		worker.postMessage({
 			type: 'command',
 			arguments:  args,
-			files
+			files,
+			totalMemory
 		})
 	}
 	// console.log(files);
