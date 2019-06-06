@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-05 15:52:42
+ * @Last Modified time: 2019-06-06 15:27:42
  */
  // 时间轴组件
 import http from '../script/http';
@@ -44,6 +44,7 @@ const store = {
     propsChange({state, rootState,commit,dispatch}, {target}){
       
       let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
+      if(!currentLayer) {return;}
       let currentTweenObj = currentLayer.tweenObj;
       if(!currentTweenObj) return;
       let currentVideoTweenObj = currentLayer.videoTweenObj;

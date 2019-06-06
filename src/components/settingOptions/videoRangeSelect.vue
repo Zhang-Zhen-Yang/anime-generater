@@ -2,11 +2,15 @@
   <div style="padding-left: 15px;">
     <div class="video-range-select">
       <mask-replace-video @selectVideo="selectVideo" @clipVideo="clipVideo">
-        <div ref="videoWrap">
+        <div>
+          <!--<div ref="videoWrap">
+          </div>-->
           <videoRangeDIsplayImage :layer="layer"></videoRangeDIsplayImage>
-        </div>
-        <div :data-timestamp="timestamp" style="width: 100%;overflow: hidden;">
-          <div class="capture-progress" :style="{width: (layer.videoObj.canvasList.length - 1) * layer.interval / videoDuration *100 +'%'}"></div>
+          <!--
+          <div :data-timestamp="timestamp" style="width: 100%;overflow: hidden;">
+            <div class="capture-progress" :style="{width: (layer.videoObj.canvasList.length - 1) * layer.interval / videoDuration *100 +'%'}"></div>
+          </div>
+          -->
         </div>
       </mask-replace-video>
     </div>

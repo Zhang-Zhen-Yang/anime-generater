@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:34:53 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-05 17:36:10
+ * @Last Modified time: 2019-06-06 10:45:33
  */
 
 
@@ -119,7 +119,7 @@ const store = {
 					if(duration > 60) {
 						t = 60;
 					}
-					let command = `-i input.mp4 -f image2 -vf fps=fps=${fps},scale=w=300:h=300:force_original_aspect_ratio=decrease,showinfo ${t ? ('-t '+t) : ''} -an out%d.jpeg`;
+					let command = `${t ? ('-t '+t) : ''} -i input.mp4  -f image2 -vf fps=fps=${fps},scale=w=300:h=300:force_original_aspect_ratio=decrease,showinfo  -an out%d.jpeg`;
 					runCommand2({files, command}, (res)=>{
 						console.log(res);
 						if(res.type == 'stdout') {

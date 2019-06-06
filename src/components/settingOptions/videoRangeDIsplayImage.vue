@@ -1,12 +1,17 @@
 <template>
-  <div class="video-range-display-image" ref="videoWrap">
-    <div v-show="videoLocalImage">
-      <img  alt="" style="max-width: 100%;vertical-align:middle;">
+  <div>
+    <div class="video-range-display-image" ref="videoWrap">
+      <div v-show="videoLocalImage">
+        <img  alt="" style="max-width: 100%;vertical-align:middle;">
+      </div>
+      <video v-show="!videoLocalImage" :src="layer.src" style="max-width: 100%;vertical-align:middle;"></video>
     </div>
-    <video v-show="!videoLocalImage" :src="layer.src" style="max-width: 100%;vertical-align:middle;"></video>
-    {{ !!videoLocalImage }}
-
-    j;lllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+    <div :data-timestamp="timestamp" style="width: 100%;overflow: hidden;">
+      <!--{{ timestamp }} | {{ layer.start_time }} |{{ layer.videoObj.canvasList.length }} | {{ videoDuration }} | {{ layer.videoObj.localVideoCapturePregress}}-->
+      <div class="capture-progress" :style="{
+        width: (layer.videoObj.canvasList.length > 0 ? ((layer.videoObj.canvasList.length - 1) * layer.interval / videoDuration) : ( (layer.videoObj.localVideoCapturePregress * 1000) / videoDuration) ) *100 +'%'
+      }"></div>
+    </div>
   </div>
 </template>
 
@@ -27,6 +32,10 @@ export default {
     }
   },
   computed: {
+    videoDuration() {
+      let videoDuration = (this.layer.end_time - this.layer.start_time);
+      return videoDuration;
+    },
     timestamp() {
       return this.layer.timestamp;
     },
@@ -39,12 +48,21 @@ export default {
       }
       return;
     },
+    progressWidth(){
+      return (this.layer.videoObj.canvasList.length - 1) * this.layer.interval / this.videoDuration *100 +'%';
+    },
+    localVideoCapturePregress() {
+      return this.videoObj.localVideoCapturePregress;
+    }
   },
   methods: {
     appendVideo() {
       if(this.videoLocalImage) {
-        this.$refs.videoWrap.innerHTML='';
-        this.$refs.videoWrap.appendChild(this.layer.videoObj.canvasList[0]);
+        if(this.layer.videoObj.canvasList[0]) {
+          this.$refs.videoWrap.innerHTML='';
+          // console.log('this.videoLocalImage', this.layer.videoObj.canvasList[0]);
+          this.$refs.videoWrap.appendChild(this.layer.videoObj.canvasList[0]);
+        }
       } else {
         this.currentVideo = this.layer.videoObj.video;
         this.$refs.videoWrap.innerHTML='';
@@ -64,7 +82,7 @@ export default {
       if(this.currentVideo != this.layer.videoObj.video) {
         this.appendVideo();
       }
-      console.log(this.currentVideo == this.layer.videoObj.video);
+      // console.log(this.currentVideo == this.layer.videoObj.video);
     },
     videoObj:{
       handler() {

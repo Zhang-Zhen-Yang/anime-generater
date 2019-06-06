@@ -7,6 +7,7 @@ import filter from './script/filter.js';
 
 import global from './style/global.scss';
 import fonts from './style/fonts.scss';
+import icon from './style/icon.scss';
 
 
 Vue.use(Vuex);

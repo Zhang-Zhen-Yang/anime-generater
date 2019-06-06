@@ -42,6 +42,7 @@
           <div style="padding-left: 15px;">
             <!--节点的属性值-->
             <table cellspacing="0" cellpadding="0" style="width:100%;table-layout:fixed;">
+              <!--对齐-->
               <tr>
                 <td class="width1-4">
                   <span class="prop-name-x">对齐</span>
@@ -77,6 +78,7 @@
                   </table>
                 </td>
               </tr>
+              <!--缓动-->
               <tr>
                 <td>
                   <span class="prop-name-x">缓动</span>
@@ -159,8 +161,15 @@
               </tr>
               <!--scaleY-->
               <tr>
-                <td>
+                <td class="relative">
                   <span class="prop-name-x">scaleY</span>
+                  <div
+                    :class="['absolute', 'link-unlink-icon', 'bg-preset', 'pointer', ratioLink ? 'link-icon' : 'unlink-icon']"
+                    @click="ratioLink=!ratioLink"
+                    title="保持宽高比"
+                  >
+                    
+                  </div>
                 </td>
                 <td colspan="1">
                   <num-resize
@@ -272,6 +281,9 @@ export default {
     return {
       msg: 'setting-options',
       target: null,
+      ratioLink: true,
+      startScaleX: 1,
+      startScaleY: 1,
     }
   },
   computed: {
@@ -387,10 +399,15 @@ export default {
         this.props.scaleX = val;
         let targetValue = val;
         if(this.cLayer.type == 'image') {
-          targetValue = val * util.getImageScale({img: this.target.image, cw: this.project.width, ch: this.project.height,type: 'cover'})
-          
+          let initImageScale = util.getImageScale({img: this.target.image, cw: this.project.width, ch: this.project.height,type: 'cover'});
+          targetValue = val * initImageScale;
         }
         this.target.scaleX = targetValue;
+        // 保持比例
+        if(this.ratioLink) {
+          this.props.scaleY = val * this.startScaleY / this.startScaleX;
+          this.target.scaleY = targetValue * this.startScaleY / this.startScaleX;
+        }
       }
     },
 
@@ -420,6 +437,11 @@ export default {
           targetValue = val * util.getImageScale({img: this.target.image, cw: this.project.width, ch: this.project.height,type: 'cover'})
         }
         this.target.scaleY = targetValue;
+        // 保持比例
+        if(this.ratioLink) {
+          this.props.scaleX = val * this.startScaleX / this.startScaleY;
+          this.target.scaleX = targetValue * this.startScaleX / this.startScaleY;
+        }
       }
     },
     heightByScaleY: {
@@ -513,10 +535,16 @@ export default {
     // 属性开始调整，设置时间轴指针的位置
     startSetValue() {
       // alert('dd');
+      
+      console.log([this.props.scaleX, this.props.scaleY]);
+      // console.log();
       this.as();
       this.$store.dispatch('startSetValue');
     },
     propStartSetValue() {
+      this.startScaleX = this.props.scaleX;
+      this.startScaleY = this.props.scaleY;
+      // console.log([, this.props.scaleY]);
       this.as();
       this.$store.dispatch('checkAddTweenIf');
       this.$store.dispatch('startSetValue');
@@ -644,5 +672,11 @@ export default {
   }
   .align-icon.align-bottom{
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='%23626A76'%3E%3Cpath d='M9 5h5v8H9zM7 1H2v12h5V1zM6 12H3V2h3v10zm-6 3h16v1H0z'/%3E%3C/svg%3E");
+  }
+  .link-unlink-icon{
+    left: 8px;
+    top: -8px;
+    width: 20px;
+    height: 20px;
   }
 </style>

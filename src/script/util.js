@@ -217,13 +217,15 @@ const util = {
 	getDurationByMessage: function({message}) {
 		console.log('-=--------------------------------');
 		let timeArray = message.split(':');
+		console.log(timeArray);
 		let duration = parseFloat(timeArray[1]) * 3600 + parseFloat(timeArray[2]) * 60 + parseFloat(timeArray[3]);
 		return duration;
 	},
 	getMessageByTime: function(time) {
 		let houres = parseInt(time / 3600);
-		let minutes = parseInt(time % 3600/ 30);
+		let minutes = parseInt(time % 3600 / 60);
 		let seconds = parseFloat(time % 60);
+		seconds = parseInt(seconds * 100) / 100;
 		return [houres<10 ? ('0' + houres) : houres, minutes<10 ? ('0' + minutes) : minutes,  seconds<10 ? ('0' + seconds) : seconds].join(':');
 	}
 

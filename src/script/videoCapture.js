@@ -25,6 +25,7 @@ class VideoCapture {
         this.timeStamp = Date.now();
         this.hasVideoImage = hasVideoImage;
         this.src = src;
+        this.localVideoCapturePregress = 0;
        
 
     }
@@ -166,6 +167,7 @@ class VideoCapture {
     }
     promise2() {
         alert('promise2');
+        
         let promise = new Promise((resolve, reject)=>{
             let fps = 20;
             let start_time = this.start_time;
@@ -173,8 +175,9 @@ class VideoCapture {
             let ss = util.getMessageByTime(start_time);
             let t = util.getMessageByTime(end_time - start_time);
             console.log([ss, t]);
+            alert([ss, t]);
 
-            let command = `-i input.mp4 -f image2 -vf fps=fps=${fps},showinfo -ss ${ss} -t ${t} -an out%d.jpeg`;
+            let command = `-ss ${ss} -t ${t} -i input.mp4 -f image2 -vf fps=fps=${fps},showinfo -an out%d.jpeg`;
             let files = [
                 {
                     name: 'input.mp4',
@@ -195,7 +198,11 @@ class VideoCapture {
                     if (result && result[1]) {
                         console.warn(result[1]);
                         // localStorage.setItem('sessionKey', result[1]);
+                        let timeList = result[1].split(':');
+                        let duration = parseFloat(timeList[0]) * 3600 + parseFloat(timeList[1]) * 60 + parseFloat(timeList[2]);
+                        this.localVideoCapturePregress = duration;
                     }
+
 
                     window.p.$store.dispatch('updateVideoCaptureTimestap', {src: this.src, });
                 } else if (res.type == 'done') {
@@ -232,7 +239,7 @@ class VideoCapture {
                             width:  videoWidth, //videoWidth,
                             height: videoHeight, // videoHeight,
                         })
-
+                        window.p.$store.dispatch('updateVideoCaptureTimestap', {src: this.src});
                     }, 1000)
                 } else if (res.type == 'error') {
                     console.log(res);
