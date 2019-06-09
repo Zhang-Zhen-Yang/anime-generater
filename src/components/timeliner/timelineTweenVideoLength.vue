@@ -1,7 +1,16 @@
 <template>
   <div class="timeline-tween-video-length" :style="style" ref="video-length-block">
-    <div :data-timestamp="item.timestamp" v-if="item.videoObj" class="video-length-inner" :style="{width: (item.videoObj.canvasList.length - 1) * item.interval / videoDuration *100 + '%'}">
-      <!--{{ item.timestamp }} || {{ item.videoObj.canvasList.length }}-->
+    <!--<div
+      :data-timestamp="item.timestamp"
+      v-if="item.videoObj"
+      class="video-length-inner"
+      :style="{width: (item.videoObj.canvasList.length - 1) * item.interval / videoDuration *100 + '%'}">
+    </div>-->
+    <div
+      :data-timestamp="item.timestamp"
+      v-if="item.videoObj"
+      class="video-length-inner"
+      :style="{width: (item.videoObj.canvasList.length > 0 ? ((item.videoObj.canvasList.length - 1) * item.interval / videoDuration) : ( (item.videoObj.localVideoCapturePregress * 1000) / videoDuration) ) *100 +'%'}">
     </div>
   </div>
 </template>

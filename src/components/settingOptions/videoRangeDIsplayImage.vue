@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="video-range-display-image" ref="videoWrap">
-      <div v-show="videoLocalImage">
+    <div class="video-range-display-image" ref="videoWrap" v-videodisplay>
+      <!--<div v-show="videoLocalImage">
         <img  alt="" style="max-width: 100%;vertical-align:middle;">
       </div>
-      <video v-show="!videoLocalImage" :src="layer.src" style="max-width: 100%;vertical-align:middle;"></video>
+      <video v-show="!videoLocalImage" :src="layer.src" style="max-width: 100%;vertical-align:middle;"></video>-->
     </div>
     <div :data-timestamp="timestamp" style="width: 100%;overflow: hidden;">
       <!--{{ timestamp }} | {{ layer.start_time }} |{{ layer.videoObj.canvasList.length }} | {{ videoDuration }} | {{ layer.videoObj.localVideoCapturePregress}}-->
@@ -26,9 +26,21 @@ export default {
       }
     }
   },
+  directives: {
+    videodisplay: {
+      inserted: function (el) {
+        
+        // alert('ddddddddddddddddddd');
+      },
+      update: function(){
+        // alert('update');
+      }
+    }
+  },
   data () {
     return {
-      msg: 'videoRangeDIsplayImage'
+      msg: 'videoRangeDIsplayImage',
+      image: new Image(),
     }
   },
   computed: {
@@ -57,11 +69,22 @@ export default {
   },
   methods: {
     appendVideo() {
+
+      /* let image = new Image();
+      image.src = 'https://imgs.aixifan.com/o_1dclg53pmrp91sq1jlv1f3oao76a.png';
+      image.onload = ()=>{
+        this.$refs.videoWrap.innerHTML='';
+        // console.log('this.videoLocalImage', this.layer.videoObj.canvasList[0]);
+        this.$refs.videoWrap.appendChild(image);
+      }
+      return;*/
+      
       if(this.videoLocalImage) {
         if(this.layer.videoObj.canvasList[0]) {
+          this.image = this.layer.videoObj.canvasList[0]
           this.$refs.videoWrap.innerHTML='';
           // console.log('this.videoLocalImage', this.layer.videoObj.canvasList[0]);
-          this.$refs.videoWrap.appendChild(this.layer.videoObj.canvasList[0]);
+          this.$refs.videoWrap.appendChild(this.image);
         }
       } else {
         this.currentVideo = this.layer.videoObj.video;
@@ -71,10 +94,26 @@ export default {
     }
   },
   mounted() {
+    console.log('dom mounted');
     this.appendVideo();
+    this.interval = setInterval(()=>{
+      // console.log(this.image);
+      // console.log(this.$refs.videoWrap.innerHTML);
+      if(this.$refs.videoWrap.innerHTML=='') {
+        this.appendVideo();
+      }
+    }, 500)
+  },
+  destroyed() {
+    if(this.interval) {
+      clearInterval(this.interval);
+    }
   },
   created() {
-    
+    console.log('dom created');
+  },
+  updated() {
+    console.log('dom updatated');
   },
   watch: {
     timestamp(n, o) {
@@ -86,6 +125,7 @@ export default {
     },
     videoObj:{
       handler() {
+        console.log('videoObj');
         this.appendVideo();
       },
       deep: true

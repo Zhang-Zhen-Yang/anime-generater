@@ -27,24 +27,28 @@ class VideoCapture {
         this.src = src;
         this.localVideoCapturePregress = 0;
        
-
     }
+    // 开始生成
     start() {
         // 视频来自网络 在网页能播放
         if(this.isNet) {
             return this.promise1();
         } else {
             // alert(this.hasVideoImage);
+            // 有画面的本地视频。
             if(this.hasVideoImage) {
                 // console.log(this.localData);
+
+                return this.promise2();
+                // 也可以
                 this.video.src = URL.createObjectURL(new Blob([this.localData]), {type: 'video/mp4'});
                 return this.promise1();
             } else {
                 return this.promise2();
             }
         }
-        
     }
+    // 将video元素绘制在canvas上 以获取图片帧
     promise1() {
         let promise = new Promise((resolve, reject)=>{
             let canvasList = [];
@@ -53,6 +57,7 @@ class VideoCapture {
                 console.log(this.video.duration);
                 console.log(this.video.videoWidth);
                 console.log(this.video.videoHeight);
+
                 let videoWidth = this.video.videoWidth;
                 let videoHeight = this.video.videoHeight;
                 /*let scale = util.getImageScale({img: {
@@ -64,7 +69,7 @@ class VideoCapture {
                     width: videoWidth,
                     height: videoHeight,
                 }, cw: 800, ch: 800, type: 'contain'});
-                console.log(scale);
+                // console.log(scale);
                 if(scale > 1) {
                     scale = 1;
                 }
@@ -165,8 +170,9 @@ class VideoCapture {
         this.promise = promise;
         return promise;
     }
+    // 通过ffmpeg 获取视频图片帧
     promise2() {
-        alert('promise2');
+        // alert('promise2');
         
         let promise = new Promise((resolve, reject)=>{
             let fps = 20;
@@ -175,9 +181,9 @@ class VideoCapture {
             let ss = util.getMessageByTime(start_time);
             let t = util.getMessageByTime(end_time - start_time);
             console.log([ss, t]);
-            alert([ss, t]);
+            // alert([ss, t]);
 
-            let command = `-ss ${ss} -t ${t} -i input.mp4 -f image2 -vf fps=fps=${fps},showinfo -an out%d.jpeg`;
+            let command = `-ss ${ss} -t ${t} -i input.mp4 -q:v 2 -f image2 -vf fps=fps=${fps},showinfo -an out%d.jpeg`;
             let files = [
                 {
                     name: 'input.mp4',
@@ -187,9 +193,11 @@ class VideoCapture {
             runCommand2({files, command}, (res)=>{
                 console.log(res);
                 if(res.type == 'stdout') {
+                    if(this.canceled) {
+                        return;
+                    }
                     if(res.data.indexOf('Duration') > -1){
-                        alert(res.data);
-                        
+                        // alert(res.data);
                     }
                     // time=00:00:01.00 b
                     let str = res.data;
@@ -202,10 +210,12 @@ class VideoCapture {
                         let duration = parseFloat(timeList[0]) * 3600 + parseFloat(timeList[1]) * 60 + parseFloat(timeList[2]);
                         this.localVideoCapturePregress = duration;
                     }
-
-
+                    // 通知获取的进度
                     window.p.$store.dispatch('updateVideoCaptureTimestap', {src: this.src, });
                 } else if (res.type == 'done') {
+                    if(this.canceled) {
+                        return;
+                    }
                     this.canvasList = res.data.map((item)=>{
                         // console.log(item);
                         let url = URL.createObjectURL(new Blob([item.data], {type: 'image/jpeg'}));
@@ -214,6 +224,7 @@ class VideoCapture {
                         image.onload = ()=>{
                             URL.revokeObjectURL(url);
                             console.log(image.width);
+                            console.log([image.width, image.height]);
                         }
                         return image;
                     })
@@ -250,6 +261,7 @@ class VideoCapture {
         this.promise = promise;
         return promise;
     }
+    // 取消获取图片帧
     cancel() {
         this.canceled = true;
         this.video.onloadedmetadata = ()=>{}

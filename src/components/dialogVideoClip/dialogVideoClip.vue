@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:32:17 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-05 15:35:07
+ * @Last Modified time: 2019-06-09 15:21:11
  */
 
 <template>
@@ -210,6 +210,10 @@ export default {
     // 确定
     confirm() {
       // alert(typeof this.trueVideoSrc);
+      if(this.start_time > this.end_time) {
+        this.$store.commit('showSnackbar', {text: '结束时间不能小于开始时间'});
+        return;
+      }
       // 如果可用而且视频来自网络
       if(this.usable && this.isNet) {
         this.$store.dispatch('videoChange', {
