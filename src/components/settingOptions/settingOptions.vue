@@ -85,7 +85,7 @@
                 </td>
                 <td colspan="3">
                   <select name="" id="" v-model="ease" style="background-color:#57595a;color:white;border-radius:2px;">
-                    <option value="" v-for="item,index in eases" :value="item.value">{{ item.name }}</option>
+                    <option v-for="item,index in eases" :value="item.value" :key="item.value">{{ item.name }}</option>
                   </select>
                 </td>
               </tr>

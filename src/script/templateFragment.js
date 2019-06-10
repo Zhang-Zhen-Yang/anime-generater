@@ -264,6 +264,7 @@ let obj = {
     timestamp: 0,
     start_time: 0,
     end_time: 1000,
+    isNet: true,
     sprite: null,
     list: [],
     lastAction: 'init',

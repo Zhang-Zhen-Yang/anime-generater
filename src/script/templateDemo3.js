@@ -421,6 +421,7 @@ let demo = {
       fillBefore: true, // 缓动前显示
       fillAfter: true, // 缓动后显示
       videoStartTime: 2000,
+      isNet: true,
       tween: [
         {
           action: 'to',

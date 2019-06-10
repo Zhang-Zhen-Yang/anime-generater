@@ -485,28 +485,39 @@ let obj = {
 
     if(item.videoObj/*item.lastAction == 'success' || item.lastAction == 'initing'*/) {
       // alert('videoObj');
-      let firstImage = item.videoObj.canvasList[0];
+      let firstImage = item.videoObj.canvasList[item.videoObj.canvasList.length - 1];
       if(firstImage) {
         // alert([firstImage.width, firstImage.height]);
+        /* item.videoObj.canvasList.forEach((i)=>{
+          console.log([i.width, i.height]);
+        })*/
         videoContainer.setBounds(0, 0, firstImage.width, firstImage.height);
+
         videoContainer.set({
           regX: firstImage.width / 2,
           regY: firstImage.height / 2,
         })
       }
     } else {
+      // alert('jjjjjjj');
       item.lastAction = 'initing';
+      let localData = '';
+      if(window.p && window.p.$store.state.dialogVideoClip.localVideo[item.src]) {
+        localData = window.p.$store.state.dialogVideoClip.localVideo[item.src].data;
+      }
       let videoCapture = new VideoCaptureClass({
         src: item.src,
         start_time: item.start_time / 1000,
         end_time: item.end_time / 1000,
         interval: item.interval / 1000,
-        isNet: true
+        isNet: item.isNet,
+        localData 
       })
       item.videoObj = videoCapture;
       let promise = videoCapture.start();
       promise.then((res)=>{
         if(res.success) {
+          // alert([res.width, res.height]);
           videoContainer.setBounds(0, 0, res.width, res.height);
           videoContainer.set({
             regX: res.width / 2,

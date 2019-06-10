@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-06 15:27:42
+ * @Last Modified time: 2019-06-10 14:40:13
  */
  // 时间轴组件
 import http from '../script/http';
@@ -195,14 +195,15 @@ const store = {
     },
     // 更改视频片段
     videoChange({state, rootState,commit,dispatch},{start_time, end_time, src, item, isNet, hasVideoImage, callback}) {
+      dispatch('addStep');
       item.start_time = start_time;
       item.end_time = end_time;
       item.src = src;
+      item.isNet = isNet;
       let localData = '';
       if(rootState.dialogVideoClip.localVideo[src]) {
         localData = rootState.dialogVideoClip.localVideo[src].data;
       }
-
       let videoCapture = new VideoCaptureClass({
         src: item.src,
         start_time: item.start_time / 1000,

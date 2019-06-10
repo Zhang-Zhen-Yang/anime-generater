@@ -141,13 +141,10 @@ let Object = {
     fillVideoListCheck({project, fUUID, fItem}) {
         fItem.list = [];
         let fItemTag =`${fItem.start_time}-${fItem.end_time}-${fItem.src}`;
-
-
-
         let prevItem = this.getLayerByVideoTag({layers: project.layers, tag: fItemTag});
-        // console.log('prevItem', prevItem);
+        // console.log(['prevItem', prevItem, prevItem.videoObj.lastAction]);
 
-        if(prevItem) {
+        if(prevItem && prevItem.videoObj && prevItem.videoObj.lastAction == 'success') {
             fItem.videoObj = new VideoCapture({
                 src: fItem.start_time,
                 start_time: fItem.end_time,
