@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 15:35:36 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-10 14:55:08
+ * @Last Modified time: 2019-06-12 11:56:39
  */
 // 文本转语音 百度tts
 
@@ -19,7 +19,7 @@ import btts from '../script/baidu_tts_cors';
 const store = {
 	state: {
 		show: false,
-		tok: '24.e829d1ce750c342c063fbca11bca0879.2592000.1558517552.282335-16069189',
+		tok: '24.08bed832e50cf1a95c5117e443763099.2592000.1562828848.282335-16090443',
 		tokNew: false,
 		voiceMap: {
 
@@ -59,8 +59,7 @@ const store = {
 		},
 		// 获取生成语音
 		fetchTTSAudio({rootState, state, commit, dispatch, getters}, {tex, oldTex, spd=5, pit=5, per=0, callback,showSnackbar = true}){
-			if(window.stopVoice) return;
-			
+			// if(window.stopVoice) return;
 			let tag = `tag:${tex}-${spd}-${pit}-${per}`;
 			// 没有文本
 			if(!tex) {

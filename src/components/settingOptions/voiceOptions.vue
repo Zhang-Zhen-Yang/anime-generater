@@ -37,35 +37,47 @@
           <tr>
             <td>语速</td>
             <td>
-              <num-resize
-                v-model="spd"
-                :min="0"
-                :max="15"
-                :stepScale="0.1"
-                :toFixed="0"
-                @start="()=>{}"
-              >
-                <span >
-                  {{ spd }}
-                </span>
-              </num-resize>
+              <div style="display:inline-block;width: 20%;">
+                <num-resize
+                  v-model="spd"
+                  :min="0"
+                  :max="15"
+                  :step="1"
+                  :stepScale="0.1"
+                  :toFixed="0"
+                  @start="()=>{}"
+                >
+                  <span >
+                    {{ spd }} 
+                  </span>
+                </num-resize>
+              </div>
+              <span>
+                取值0-15，默认为5中语速
+              </span>
             </td>
           </tr>
           <tr>
             <td>音调</td>
             <td>
-              <num-resize
-                v-model="pit"
-                :min="0"
-                :max="15"
-                :stepScale="0.1"
-                :toFixed="0"
-                @start="()=>{}"
-              >
-                <span >
-                  {{ pit }}
-                </span>
-              </num-resize>
+              <div style="display:inline-block;width: 20%;">
+                <num-resize
+                  v-model="pit"
+                  :min="0"
+                  :max="15"
+                  :stepScale="0.1"
+                  :step="1"
+                  :toFixed="0"
+                  @start="()=>{}"
+                >
+                  <span >
+                    {{ pit }}
+                  </span>
+                </num-resize>
+              </div>
+              <span>
+                取值0-15，默认为5中语调
+              </span>
             </td>
           </tr>
           <tr>
@@ -94,20 +106,21 @@
         <table cellspacing="0" cellpadding="0" style="width: 100%;">
           <!--show-->
           <tr>
-            <td class="width1-4">show</td>
+            <td class="width1-4">显示字幕</td>
             <td class="relative">
               <checkbox v-model="showSubtitle"></checkbox>
             </td>
           </tr>
           <!--fontSize-->
           <tr>
-            <td class="width1-4">fontSize</td>
+            <td class="width1-4">字体大小</td>
             <td class="relative">
               <num-resize
                 v-model="fontSize"
                 :min="0"
                 :max="100"
                 :stepScale="1"
+                :step="1"
                 :toFixed="0"
                 @start="()=>{}"
               >
@@ -119,7 +132,7 @@
           </tr>
           <!--color-->
           <tr>
-            <td class="width1-4">color</td>
+            <td class="width1-4">颜色</td>
             <td class="relative">
               <color-picker title="颜色" v-model="color" :showTitle="false" @start="()=>{}">
               </color-picker>
@@ -128,7 +141,7 @@
           </tr>
           <!--font-->
           <tr>
-            <td class="width1-4">font</td>
+            <td class="width1-4">字体</td>
             <td class="relative">
               <select name="" id="" v-model="fontFamily" style="background-color:#57595a;color:white;border-radius:2px;">
                 <option value="" v-for="item,index in fontsList" :value="item.value">{{item.name}}</option>
@@ -137,13 +150,14 @@
           </tr>
           <!--outline-->
           <tr>
-            <td class="width1-4">outline</td>
+            <td class="width1-4">描边粗细</td>
             <td class="relative">
               <num-resize
                 v-model="outline"
                 :min="0"
                 :max="100"
                 :stepScale="1"
+                :step="1"
                 :toFixed="0"
                 @start="()=>{}"
               >
@@ -155,7 +169,7 @@
           </tr>
           <!--outlineColor-->
           <tr>
-            <td class="width1-4">outlineColor</td>
+            <td class="width1-4">描边颜色</td>
             <td class="relative">
               <color-picker title="颜色" v-model="outlineColor" :showTitle="false" @start="()=>{}">
               </color-picker>

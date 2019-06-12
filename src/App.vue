@@ -37,6 +37,7 @@
     <dialogAsmSwitch v-if="dialogSetting.switchShow"/>
     <contextMenu></contextMenu>
     <snackbar ref="snackbar"></snackbar>
+    <workspaceContextmenu></workspaceContextmenu>
   </div>
 </template>
 
@@ -57,6 +58,7 @@ import audioTrigger from './components/audioTrigger.vue';
 import dialogSetting from './components/dialogSetting/dialogSetting.vue';
 import dialogAsmSwitch from './components/dialogSetting/dialogAsmSwitch.vue';
 import leftBar from './components/leftBar.vue';
+import workspaceContextmenu from './components/workspaceContextmenu.vue';
 export default {
   name: 'app',
   components: {
@@ -75,7 +77,8 @@ export default {
     audioTrigger,
     dialogSetting,
     leftBar,
-    dialogAsmSwitch
+    dialogAsmSwitch,
+    workspaceContextmenu
   },
   data () {
     return {
@@ -117,6 +120,7 @@ export default {
 
     // 全局点击
     appClick(e) {
+      this.$store.dispatch('hideContextMenu');
       // console.log(e.target.className);
     },
     dragover(e) {

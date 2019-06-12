@@ -125,12 +125,13 @@
               <!--scaleX-->
               <tr>
                 <td>
-                  <span class="prop-name-x">scaleX</span>
+                  <span class="prop-name-x">X轴缩放</span>
                 </td>
                 <td colspan="1" style="width: 45%">
                   <num-resize
                     v-model="scaleX"
                     :stepScale="0.01"
+                    :step="0.01"
                     :toFixed="3"
                     @start="propStartSetValue"
                     @change="change({type:'scaleX',value: scaleX})">
@@ -144,12 +145,13 @@
                 </td>
                 <td>
                   <!--宽-->
-                  <span class="prop-name-x">width</span>
+                  <span class="prop-name-x">宽</span>
                 </td>
                 <td style="width: 25%">
                   <num-resize
                     v-model="widthByScaleX"
                     :stepScale="1"
+                    :step="1"
                     :toFixed="3"
                     @start="propStartSetValue"
                     @change="change({type:'scaleX',value: scaleX})">
@@ -162,7 +164,7 @@
               <!--scaleY-->
               <tr>
                 <td class="relative">
-                  <span class="prop-name-x">scaleY</span>
+                  <span class="prop-name-x">Y轴缩放</span>
                   <div
                     :class="['absolute', 'link-unlink-icon', 'bg-preset', 'pointer', ratioLink ? 'link-icon' : 'unlink-icon']"
                     @click="ratioLink=!ratioLink"
@@ -175,6 +177,7 @@
                   <num-resize
                     v-model="scaleY"
                     :stepScale="0.01"
+                    :step="0.01"
                     :toFixed="3"
                     @start="propStartSetValue"
                     @change="change({})">
@@ -185,12 +188,13 @@
                 </td>
                 <td>
                   <!--高-->
-                  <span class="prop-name-x">height</span>
+                  <span class="prop-name-x">高</span>
                 </td>
                 <td>
                   <num-resize
                     v-model="heightByScaleY"
                     :stepScale="1"
+                    :step="1"
                     :toFixed="3"
                     @start="propStartSetValue"
                     @change="change({})">
@@ -204,13 +208,14 @@
               <tr>
                 <td>
                   <span class="prop-name-x">
-                    rotation
+                    旋转
                   </span>
                 </td>
                 <td colspan="3">
                   <num-resize
                     v-model="rotation"
                     :stepScale="1"
+                    :step="1"
                     @start="propStartSetValue"
                     @change="change({type:'rotation',value: rotation})">
                     <span>
@@ -223,13 +228,14 @@
               <tr>
                 <td>
                   <span  class="prop-name-x">
-                    alpha
+                    不透明度
                   </span>
                 </td>
                 <td colspan="3">
                   <num-resize
                     v-model="alpha"
                     :stepScale="0.01"
+                    :step="0.01"
                     :max="1"
                     :min="0"
                     @start="propStartSetValue"

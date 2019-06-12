@@ -1,9 +1,9 @@
 <template>
   <div :style="{position: 'relative', zIndex: index}" v-show="isVisible">
-    <div class="dom-text" :style="style" ref="domText"  @click.stop="setActiveIndex">
+    <div class="dom-text" :style="style" ref="domText"  @click.stop="setActiveIndex" @contextmenu="contextmenu($event)">
       <!--{{ obj.text || 'test' }} -->
     </div>
-    <div :style="dragStyle" class="dom-text-d" ref="domTextD" v-show="isActivity" @click.stop="">
+    <div :style="dragStyle" class="dom-text-d" ref="domTextD" v-show="isActivity" @click.stop="hideContextmenu" @contextmenu.stop="contextmenu($event)">
       <div :style="resizeStyle" class="dom-text-r" ref="domTextR"></div>
     </div>
   </div>
@@ -352,8 +352,19 @@ export default {
         }
       });
     },
+    hideContextmenu() {
+      this.$store.dispatch('hideContextMenu');
+    },
+    // 右键
+    contextmenu(e) {
+      e.preventDefault();
+      this.setActiveIndex();
+      this.$store.dispatch('contextMenu', {e});
+      // alert('contextMenu');
+    },
     // 点击击活图层
     setActiveIndex() {
+      this.hideContextmenu();
       if(this.isSub) {
         this.$store.state.activeLayerIndex = [this.index, this.sIndex];
         this.$store.state.tl.topIndex = this.index;

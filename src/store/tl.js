@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-05-13 16:51:10
+ * @Last Modified time: 2019-06-12 11:08:41
  */
 
  // 时间轴组件
@@ -590,6 +590,8 @@ const store = {
               state.tweenIndex -= 1;
             }
           }
+        } else {
+
         }
         
       }
@@ -610,6 +612,7 @@ const store = {
           break;
         // delete
         case 46:
+          console.log(e.target);
           dispatch('removeTween');
           break;
         // enter

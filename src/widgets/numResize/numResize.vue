@@ -9,7 +9,7 @@
             @input="input"
             :max="max"
             :min="min"
-            :step="stepScale"
+            :step="step"
             @blur="blur"
             @change="change"
             @focus="focus"
@@ -23,6 +23,10 @@
 export default {
     name: 'number-resize',
     props: {
+        step: {
+            type: Number,
+            default: 1
+        },
         // 移动的缩放比，通常1px 对应 1
         stepScale: {
             type: Number,

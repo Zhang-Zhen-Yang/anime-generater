@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-04-20 14:32:17 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-09 15:21:11
+ * @Last Modified time: 2019-06-12 11:31:17
  */
 
 <template>
@@ -69,13 +69,13 @@
                     <tr>
                       <td>开始：</td>
                       <td>
-                        <num-resize v-model="start_time" :min="0" :max="end_time" :stepScale="10" @resize="setBlock">
+                        <num-resize v-model="start_time" :min="0" :max="end_time" :step="10":stepScale="10" @resize="setBlock">
                           {{ (start_time / 1000).toFixed(2) }}s
                         </num-resize>
                       </td>
                       <td>结束</td>
                       <td>
-                        <num-resize v-model="end_time" :min="start_time" :max="duration * 1000" :stepScale="10" @resize="setBlock">
+                        <num-resize v-model="end_time" :min="start_time" :max="duration * 1000" :step="10" :stepScale="10" @resize="setBlock">
                            {{ (end_time / 1000).toFixed(2) }}s
                         </num-resize>
                       </td>

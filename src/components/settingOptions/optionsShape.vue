@@ -5,9 +5,9 @@
     </div>
     <div style="padding-left: 15px;">
       <select name="" id="" v-model="shapeType" style="background-color:#57595a;color:white;border-radius:2px;">
-        <option value="polyStar">polyStar</option>
-        <option value="circle">circle</option>
-        <option value="rect">rect</option>
+        <option value="polyStar">多边形</option>
+        <option value="circle">圆形</option>
+        <option value="rect">矩形</option>
       </select>
     </div>
     <div class="c-layer-title">
@@ -41,6 +41,7 @@
           <td>
             <num-resize
               v-model="pointSize"
+              :step="0.01"
               :stepScale="0.01"
               :min="0"
               :max="1"
@@ -73,7 +74,7 @@
         <!--颜色-->
         <tr>
           <td class="width1-4">
-            <span class="prop-name-x">fill</span>
+            <span class="prop-name-x">颜色</span>
           </td>
           <td>
             <color-picker title="颜色" v-model="shapeColor" :showTitle="false" @start="()=>{as();}">
@@ -106,7 +107,7 @@
         <!--颜色-->
         <tr>
           <td class="width1-4">
-            <span class="prop-name-x">fill</span>
+            <span class="prop-name-x">颜色</span>
           </td>
           <td>
             <color-picker title="颜色" v-model="shapeColor" :showTitle="false" @start="()=>{as();}">

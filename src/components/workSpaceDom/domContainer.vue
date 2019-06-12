@@ -1,11 +1,11 @@
 // 容器类型
 <template>
   <div v-show="isVisible">
-    <div :style="dragStyle" class="dom-container-d" ref="domContainerD" v-show="isActivity">
+    <div :style="dragStyle" class="dom-container-d" ref="domContainerD" v-show="isActivity" @contextmenu.stop="contextmenu($event)">
       <div :style="resizeStyle" class="dom-container-r" ref="domContainerR">
       </div>
     </div>
-    <div class="dom-container" :style="style" ref="domContainer" @mousedown="setActiveIndex">
+    <div class="dom-container" :style="style" ref="domContainer" @mousedown="setActiveIndex" @contextmenu.stop="contextmenu($event)">
       <div class="bg-preset rotate-center-icon" v-if="topIndex == index"></div>
       <template v-for="i,iindex in item.children">
         <!--容器下的image-->
@@ -323,10 +323,17 @@ export default {
           _this.bindResizable({aspectRatio: shouldAspect});
         }
       });
-
+    },
+    // 右键
+    contextmenu(e) {
+      e.preventDefault();
+      this.setActiveIndex(e);
+      this.$store.dispatch('contextMenu', {e});
+      // alert('contextMenu');
     },
     // 点击击活图层
     setActiveIndex(e) {
+      this.$store.dispatch('hideContextMenu');
       // return;
       // console.log(e.target.className);
       let targetClassName = e.target.className;

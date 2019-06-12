@@ -91,8 +91,9 @@ export default {
             } else {
               // this.audio.pause();
             }
-          }
-          if(Math.abs(this.audio.currentTime * 1000 + this.item.time - nval) > 100) {
+          } 
+          // 如果音频差200ms以上，重新设置音频的播放进度
+          if(Math.abs(this.audio.currentTime * 1000 + this.item.time - nval) > 200) {
             this.audio.currentTime = (nval - this.item.time) / 1000;
           }
         } else {

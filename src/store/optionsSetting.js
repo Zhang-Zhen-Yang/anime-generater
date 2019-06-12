@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-10 14:40:13
+ * @Last Modified time: 2019-06-12 15:23:21
  */
  // 时间轴组件
 import http from '../script/http';
@@ -29,6 +29,12 @@ const store = {
     loadedFonts: {},
     // 本地安全字体,不调用webfontLoader
     localFonts: ['黑体'],
+    contextmenu: {
+      show: false,
+      x: 0,
+      y: 0,
+      layer: {}
+    }
 	},
 	// ---------------------------------------------------------------------------------------------------------
 	getters: {
@@ -400,6 +406,21 @@ const store = {
       }
       // currentLayer.tween[state.tweenIndex].props.y = currentLayer.obj.y;
       dispatch('propsChange', {target: currentLayer.obj});
+    },
+    // 右键菜单
+    contextMenu({state, rootState,commit,dispatch}, {e}) {
+      console.log('contextMenu');
+      let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
+      // console.log([e.pageX, e.pageY]);
+      state.contextmenu.x = e.pageX;
+      state.contextmenu.y = e.pageY;
+      state.contextmenu.show = true;
+      state.contextmenu.layer = currentLayer;
+    },
+    // 隐藏右键菜单
+    hideContextMenu({state, rootState,commit,dispatch}) {
+      // this.$store.dispatch('hideContextMenu');
+      state.contextmenu.show = false;
     }
 	}// end actions 
 }

@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-02-21 09:18:10 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-10 14:55:55
+ * @Last Modified time: 2019-06-12 11:56:14
  */
 
 import http from '../script/http';
@@ -187,15 +187,19 @@ const store = {
 			dispatch('getSettingFromStorage');
 			window.localImages = {};
 			state.project = demo3;
-			dispatch('checkTok').then((res)=>{
-				if(res&&res.success) {
-					dispatch('fillVoices', {project: state.project});
-				} else {
+			if(window.stopVoice) {
+				dispatch('fillVoices', {project: state.project});
+			} else {
+				dispatch('checkTok').then((res)=>{
+					if(res&&res.success) {
+						dispatch('fillVoices', {project: state.project});
+					} else {
+	
+					}
+				})
+			}
 
-				}
-			})
 			
-			// dispatch('fillVoices', {project: state.project});
 			/* state.project.voices.forEach((item, index)=>{
 				console.log(item);
 				dispatch('fetchTTSAudio', {
@@ -760,9 +764,11 @@ const store = {
 			// 转换图片到视频
 			let totalMemory = state.dialogSetting.totalMemory * 1024 * 1024;
 
+			/* console.log('voice------------------------------------', voice);
+			console.log('voice------------------------------------', voice.byteLength);*/
 			(state.convertVer == 1 ? convertImageToVideo : convertImageToVideo2)(
 				image,
-				(voice && voice.length > 0)? new Uint8Array(voice) : null,
+				(voice && voice.byteLength > 0)? new Uint8Array(voice) : null,
 				{
 					f: f,
 					t: state.timeline.duration / 1000,

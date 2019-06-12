@@ -73,7 +73,7 @@
     <div style="padding-left: 15px;">
       <table cellspacing="0" cellpadding="0" style="width: 100%;">
         <tr>
-          <td class="width1-4">offsetX</td>
+          <td class="width1-4">横向偏移</td>
           <td colspan="2">
             <num-resize
               v-model="shadowOffsetX"
@@ -87,7 +87,7 @@
           </td>
         </tr>
         <tr>
-          <td>offsetY</td>
+          <td>纵向偏移</td>
           <td colspan="2">
             <num-resize
               v-model="shadowOffsetY"
@@ -101,7 +101,7 @@
           </td>
         </tr>
         <tr>
-          <td>blur</td>
+          <td>投影程度</td>
           <td colspan="2">
             <num-resize
               v-model="shadowBlur"
@@ -116,7 +116,7 @@
           </td>
         </tr>
         <tr>
-          <td>color</td>
+          <td>投影颜色</td>
           <td v-if="false">
             <div class="color-dot" :style="{backgroundColor: shadowColor}"></div>&nbsp;
           </td>

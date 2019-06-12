@@ -1,7 +1,7 @@
 <template>
-  <div style="position: relative;" ref="domImageWrap" v-show="isVisible" @click.stop="">
-    <img class="dom-image" :src="obj.image.src" :style="style" ref="domImage" @click.stop="setActiveIndex" />
-    <div :style="dragStyle" :class="['dom-image-d', isSub ? 'dom-image-d-sub': '']" ref="domImageD" v-show="isActivity" @click.stop="">
+  <div style="position: relative;" ref="domImageWrap" v-show="isVisible" @click.stop="hideContextmenu" @contextmenu.stop="contextmenu($event)">
+    <img class="dom-image" :src="obj.image.src" :style="style" ref="domImage" @click.stop="setActiveIndex" @contextmenu.stop="contextmenu($event)"/>
+    <div :style="dragStyle" :class="['dom-image-d', isSub ? 'dom-image-d-sub': '']" ref="domImageD" v-show="isActivity" @click.stop="" >
       <div :style="resizeStyle" class="dom-image-r" ref="domImageR">
         <!--{{ isSub ? style : {} }}-->
         <!--{{ obj.x }}，{{ obj.image.width }}，{{ obj.image.height}}, {{ obj.scaleX }}-->
@@ -360,8 +360,19 @@ export default {
         }
       });
     },
+    hideContextmenu() {
+      this.$store.dispatch('hideContextMenu');
+    },
+    // 右键
+    contextmenu(e) {
+      e.preventDefault();
+      this.setActiveIndex();
+      this.$store.dispatch('contextMenu', {e});
+      // alert('contextMenu');
+    },
     // 点击击活图层
     setActiveIndex() {
+      this.$store.dispatch('hideContextMenu');
       if(this.isSub) {
         this.$store.state.activeLayerIndex = [this.index, this.sIndex];
         this.$store.state.tl.topIndex = this.index;
