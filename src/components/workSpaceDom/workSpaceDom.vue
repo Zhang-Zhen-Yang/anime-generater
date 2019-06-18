@@ -7,23 +7,23 @@
         :index="index - 1"
         v-if="item.children && item.children[0] && item.children[0].image" :obj="item.children[0]"></domImage>
     </div>-->
-    <div v-for="item, index in layers" v-show="item.editable">
+    <div v-for="item, index in layers" v-show="type == 'canvas' || item.editable">
       <!--图片类型-->
       <domImage
         :index="index"
-        v-if="item.type=='image'&&item.obj && item.obj.image" :obj="item.obj"></domImage>
+        v-if="item.type=='image'&&item.obj && item.obj.image" :obj="item.obj" :type="type"></domImage>
       <domText
         :index="index"
-        v-if="item.type=='text'&&item.obj" :obj="item.obj"></domText>
+        v-if="item.type=='text'&&item.obj" :obj="item.obj" :canvastype="'text'" :type="type" :item="item"></domText>
       <domText
         :index="index"
-        v-if="item.type=='shape'&&item.obj" :obj="item.obj" :item="item" :isShape="true"></domText>
+        v-if="item.type=='shape'&&item.obj" :obj="item.obj" :canvastype="'shape'" :item="item" :isShape="true" :type="type"></domText>
       <domContainer
         :index="index"
-        v-if="item.type=='container'&&item.obj" :obj="item.obj" :item="item"></domContainer>
+        v-if="item.type=='container'&&item.obj" :obj="item.obj" :item="item" :type="type"></domContainer>
       <domText
         :index="index"
-        v-if="item.type=='video'&&item.obj" :obj="item.obj" :item="item" :isShape="true"></domText>
+        v-if="item.type=='video'&&item.obj" :obj="item.obj" :canvastype="'video'" :item="item" :isShape="true" :type="type"></domText>
     </div>
 
   </div>
@@ -37,9 +37,15 @@ import domContainer from './domContainer.vue';
 export default {
   name: 'work-space-dom',
   components: {domImage, domText, domContainer},
+  props: {
+    type: {
+      type: String,
+      default: 'event',
+    }
+  },
   data () {
     return {
-      msg: 'work-space-dom'
+      msg: 'work-space-dom',
     }
   },
   computed: {
@@ -64,10 +70,14 @@ export default {
       return this.project.zoom;
     },
     stageStyle() {
-      return {
+      let style = {
         width: this.project.width *  this.zoom+ 'px',//this.size.width + 'px',
         height: this.project.height * this.zoom + 'px', // this.size.height + 'px',
       }
+      if(this.type == 'canvas') {
+        style.zIndex = -1;
+      }
+      return style; 
     },
     project() {
       return this.$store.state.project;

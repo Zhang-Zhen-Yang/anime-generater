@@ -414,6 +414,7 @@ let demo = {
       timestamp: 0,
       sprite: null,
       list: [],
+      clipIndex: -1,
       lastAction: 'init',
       
       videoFillBefore: true, // 视频播放前显示

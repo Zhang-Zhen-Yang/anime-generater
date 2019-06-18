@@ -1,7 +1,7 @@
 // 容器类型
 <template>
   <div v-show="isVisible">
-    <div :style="dragStyle" class="dom-container-d" ref="domContainerD" v-show="isActivity" @contextmenu.stop="contextmenu($event)">
+    <div :style="dragStyle" class="dom-container-d" ref="domContainerD" v-show="isActivity && type == 'event'" @contextmenu.stop="contextmenu($event)">
       <div :style="resizeStyle" class="dom-container-r" ref="domContainerR">
       </div>
     </div>
@@ -16,6 +16,7 @@
           :index="index"
           :sIndex="iindex"
           :parentObj="obj"
+          :type="type"
         ></domImage>
         <!--容器下的text-->
         <domText
@@ -26,6 +27,9 @@
           :index="index"
           :sIndex="iindex"
           :parentObj="obj"
+          :type="type"
+          :canvastype="i.type"
+          :item="i"
         ></domText>
       </template>
     </div>
@@ -58,6 +62,10 @@ export default {
     index: {
       type: Number,
       default: -1
+    },
+    type: {
+      type: String,
+      default: 'event',
     }
   },
   data () {
@@ -122,7 +130,7 @@ export default {
         height: height * scaleY * this.zoom + 'px',
         // transformOrigin: '0 0',
         transform: `${this.obj.scaleX < 0 ?'scaleX(-1)': ''} ${this.obj.scaleY < 0 ?'scaleY(-1)': ''} rotateZ(${this.obj.rotation}deg)`,
-        border: this.topIndex == this.index ? '1px dashed #aaaaaa' : 'none'
+        border: (this.topIndex == this.index && this.type == 'event') ? '1px dashed #aaaaaa' : 'none'
       }
     },
     dragStyle() {
@@ -227,6 +235,7 @@ export default {
       })
     },
     bindDraggableResizable() {
+      if(this.type == 'container') { return; }
       this.bindResizable({aspectRatio:true});
       // 可旋转
       $(this.domContainerR).rotatable({

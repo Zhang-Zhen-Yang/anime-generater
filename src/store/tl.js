@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-12 11:08:41
+ * @Last Modified time: 2019-06-18 09:51:54
  */
 
  // 时间轴组件
@@ -270,6 +270,22 @@ const store = {
     // 添加图层
     addLayer({state, rootState,commit,dispatch}, {layerType}) {
       let newLayer = JSON.parse(JSON.stringify(templateFragment[layerType]));
+      let layerCount = 0;
+      rootState.project.layers.forEach((layer)=>{
+        if (layer.type == layerType) {
+          layerCount += 1;
+        } if (layer.type == 'container') {
+          layer.children.forEach((cLayer)=>{
+            if(cLayer.type == layerType) {
+              layerCount += 1;
+            }
+          })
+        }
+      })
+      let layerMap = {image: '图片', shape: '形状', video: '视频', text: '文本', container: '文件夹'};
+
+      newLayer.layerName = layerMap[layerType] + layerCount;
+
       rootState.project.layers.push(newLayer);
       let layerLength = rootState.project.layers.length;
       let item = rootState.project.layers[layerLength - 1];
@@ -971,7 +987,7 @@ const store = {
         let position = window.timeline.position;
         // console.log(position);
         currentLayer.tween.forEach((item, index)=>{
-          console.log(item.time);
+          // console.log(item.time);
           if(Math.abs(item.time - position) < 10) {
             state.tweenIndex = index;
           }

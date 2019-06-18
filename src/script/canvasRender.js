@@ -742,22 +742,26 @@ let obj = {
             obj.removeAllChildren();
             videoTween.wait(0).call(()=>{
               obj.removeAllChildren();
+              item.clipIndex = -1;
             });
           } else {
             obj.removeAllChildren();
             let bitmap = new c.Bitmap(clipListItem);
-            obj.addChild(bitmap)
+            obj.addChild(bitmap);
+            item.clipIndex = index;
   
             videoTween.wait(0).call(()=>{
               document.body.appendChild(clipListItem);
               obj.removeAllChildren();
               let bitmap = new c.Bitmap(clipListItem);
-              obj.addChild(bitmap)
+              obj.addChild(bitmap);
+              item.clipIndex = index;
             })
           }
           videoTween.wait(firstTime).call(()=>{
             let bitmap = new c.Bitmap(clipListItem);
             obj.addChild(bitmap);
+            item.clipIndex = index;
           });
           totalTime += firstTime;
           return;
@@ -800,6 +804,7 @@ let obj = {
           } else {
             obj.removeAllChildren();
             let bitmap = new c.Bitmap(clipListItem);
+            item.clipIndex = index;
             obj.addChild(bitmap)
           }
         });
@@ -813,14 +818,17 @@ let obj = {
             obj.removeAllChildren();
             let bitmap = new c.Bitmap(item.list[item.list.length - 1]);
             obj.addChild(bitmap)
+            item.clipIndex = item.list.length - 1;
           } else {
             obj.removeAllChildren();
+            item.clipIndex = -1;
           }
       } else {
         let witch = parseInt((currentTime - firstTime) / item.interval);
         obj.removeAllChildren();
         let bitmap = new c.Bitmap(item.list[(witch - 1) < 0 ? 0 : (witch - 1)]);
-        obj.addChild(bitmap)
+        obj.addChild(bitmap);
+        item.clipIndex = (witch - 1) < 0 ? 0 : (witch - 1);
       }
     }
     item.videoTweenObj = videoTween;

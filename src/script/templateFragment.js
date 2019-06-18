@@ -267,6 +267,7 @@ let obj = {
     isNet: true,
     sprite: null,
     list: [],
+    clipIndex: -1,
     lastAction: 'init',
     videoFillBefore: true,
     videoFillAfter: true,

@@ -227,6 +227,16 @@ const util = {
 		let seconds = parseFloat(time % 60);
 		seconds = parseInt(seconds * 100) / 100;
 		return [houres<10 ? ('0' + houres) : houres, minutes<10 ? ('0' + minutes) : minutes,  seconds<10 ? ('0' + seconds) : seconds].join(':');
+	},
+	getTimeString: function() {
+		let date = new Date();
+		let year = date.getFullYear();
+		let month = date.getMonth() + 1;
+		let day = date.getDate();
+		let hour = date.getHours();
+		let minutes = date.getMinutes();
+		let seconds = date.getSeconds();
+		return `${year}-${month > 9 ? month : ('0'+month)}-${day > 9 ? day : ('0' + day)} ${hour > 9 ? hour: ('0' + hour)}:${minutes > 9 ? minutes : ('0'+ minutes) }:${seconds > 9 ? seconds : ('0'+ seconds) }`;
 	}
 
 }

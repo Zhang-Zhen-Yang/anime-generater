@@ -194,8 +194,9 @@ function convertStreams(videoBlob, audioBlob, {t}) {
 function PostBlob(blob) {
 	var h2 = document.querySelector('#log');
 	var downloadWrap  = document.getElementById('download-wrap');
+	var downloadName = '图文视频' +util.getTimeString();
 	// h2.innerHTML = '<a href="' + URL.createObjectURL(blob) + '" target="_blank" download="Recorded Audio+Canvas File.mp4">Download Recorded Audio+Canvas file in MP4 container and play in VLC player!</a>';
-	let link = '<a href="' + URL.createObjectURL(blob) + '" target="_blank" download="file.mp4">点击下载视频文件!<div id="video-download-icon"></div></a>';
+	let link = '<a href="' + URL.createObjectURL(blob) + '" target="_blank" download="' + downloadName + '.mp4">点击下载视频文件!<div id="video-download-icon"></div></a>';
 	h2.innerHTML = link;
 	downloadWrap.innerHTML = link;
 	h2.setAttribute('contenteditable', 'false');

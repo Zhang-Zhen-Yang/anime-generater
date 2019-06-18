@@ -1,7 +1,7 @@
 <template>
   <div style="position: relative;" ref="domImageWrap" v-show="isVisible" @click.stop="hideContextmenu" @contextmenu.stop="contextmenu($event)">
-    <img class="dom-image" :src="obj.image.src" :style="style" ref="domImage" @click.stop="setActiveIndex" @contextmenu.stop="contextmenu($event)"/>
-    <div :style="dragStyle" :class="['dom-image-d', isSub ? 'dom-image-d-sub': '']" ref="domImageD" v-show="isActivity" @click.stop="" >
+    <img class="dom-image" :src="obj.image.src" :style="{...style, opacity: type == 'canvas'? 0.8 : 0 }" ref="domImage" @click.stop="setActiveIndex" @contextmenu.stop="contextmenu($event)"/>
+    <div :style="dragStyle" :class="['dom-image-d', isSub ? 'dom-image-d-sub': '']" ref="domImageD" v-show="isActivity && type =='event'" @click.stop="" >
       <div :style="resizeStyle" class="dom-image-r" ref="domImageR">
         <!--{{ isSub ? style : {} }}-->
         <!--{{ obj.x }}，{{ obj.image.width }}，{{ obj.image.height}}, {{ obj.scaleX }}-->
@@ -40,6 +40,10 @@ export default {
     isSub: {
       type: Boolean,
       default: false,
+    },
+    type: {
+      type: String,
+      default: 'event',
     }
   },
   data () {
@@ -252,6 +256,7 @@ export default {
     },
     // 绑定缩放和拖动
     bindDraggableResizable() {
+      if(this.type == 'canvas') { return; }
       this.bindResizable({aspectRatio: false});
       // 可旋转
       $(this.domImageR).rotatable({

@@ -3,34 +3,13 @@
     <div id="setting-options-title" slot="s">
       设置<!--{{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}-->
     </div>
+
+    
     <div v-if="voiceIndex > -1" id="setting-options-content" slot="e">
       <voiceOptions></voiceOptions>
     </div>
     <div v-else id="setting-options-content" slot="e">
-      <div class="divider" style="padding: 10px;">
-        <!--全局设置======================================================================================-->
-        <optionsGlobal v-if="tlTopIndex == -1"></optionsGlobal>
-        
-        <!--{{ cLayer.type }}-->
-        <!--容器类型==================================================================================-->
-        <optionsContainer :cLayer="cLayer" :target="target" v-if="cLayer && cLayer.type=='container'"></optionsContainer>
-        <!--图片类型==================================================================================-->
-        <optionsImage :cLayer="cLayer" v-if="cLayer && cLayer.type=='image'"></optionsImage>
-
-
-        <!--文本类型=====================================================================================-->
-        <optionsText :cLayer="cLayer" :target="target" v-if="cLayer && cLayer.type=='text'" ></optionsText>
-        <!--视频类型========================================================================================-->
-        <template v-if="cLayer && cLayer.type=='video'">
-          <!--视频-->
-          <div class="c-layer-title">
-            <span class="prop-name">视频</span>
-          </div>
-            <videoRangeSelect :layer="cLayer"></videoRangeSelect>
-        </template>
-        <!--形状类型========================================================================================-->
-        <optionsShape :cLayer="cLayer" :target="target" v-if="cLayer && cLayer.type=='shape'"></optionsShape>
-      </div>
+      
 
       <div class="divider" style="padding: 10px;" v-if="currentTween&&hasProps&&cLayer.type">
         <!--属性节点=================================================================================-->
@@ -91,10 +70,24 @@
               </tr>
               <!--x-->
               <tr>
+                
+                <td>
+                  <span class="prop-name-x">x (左上角)</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="xByLeft"
+                    @start="propStartSetValue"
+                    @change="change({type:'x',value: x})">
+                    <span >
+                      {{ parseFloat(xByLeft.toFixed(2)) }}
+                    </span>
+                  </num-resize>
+                </td>
                 <td>
                   <span class="prop-name-x">x</span>
                 </td>
-                <td colspan="3">
+                <td>
                   <num-resize
                     v-model="x"
                     @start="propStartSetValue"
@@ -108,10 +101,24 @@
               </tr>
               <!--y-->
               <tr>
+                
+                <td>
+                  <span class="prop-name-x">y (左上角)</span>
+                </td>
+                <td>
+                  <num-resize
+                    v-model="yByTop"
+                    @start="propStartSetValue"
+                    @change="change({type:'y',value: y})">
+                    <span>
+                      {{ parseFloat(yByTop.toFixed(2)) }}
+                    </span>
+                  </num-resize>
+                </td>
                 <td>
                   <span class="prop-name-x">y</span>
                 </td>
-                <td colspan="3">
+                <td>
                   <num-resize
                     v-model="y"
                     @start="propStartSetValue"
@@ -250,6 +257,35 @@
           </div>
         </template>
       </div>
+
+
+
+
+
+      <div class="divider" style="padding: 10px;">
+        <!--全局设置======================================================================================-->
+        <optionsGlobal v-if="tlTopIndex == -1"></optionsGlobal>
+        
+        <!--{{ cLayer.type }}-->
+        <!--容器类型==================================================================================-->
+        <optionsContainer :cLayer="cLayer" :target="target" v-if="cLayer && cLayer.type=='container'"></optionsContainer>
+        <!--图片类型==================================================================================-->
+        <optionsImage :cLayer="cLayer" v-if="cLayer && cLayer.type=='image'"></optionsImage>
+
+
+        <!--文本类型=====================================================================================-->
+        <optionsText :cLayer="cLayer" :target="target" v-if="cLayer && cLayer.type=='text'" ></optionsText>
+        <!--视频类型========================================================================================-->
+        <template v-if="cLayer && cLayer.type=='video'">
+          <!--视频-->
+          <div class="c-layer-title">
+            <span class="prop-name">视频</span>
+          </div>
+            <videoRangeSelect :layer="cLayer"></videoRangeSelect>
+        </template>
+        <!--形状类型========================================================================================-->
+        <optionsShape :cLayer="cLayer" :target="target" v-if="cLayer && cLayer.type=='shape'"></optionsShape>
+      </div>
      <!-- 
       <hr>
       {{ tlTopIndex }} {{ tlSubIndex }} {{ tlTweenIndex }}{{ cTween }}
@@ -386,6 +422,26 @@ export default {
         this.target.x = val;
       }
     },
+    // x (0,0)时在左上角
+    xByLeft: {
+      get() {
+        // console.log(this.target.scaleX);
+        let scaleX = this.target.scaleX;
+        let width = (this.target.getBounds() || {width: 0}).width || 0;
+        // console.log(this.props.x - width * scaleX / 2);
+
+        return this.props.x - width * scaleX / 2;
+      },
+      set(val) {
+        let scaleX = this.target.scaleX;
+        let width = (this.target.getBounds() || {width: 0}).width || 0;
+
+        let x = val +  width * scaleX / 2
+
+        this.props.x = x;
+        this.target.x = x;
+      }
+    },
     // y
     y:{
       get() {
@@ -394,6 +450,26 @@ export default {
       set(val) {
         this.props.y = val;
         this.target.y = val;
+      }
+    },
+    // y
+    yByTop:{
+      get() {
+        let scaleY = this.target.scaleY;
+        let height = (this.target.getBounds() || {height: 0}).height || 0;
+        // console.log(this.props.x - width * scaleX / 2);
+
+        return this.props.y - height * scaleY / 2;
+
+      },
+      set(val) {
+        let scaleY = this.target.scaleY;
+        let height = (this.target.getBounds() || {height: 0}).height || 0;
+
+        let y = val +  height * scaleY / 2
+
+        this.props.y = y;
+        this.target.y = y;
       }
     },
     // scaleX

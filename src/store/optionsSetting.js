@@ -2,7 +2,7 @@
  * @Author: zhangzhenyang 
  * @Date: 2019-03-22 11:25:38 
  * @Last Modified by: zhangzhenyang
- * @Last Modified time: 2019-06-12 15:23:21
+ * @Last Modified time: 2019-06-13 09:03:41
  */
  // 时间轴组件
 import http from '../script/http';
@@ -409,7 +409,7 @@ const store = {
     },
     // 右键菜单
     contextMenu({state, rootState,commit,dispatch}, {e}) {
-      console.log('contextMenu');
+      // console.log('contextMenu');
       let currentLayer = utilTimeline.getCurrentLayer({rootState: rootState});
       // console.log([e.pageX, e.pageY]);
       state.contextmenu.x = e.pageX;

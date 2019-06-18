@@ -1,9 +1,12 @@
 <template>
-  <div :style="{position: 'relative', zIndex: index}" v-show="isVisible">
+  <div :style="{position: 'relative', zIndex: index, opacity: type == 'canvas'? 0.5 : 1}" v-show="isVisible">
     <div class="dom-text" :style="style" ref="domText"  @click.stop="setActiveIndex" @contextmenu="contextmenu($event)">
-      <!--{{ obj.text || 'test' }} -->
+      <!-- {{ obj.text || 'test' }}-->
+      <domBgCanvas v-if="type=='canvas'" :obj="obj" :parentObj="parentObj" :item="item" :canvastype="canvastype" :isSub="isSub"></domBgCanvas>
+      <!--<canvas v-if="type=='canvas'" ref="domTextCanvas" style="backgroundImage" width="800" height="800">
+      </canvas>-->
     </div>
-    <div :style="dragStyle" class="dom-text-d" ref="domTextD" v-show="isActivity" @click.stop="hideContextmenu" @contextmenu.stop="contextmenu($event)">
+    <div :style="dragStyle" class="dom-text-d" ref="domTextD" v-show="isActivity && type == 'event'" @click.stop="hideContextmenu" @contextmenu.stop="contextmenu($event)">
       <div :style="resizeStyle" class="dom-text-r" ref="domTextR"></div>
     </div>
   </div>
@@ -12,8 +15,10 @@
 <script>
 import  utilTimeline from '../../script/utilTimeline.js';
 import  util from '../../script/util.js';
+import  domBgCanvas from './domBgCanvas.vue';
 export default {
   name: 'dom-text',
+  components: {domBgCanvas},
   props: {
     obj: {
       type: Object,
@@ -48,6 +53,14 @@ export default {
     isShape: {
       type: Boolean,
       default: false
+    },
+    type: {
+      type: String,
+      default: 'event',
+    },
+    canvastype: {
+      type: String,
+      default: 'text',
     }
   },
   data () {
@@ -246,6 +259,7 @@ export default {
       })
     },
     bindDraggableResizable() {
+      if (this.type == 'canvas') { return; }
       this.bindResizable({aspectRatio: true});
       // 可旋转
       $(this.domTextR).rotatable({
@@ -381,7 +395,8 @@ export default {
     },
     c() {
       this.$store.dispatch('checkAddTweenIf');
-    }
+    },
+    
   },
   created() {
     
@@ -391,8 +406,10 @@ export default {
     this.domTextR = this.$refs.domTextR;
     this.domTextD = this.$refs.domTextD;
     this.bindDraggableResizable();
-
     console.log('domText', this.obj);
+  },
+  watch: {
+    
   }
 }
 </script>
